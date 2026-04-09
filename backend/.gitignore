@@ -1,0 +1,65 @@
+################################
+# JAVA / SPRING
+################################
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+################################
+# NODE / REACT
+################################
+node_modules/
+dist/
+build/
+coverage/
+
+################################
+# ENV / CONFIG
+################################
+.env
+.env.local
+.env.*.local
+application-local.yml
+
+################################
+# IDE
+################################
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### VS Code ###
+.vscode/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+################################
+# OS
+################################
+.DS_Store
+Thumbs.db
+
+################################
+# LOGS
+################################
+*.log
+logs/
