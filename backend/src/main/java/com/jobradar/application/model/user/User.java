@@ -1,4 +1,4 @@
-package com.jobradar.application.user;
+package com.jobradar.application.model.user;
 
 
 import com.jobradar.application.model.Application;

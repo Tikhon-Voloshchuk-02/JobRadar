@@ -1,4 +1,4 @@
-package com.jobradar.application.user;
+package com.jobradar.application.model.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

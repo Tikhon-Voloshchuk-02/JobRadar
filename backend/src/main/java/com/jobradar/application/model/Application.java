@@ -1,6 +1,6 @@
 package com.jobradar.application.model;
 
-import com.jobradar.application.user.User;
+import com.jobradar.application.model.user.User;
 import jakarta.persistence.*;
 
 
