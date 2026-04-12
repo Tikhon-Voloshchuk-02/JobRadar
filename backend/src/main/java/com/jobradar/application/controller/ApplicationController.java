@@ -1,4 +1,5 @@
 package com.jobradar.application.controller;
+import com.jobradar.application.dto.StatusChangeRequest;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.StatusHistory;
@@ -55,6 +56,13 @@ public class ApplicationController {
         return ResponseEntity.ok(application);
     }
 
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<StatusHistory>> getApplicationHistory(@PathVariable Long id) {
+        List<StatusHistory> history = applicationService.getApplicationHistory(id);
+        return ResponseEntity.ok(history);
+    }
+
+
     /**
      * Updates an existing application without changing its status.
      *
@@ -84,24 +92,21 @@ public class ApplicationController {
     }
 
     /**
-     * Changes the status of an application.
+     * Updates the status of a specific application
      *
-     * @param id application ID
-     * @param newStatus new application status
-     * @return updated application
+     * @param id the ID of the application
+     * @param request contains the new status to be applied
+     * @return the updated application with the new_status or 404 if not found
      */
     @PatchMapping("/{id}/status")
     public ResponseEntity<Application> changeStatus(
             @PathVariable Long id,
-            @RequestParam ApplicationStatus newStatus
+            @RequestBody StatusChangeRequest request
     ) {
-        Application application = applicationService.changeStatus(id, newStatus);
-        return ResponseEntity.ok(application);
+        return ResponseEntity.ok(
+                applicationService.changeStatus(id, request.getNewStatus())
+        );
     }
 
-    @GetMapping("/{id}/history")
-    public ResponseEntity<List<StatusHistory>> getApplicationHistory(@PathVariable Long id) {
-        List<StatusHistory> history = applicationService.getApplicationHistory(id);
-        return ResponseEntity.ok(history);
-    }
+
 }

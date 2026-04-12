@@ -1,6 +1,6 @@
 package com.jobradar.application.controller;
 
-import com.jobradar.application.auth.RegisterRequest;
+import com.jobradar.application.dto.RegisterRequest;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.service.AuthService;
 import org.springframework.http.HttpStatus;

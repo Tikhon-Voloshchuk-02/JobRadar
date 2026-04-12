@@ -1,5 +1,6 @@
 package com.jobradar.application.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class StatusHistory {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "application_id", nullable = false)
+    @JsonIgnore
     private Application application;
 
     public StatusHistory() { }
