@@ -2,7 +2,7 @@ package com.jobradar.application.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jobradar.application.auth.RegisterRequest;
+import com.jobradar.application.dto.RegisterRequest;
 import com.jobradar.application.exception.EmailAlreadyExistsException;
 import com.jobradar.application.model.user.Role;
 import com.jobradar.application.model.user.User;

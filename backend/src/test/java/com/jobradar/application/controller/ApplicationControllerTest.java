@@ -58,4 +58,6 @@ public class ApplicationControllerTest {
                 .andExpect(jsonPath("$.position").value("Java Dev"))
                 .andExpect(jsonPath("$.status").value("APPLIED"));
     }
+
+
 }

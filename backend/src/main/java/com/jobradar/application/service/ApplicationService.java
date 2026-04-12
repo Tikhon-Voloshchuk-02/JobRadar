@@ -87,6 +87,10 @@ public class ApplicationService {
     }
 
     public List<StatusHistory> getApplicationHistory(Long applicationId) {
+        if (!applicationRepository.existsById(applicationId)) {
+            throw new ApplicationNotFoundException(applicationId);
+        }
+
         return statusHistoryRepository.findByApplicationIdOrderByChangedAtDesc(applicationId);
     }
 }

@@ -1,4 +1,4 @@
-package com.jobradar.application.auth;
+package com.jobradar.application.dto;
 
 public class RegisterRequest {
 
