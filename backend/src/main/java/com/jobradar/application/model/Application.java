@@ -1,6 +1,9 @@
 package com.jobradar.application.model;
 
+import com.jobradar.application.user.User;
 import jakarta.persistence.*;
+
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -31,6 +34,13 @@ public class Application {
     private LocalDateTime createdAt;
 
     private LocalDate appliedAt;
+
+
+    @ManyToOne
+    //@JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     public Application(){ }
 
@@ -81,5 +91,10 @@ public class Application {
     public LocalDate getAppliedAt() { return appliedAt; }
 
     public void setAppliedAt(LocalDate appliedAt) { this.appliedAt = appliedAt; }
+
+//  < ------ USERS ------>
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
 }

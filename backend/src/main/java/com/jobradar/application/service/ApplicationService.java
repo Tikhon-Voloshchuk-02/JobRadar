@@ -1,10 +1,12 @@
 package com.jobradar.application.service;
 
+import com.jobradar.application.exception.ApplicationNotFoundException;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.StatusHistory;
 import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.StatusHistoryRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +32,8 @@ public class ApplicationService {
     }
 
     public Application getApplicationById(Long id){
-        return applicationRepository.findById(id).orElseThrow(()
-                -> new RuntimeException("Application " + id + " not found")
-        );
+        return applicationRepository.findById(id)
+                .orElseThrow(() -> new ApplicationNotFoundException(id));
     }
 
     /*
@@ -65,10 +66,16 @@ public class ApplicationService {
       @param newStatus the new status to set
       @return updated application
      */
+    @Transactional
     public Application changeStatus(Long id, ApplicationStatus newStatus) {
         Application application = getApplicationById(id);
 
         ApplicationStatus oldStatus = application.getStatus();
+
+        if (oldStatus == newStatus) {
+            return application;
+        }
+
         application.setStatus(newStatus);
 
         Application savedApplication = applicationRepository.save(application);
