@@ -1,8 +1,11 @@
 package com.jobradar.application.controller;
 
+import com.jobradar.application.dto.AuthResponse;
+import com.jobradar.application.dto.LoginRequest;
 import com.jobradar.application.dto.RegisterRequest;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +27,12 @@ public class AuthController {
     public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
         User user = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request){
+        AuthResponse response= authService.login(request);
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.jobradar.application.model.user;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jobradar.application.model.Application;
 import jakarta.persistence.*;
 
@@ -26,6 +27,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)

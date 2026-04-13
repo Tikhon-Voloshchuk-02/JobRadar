@@ -50,7 +50,6 @@ public class AuthControllerTest {
         savedUser.setFirstname("Tikhon");
         savedUser.setLastname("Voloshchuk");
         savedUser.setEmail("tikhon@example.com");
-        savedUser.setPassword("123456");
         savedUser.setRole(Role.USER);
 
         when(authService.register(any(RegisterRequest.class))).thenReturn(savedUser);
@@ -59,11 +58,14 @@ public class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
+               // .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.firstname").value("Tikhon"))
                 .andExpect(jsonPath("$.lastname").value("Voloshchuk"))
                 .andExpect(jsonPath("$.email").value("tikhon@example.com"))
-                .andExpect(jsonPath("$.role").value("USER"));
+                .andExpect(jsonPath("$.role").value("USER"))
+                .andExpect(jsonPath("$.password").doesNotExist());
     }
+
 
 
     @Test
