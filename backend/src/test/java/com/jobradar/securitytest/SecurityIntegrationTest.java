@@ -3,6 +3,8 @@ package com.jobradar.securitytest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobradar.application.controller.AuthController;
+import com.jobradar.application.dto.AuthResponse;
+import com.jobradar.application.dto.LoginRequest;
 import com.jobradar.application.dto.RegisterRequest;
 import com.jobradar.application.exception.EmailAlreadyExistsException;
 import com.jobradar.application.model.user.Role;
@@ -81,7 +83,6 @@ public class SecurityIntegrationTest {
 
     // Tests registration failure when email already exists and verifies HTTP-409 response with error-message
     @Test
-    @Test
     void shouldReturnConflictWhenEmailAlreadyExists() throws Exception {
         RegisterRequest request = new RegisterRequest();
         request.setFirstname("SimpleUserFirstName");
@@ -100,4 +101,22 @@ public class SecurityIntegrationTest {
                 .andExpect(jsonPath("$.error")
                         .value("User with Email: test@example.com already exists"));
     }
+
+    @Test
+    void shouldLoginSuccessfully() throws Exception {
+        LoginRequest request = new LoginRequest();
+        request.setEmail("test@example.com");
+        request.setPassword("123456");
+
+        AuthResponse response = new AuthResponse();
+        response.setToken("fake-jwt-token");
+
+        when(authService.login(any(LoginRequest.class))).thenReturn(response);
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("fake-jwt-token"));
+    }
+
 }
