@@ -4,10 +4,15 @@ import com.jobradar.application.exception.ApplicationNotFoundException;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.StatusHistory;
+import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.StatusHistoryRepository;
+import com.jobradar.application.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 
@@ -16,24 +21,39 @@ public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final StatusHistoryRepository statusHistoryRepository;
+    private final UserRepository userRepository;
 
     public ApplicationService(ApplicationRepository applicationRepository,
-                                 StatusHistoryRepository statusHistoryRepository){
+                                 StatusHistoryRepository statusHistoryRepository,
+                                 UserRepository userRepository){
         this.applicationRepository=applicationRepository;
         this.statusHistoryRepository=statusHistoryRepository;
+        this.userRepository=userRepository;
     }
 
     public Application createApplication(Application application){
+        User currentUser = getCurrentUser();
+        application.setUser(currentUser);
         return applicationRepository.save(application);
     }
 
     public List<Application> getAllApplications(){
-        return applicationRepository.findAll();
+        User currentUser = getCurrentUser();
+        return applicationRepository.findByUser(currentUser);
     }
 
     public Application getApplicationById(Long id){
-        return applicationRepository.findById(id)
-                .orElseThrow(() -> new ApplicationNotFoundException(id));
+//        return applicationRepository.findById(id)
+//                .orElseThrow(() -> new ApplicationNotFoundException(id));
+
+        User currentUser = getCurrentUser();
+
+        Application application = applicationRepository.findById(id).orElseThrow(() -> new ApplicationNotFoundException(id));
+
+        if(!application.getUser().getId().equals(currentUser.getId())){
+            throw new AccessDeniedException("You do not have access to this application");
+        }
+        return application;
     }
 
     /*
@@ -86,11 +106,28 @@ public class ApplicationService {
         return savedApplication;
     }
 
-    public List<StatusHistory> getApplicationHistory(Long applicationId) {
-        if (!applicationRepository.existsById(applicationId)) {
-            throw new ApplicationNotFoundException(applicationId);
-        }
+/*
+    Retrieves the currently authenticated user from the SecurityContext.
+    The method extracts the principal (email) from the current Authentication
+    object and loads the corresponding User entity from the database.
 
-        return statusHistoryRepository.findByApplicationIdOrderByChangedAtDesc(applicationId);
+    This ensures that all data access operations are scoped to the authenticated user.
+
+    @return the authenticated User entity
+    @throws UsernameNotFoundException if the user cannot be found in the database
+*/
+
+    private User getCurrentUser() {
+        String email = SecurityContextHolder.getContext()
+                                            .getAuthentication()
+                                            .getName();
+
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User nor found" +email));
+    }
+
+
+    public List<StatusHistory> getApplicationHistory(Long applicationId) {
+        Application application = getApplicationById(applicationId);
+        return statusHistoryRepository.findByApplicationIdOrderByChangedAtDesc(application.getId());
     }
 }
