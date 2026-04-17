@@ -63,3 +63,5 @@ Thumbs.db
 ################################
 *.log
 logs/
+
+src/main/resources/application-local.yaml

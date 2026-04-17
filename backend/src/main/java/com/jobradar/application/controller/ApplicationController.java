@@ -33,15 +33,13 @@ public class ApplicationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedApplication);
     }
 
-    /**
-     * Returns all applications.
-     *
-     * @return list of all applications
-     */
+
     @GetMapping
-    public ResponseEntity<List<Application>> getAllApplications() {
-        List<Application> applications = applicationService.getAllApplications();
-        return ResponseEntity.ok(applications);
+    public ResponseEntity<List<Application>> getApplications(
+            @RequestParam(required = false) ApplicationStatus status,
+            @RequestParam(required = false) String search
+    ) {
+        return ResponseEntity.ok(applicationService.getApplications(status, search));
     }
 
     /**
