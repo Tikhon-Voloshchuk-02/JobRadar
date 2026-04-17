@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/jobradar
     username: postgres
-    password: postgres
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -13,5 +13,5 @@ spring:
         format_sql: true
 
 jwt:
-  secret: my-super-secret-key-my-super-secret-key
+  secret: ${JWT_SECRET}
   expiration: 86400000

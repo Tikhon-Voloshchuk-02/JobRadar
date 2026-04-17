@@ -9,6 +9,7 @@ import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.StatusHistoryRepository;
 import com.jobradar.application.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -31,15 +32,18 @@ public class ApplicationService {
         this.userRepository=userRepository;
     }
 
+
     public Application createApplication(Application application){
         User currentUser = getCurrentUser();
         application.setUser(currentUser);
         return applicationRepository.save(application);
     }
 
-    public List<Application> getAllApplications(){
+    public List<Application> getApplications(ApplicationStatus status, String search) {
         User currentUser = getCurrentUser();
-        return applicationRepository.findByUser(currentUser);
+        String searchPattern = normalizeSearchPattern(search);
+
+        return applicationRepository.findByUserAndFilters(currentUser, status, searchPattern);
     }
 
     public Application getApplicationById(Long id){
@@ -122,12 +126,19 @@ public class ApplicationService {
                                             .getAuthentication()
                                             .getName();
 
-        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User nor found" +email));
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User nor found " +email));
     }
 
 
     public List<StatusHistory> getApplicationHistory(Long applicationId) {
         Application application = getApplicationById(applicationId);
         return statusHistoryRepository.findByApplicationIdOrderByChangedAtDesc(application.getId());
+    }
+
+    private String normalizeSearchPattern(String search) {
+        if (search == null || search.isBlank()) {
+            return null;
+        }
+        return "%" + search.trim().toLowerCase() + "%";
     }
 }
