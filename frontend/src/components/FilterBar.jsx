@@ -20,10 +20,10 @@ export default function FilterBar({
         value={selectedStatus}
         onChange={(e) => onStatusChange(e.target.value)}
       >
-        <option value="">All statuses</option>
+        <option value="ALL">All statuses</option>
         {STATUS_OPTIONS.map((status) => (
           <option key={status} value={status}>
-            {status}
+                {status === "ALL" ? "All statuses" : status}
           </option>
         ))}
       </select>

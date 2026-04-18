@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+
 import {
   getAllApplications,
+  createApplication,
   deleteApplication,
   updateApplicationStatus,
 } from "../api/applications";
+import { logout } from "../auth/auth";
 import FilterBar from "../components/FilterBar";
 import ApplicationCard from "../components/ApplicationCard";
 
@@ -14,7 +17,18 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("ALL");
+
+  const [showForm, setShowForm] = useState(false);
+
+    const [formData, setFormData] = useState({
+      company: "",
+      position: "",
+      link: "",
+      status: "SAVED",
+      notes: "",
+      appliedAt: "",
+    });
 
   async function loadApplications() {
     try {
@@ -34,11 +48,50 @@ export default function DashboardPage() {
     loadApplications();
   }, []);
 
+  function handleFormChange(e) {
+      const { name, value } = e.target;
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+  }
+
+  async function handleCreateApplication(e) {
+    e.preventDefault();
+
+    try {
+      setError("");
+
+      const result = await createApplication(formData);
+      console.log("CREATE RESPONSE:", result);
+
+      await loadApplications();
+
+      setFormData({
+        company: "",
+        position: "",
+        link: "",
+        status: "SAVED",
+        notes: "",
+        appliedAt: "",
+      });
+
+      setShowForm(false);
+      setSelectedStatus("ALL");
+      setSearchTerm("");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Failed to create application");
+    }
+  }
+
   async function handleDelete(id) {
     const confirmed = window.confirm("Delete this application?");
     if (!confirmed) return;
 
     try {
+      setError("");
       await deleteApplication(id);
       setApplications((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
@@ -48,6 +101,7 @@ export default function DashboardPage() {
 
   async function handleStatusChange(id, newStatus) {
     try {
+      setError("");
       const updated = await updateApplicationStatus(id, newStatus);
 
       setApplications((prev) =>
@@ -59,14 +113,14 @@ export default function DashboardPage() {
   }
 
   function handleLogout() {
-    localStorage.removeItem("token");
+    logout();
     window.location.href = "/login";
   }
 
   const filteredApplications = useMemo(() => {
     return applications.filter((app) => {
       const matchesStatus =
-        !selectedStatus || app.status === selectedStatus;
+        selectedStatus === "ALL" || app.status === selectedStatus;
 
       const term = searchTerm.trim().toLowerCase();
       const matchesSearch =
@@ -80,49 +134,110 @@ export default function DashboardPage() {
   }, [applications, searchTerm, selectedStatus]);
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <h1>JobRadar Dashboard</h1>
-          <p>Track your applications in one place</p>
+      <div className="dashboard-page">
+        <header className="dashboard-header">
+          <div>
+            <h1>JobRadar Dashboard</h1>
+            <p>Track your applications in one place</p>
+          </div>
+
+          <div className="dashboard-header__actions">
+            <button onClick={() => setShowForm((prev) => !prev)}>
+              {showForm ? "Cancel" : "Add application"}
+            </button>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        </header>
+
+        {showForm && (
+          <form className="application-form" onSubmit={handleCreateApplication}>
+            <input
+              type="text"
+              name="company"
+              placeholder="Company"
+              value={formData.company}
+              onChange={handleFormChange}
+              required
+            />
+
+            <input
+              type="text"
+              name="position"
+              placeholder="Position"
+              value={formData.position}
+              onChange={handleFormChange}
+              required
+            />
+
+            <input
+              type="url"
+              name="link"
+              placeholder="Vacancy link"
+              value={formData.link}
+              onChange={handleFormChange}
+            />
+
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleFormChange}
+            >
+              <option value="SAVED">SAVED</option>
+              <option value="APPLIED">APPLIED</option>
+              <option value="WAITING">WAITING</option>
+              <option value="INTERVIEW">INTERVIEW</option>
+              <option value="REJECTED">REJECTED</option>
+              <option value="OFFER">OFFER</option>
+            </select>
+
+            <textarea
+              name="notes"
+              placeholder="Notes"
+              value={formData.notes}
+              onChange={handleFormChange}
+            />
+
+            <input
+              type="date"
+              name="appliedAt"
+              value={formData.appliedAt}
+              onChange={handleFormChange}
+            />
+
+            <button type="submit">Save application</button>
+          </form>
+        )}
+
+        <FilterBar
+          searchTerm={searchTerm}
+          selectedStatus={selectedStatus}
+          onSearchChange={setSearchTerm}
+          onStatusChange={setSelectedStatus}
+          onReset={() => {
+            setSearchTerm("");
+            setSelectedStatus("ALL");
+          }}
+        />
+
+        {loading && <p>Loading applications...</p>}
+        {error && <p className="error-text">{error}</p>}
+
+        {!loading && !error && filteredApplications.length === 0 && (
+          <p>No applications found.</p>
+        )}
+
+        <div className="applications-grid">
+          {filteredApplications.map((application) => (
+            <ApplicationCard
+              key={application.id}
+              application={application}
+              onEdit={(app) => console.log("Edit", app)}
+              onViewHistory={(app) => console.log("History", app)}
+              onDelete={handleDelete}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
         </div>
-
-        <div className="dashboard-header__actions">
-          <button>Add application</button>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      </header>
-
-      <FilterBar
-        searchTerm={searchTerm}
-        selectedStatus={selectedStatus}
-        onSearchChange={setSearchTerm}
-        onStatusChange={setSelectedStatus}
-        onReset={() => {
-          setSearchTerm("");
-          setSelectedStatus("");
-        }}
-      />
-
-      {loading && <p>Loading applications...</p>}
-      {error && <p className="error-text">{error}</p>}
-
-      {!loading && !error && filteredApplications.length === 0 && (
-        <p>No applications found.</p>
-      )}
-
-      <div className="applications-grid">
-        {filteredApplications.map((application) => (
-          <ApplicationCard
-            key={application.id}
-            application={application}
-            onEdit={(app) => console.log("Edit", app)}
-            onViewHistory={(app) => console.log("History", app)}
-            onDelete={handleDelete}
-            onStatusChange={handleStatusChange}
-          />
-        ))}
       </div>
-    </div>
-  );
-}
+    );
+  }

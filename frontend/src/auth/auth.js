@@ -12,7 +12,11 @@ export function removeToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+export function logout() {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
 export function isAuthenticated() {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem(TOKEN_KEY);
   return token && token !== "null" && token !== "undefined";
 }

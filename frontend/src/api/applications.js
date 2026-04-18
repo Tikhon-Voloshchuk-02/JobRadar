@@ -1,12 +1,14 @@
+import { getToken } from "../auth/auth";
+
 const API_BASE = "http://localhost:8080/api/applications";
 
 function getAuthHeaders() {
-  const token = localStorage.getItem("token");
+  const token = getToken();
 
   return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
 }
 
 
@@ -34,7 +36,7 @@ export async function createApplication(applicationData) {
     throw new Error("Failed to create application");
   }
 
-  return response.json();
+  return await response.text();
 }
 
 export async function updateApplication(id, applicationData) {

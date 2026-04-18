@@ -117,3 +117,37 @@
   background: #dc2626;
   color: white;
 }
+
+.application-form {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0 24px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.application-form input,
+.application-form select,
+.application-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #2b3245;
+  border-radius: 12px;
+  background: #111525;
+  color: white;
+  font-size: 16px;
+}
+
+.application-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.application-form button {
+  width: fit-content;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}

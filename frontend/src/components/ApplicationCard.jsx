@@ -17,9 +17,9 @@ export default function ApplicationCard({
 
         <select
           value={application.status}
-          onChange={(e) => onStatusChange(application.id, e.target.value)}
+          onChange={(e) => onStatusChange?.(application.id, e.target.value)}
         >
-          {STATUS_OPTIONS.map((status) => (
+          {STATUS_OPTIONS.filter((status) => status !== "ALL").map((status) => (
             <option key={status} value={status}>
               {status}
             </option>
@@ -42,9 +42,9 @@ export default function ApplicationCard({
       </div>
 
       <div className="application-card__actions">
-        <button onClick={() => onEdit(application)}>Edit</button>
-        <button onClick={() => onViewHistory(application)}>History</button>
-        <button onClick={() => onDelete(application.id)}>Delete</button>
+        <button onClick={() => onEdit?.(application)}>Edit</button>
+        <button onClick={() => onViewHistory?.(application)}>History</button>
+        <button onClick={() => onDelete?.(application.id)}>Delete</button>
       </div>
     </div>
   );
