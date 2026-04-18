@@ -13,5 +13,6 @@ export function removeToken() {
 }
 
 export function isAuthenticated() {
-  return !!getToken();
+  const token = localStorage.getItem("token");
+  return token && token !== "null" && token !== "undefined";
 }
