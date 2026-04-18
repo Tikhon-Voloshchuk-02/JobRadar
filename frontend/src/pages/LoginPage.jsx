@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginRequest } from "../api/api";
 import { saveToken } from "../auth/auth";
+import { Link } from "react-router-dom";
 
 import "./LoginPage.css";
 
@@ -58,6 +59,9 @@ function LoginPage() {
         </form>
 
         {error && <p className="login-error">{error}</p>}
+        <p className="login-footer">
+          Don’t have an account? <Link to="/register">Register</Link>
+        </p>
       </div>
     </div>
   );
