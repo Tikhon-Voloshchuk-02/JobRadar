@@ -1,5 +1,6 @@
 package com.jobradar.application.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jobradar.application.model.user.User;
 import jakarta.persistence.*;
 
@@ -37,8 +38,8 @@ public class Application {
 
 
     @ManyToOne
-    //@JoinColumn(name = "user_id", nullable = false)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
 

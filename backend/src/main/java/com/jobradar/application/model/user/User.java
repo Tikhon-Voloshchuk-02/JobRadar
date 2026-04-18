@@ -81,6 +81,8 @@ public class User implements UserDetails {
         return role;
     }
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
     public List<Application> getApplications() {
         return applications;
     }
