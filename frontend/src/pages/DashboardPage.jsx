@@ -6,7 +6,9 @@ import {
   updateApplication,
   deleteApplication,
   updateApplicationStatus,
+  getApplicationHistory,
 } from "../api/applications";
+
 import { logout } from "../auth/auth";
 import FilterBar from "../components/FilterBar";
 import ApplicationCard from "../components/ApplicationCard";
@@ -19,6 +21,10 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("ALL");
+
+  const [showHistory, setShowHistory] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [historyEntries, setHistoryEntries] = useState([]);
 
   const [showForm, setShowForm] = useState(false);
 
@@ -72,6 +78,19 @@ export default function DashboardPage() {
       notes: application.notes || "",
       appliedAt: application.appliedAt || "",
     });
+  }
+
+  async function handleViewHistory(application) {
+    try {
+      setError("");
+      const history = await getApplicationHistory(application.id);
+
+      setSelectedApplication(application);
+      setHistoryEntries(history);
+      setShowHistory(true);
+    } catch (err) {
+      setError(err.message || "Failed to load status history");
+    }
   }
 
   async function handleSubmitApplication(e) {
@@ -281,12 +300,37 @@ export default function DashboardPage() {
             key={application.id}
             application={application}
             onEdit={handleEdit}
-            onViewHistory={(app) => console.log("History", app)}
+            onViewHistory={handleViewHistory}
             onDelete={handleDelete}
             onStatusChange={handleStatusChange}
           />
         ))}
       </div>
+
+      {showHistory && selectedApplication && (
+        <div className="history-panel">
+          <h2>Status history</h2>
+          <p>
+            <strong>{selectedApplication.company}</strong> —{" "}
+            {selectedApplication.position}
+          </p>
+
+          {historyEntries.length === 0 ? (
+            <p>No history yet.</p>
+          ) : (
+            <ul>
+              {historyEntries.map((entry) => (
+                <li key={entry.id}>
+                  {entry.oldStatus} → {entry.newStatus} (
+                  {entry.changedAt || entry.createdAt || entry.changeDate || "No date"})
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <button onClick={() => setShowHistory(false)}>Close</button>
+        </div>
+      )}
     </div>
   );
 }
