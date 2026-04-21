@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "";
 
 async function handleError(response, defaultMessage) {
   let errorMessage = defaultMessage;
@@ -60,4 +60,13 @@ export async function getApplications(token) {
   }
 
   return response.json();
+}
+
+if (!response.ok) {
+  console.log("STATUS:", response.status);
+
+  const text = await response.text();
+  console.log("RESPONSE:", text);
+
+  throw new Error("Registration failed");
 }
