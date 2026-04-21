@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:15
+    container_name: jobradar-db
+    environment:
+      POSTGRES_DB: jobradar
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: jobradar-backend
+    depends_on:
+      - db
+    environment:
+      JWT_SECRET: 6cW9m2f0qM0b3Qx7bA0Hq3d6eZJ9r8V1yT2uL4nP5sQ=
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/jobradar
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
