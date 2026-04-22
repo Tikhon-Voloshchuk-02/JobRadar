@@ -7,11 +7,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ApplicationRepository extends JpaRepository <Application, Long> {
 
     List<Application> findByUser(User user);
+
+    long countByUser(User user);
+    long countByUserAndStatus(User user, ApplicationStatus status);
+    long countByUserAndStatusIn(User user, Collection<ApplicationStatus> statuses);
 
     @Query("""
     SELECT a
@@ -30,4 +35,7 @@ public interface ApplicationRepository extends JpaRepository <Application, Long>
             @Param("status") ApplicationStatus status,
             @Param("searchPattern") String searchPattern
     );
+
+
+
 }

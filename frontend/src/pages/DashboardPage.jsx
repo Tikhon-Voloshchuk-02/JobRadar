@@ -7,6 +7,7 @@ import {
   deleteApplication,
   updateApplicationStatus,
   getApplicationHistory,
+   getDashboardSummary,
 } from "../api/applications";
 
 import { logout } from "../auth/auth";
@@ -29,6 +30,13 @@ export default function DashboardPage() {
   const [showForm, setShowForm] = useState(false);
 
   const [editingApplicationId, setEditingApplicationId] = useState(null);
+
+  const [summary, setSummary] = useState({
+    totalApplications: 0,
+    activeApplications: 0,
+    interviews: 0,
+    offers: 0,
+  });
 
     const [formData, setFormData] = useState({
       company: "",
@@ -53,8 +61,27 @@ export default function DashboardPage() {
     }
   }
 
+//applications
   useEffect(() => {
     loadApplications();
+  }, []);
+
+  // summary loader
+  async function loadSummary() {
+    try {
+      console.log("LOADING SUMMARY...");
+      const data = await getDashboardSummary();
+      console.log("SUMMARY DATA:", data);
+      setSummary(data);
+    } catch (error) {
+      console.error("Failed to load dashboard summary", error);
+    }
+  }
+
+  // summary
+  useEffect(() => {
+    console.log("SUMMARY EFFECT RUN");
+    loadSummary();
   }, []);
 
   function handleFormChange(e) {
@@ -214,6 +241,28 @@ export default function DashboardPage() {
           <button onClick={handleLogout}>Logout</button>
         </div>
       </header>
+
+      <div className="dashboard-summary">
+        <div className="summary-card">
+          <h3>Total</h3>
+          <p>{summary.totalApplications}</p>
+        </div>
+
+        <div className="summary-card">
+          <h3>Active</h3>
+          <p>{summary.activeApplications}</p>
+        </div>
+
+        <div className="summary-card">
+          <h3>Interviews</h3>
+          <p>{summary.interviews}</p>
+        </div>
+
+        <div className="summary-card">
+          <h3>Offers</h3>
+          <p>{summary.offers}</p>
+        </div>
+      </div>
 
       {showForm && (
         <form className="application-form" onSubmit={handleSubmitApplication}>

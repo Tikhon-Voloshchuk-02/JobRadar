@@ -62,11 +62,19 @@ export async function getApplications(token) {
   return response.json();
 }
 
-if (!response.ok) {
-  console.log("STATUS:", response.status);
+// <------- GET DASHBOARD-SUMMARY ----->
+export async function getDashboardSummary() {
+  const token = localStorage.getItem("token");
 
-  const text = await response.text();
-  console.log("RESPONSE:", text);
+  const response = await fetch("/api/dashboard/summary", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  throw new Error("Registration failed");
+  if (!response.ok) {
+    throw new Error("Failed to fetch dashboard summary");
+  }
+
+  return response.json();
 }

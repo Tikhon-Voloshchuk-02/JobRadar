@@ -65,3 +65,19 @@ Thumbs.db
 logs/
 
 src/main/resources/application-local.yaml
+
+# Docs (not part of runtime code)
+docs/
+
+# Future python microservice (not used yet)
+python-service/
+
+# Node
+frontend/node_modules/
+
+# Build artifacts
+backend/target/
+frontend/dist/
+
+# Env
+.env
