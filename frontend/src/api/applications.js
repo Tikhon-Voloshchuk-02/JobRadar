@@ -90,3 +90,19 @@ export async function getApplicationHistory(id) {
 
   return response.json();
 }
+
+export async function getDashboardSummary() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch("/api/dashboard/summary", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch dashboard summary");
+  }
+
+  return response.json();
+}
