@@ -1,0 +1,89 @@
+{
+  "company": "Company",
+  "position": "Position",
+  "vacancy_link": "Vacancy link",
+  "notes": "Notes",
+  "save_application": "Save application",
+  "update_application": "Update application",
+
+  "status": {
+    "all": "All statuses",
+    "saved": "Saved",
+    "applied": "Applied",
+    "waiting": "Waiting",
+    "interview": "Interview",
+    "rejected": "Rejected",
+    "offer": "Offer"
+  },
+
+  "search_placeholder": "Search by company, position, notes...",
+  "reset": "Reset",
+  "open_vacancy": "Open vacancy",
+  "applied_at": "Applied at",
+  "created_at": "Created at",
+  "no_notes": "No notes",
+  "edit": "Edit",
+  "delete": "Delete",
+
+  "summary": {
+    "total": "Total",
+    "active": "Active",
+    "interviews": "Interviews",
+    "offers": "Offers",
+    "status_distribution": "Status distribution"
+  },
+
+  "dashboard": {
+    "title": "JobRadar Dashboard",
+    "subtitle": "Track your applications in one place"
+  },
+
+  "add_application": "Add application",
+  "loading_applications": "Loading applications...",
+  "no_applications_found": "No applications found.",
+
+  "loading": "Loading...",
+  "logout": "Logout",
+  "cancel": "Cancel",
+  "close": "Close",
+
+  "auth": {
+    "register": "Register",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "create_account": "Create account",
+    "no_account": "Don’t have an account?",
+    "have_account": "Already have an account?"
+  },
+
+  "errors": {
+    "login_failed": "Login failed",
+    "registration_failed": "Registration failed"
+  },
+
+  "history": {
+    "title": "Status history",
+    "no_history": "No history yet.",
+    "no_date": "No date"
+  },
+
+  "history_button": "History",
+
+  "activity": {
+    "title": "Recent activity",
+    "no_activity": "No recent activity yet.",
+    "created": "Created"
+  },
+
+  "time": {
+    "just_now": "just now",
+    "min_ago": "min ago",
+    "hour_ago": "h ago"
+  },
+
+  "show": "Show",
+  "hide": "Hide"
+}

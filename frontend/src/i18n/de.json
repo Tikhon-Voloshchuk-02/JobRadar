@@ -1,0 +1,89 @@
+{
+  "company": "Firma",
+  "position": "Position",
+  "vacancy_link": "Stellenanzeige",
+  "notes": "Notizen",
+  "save_application": "Bewerbung speichern",
+  "update_application": "Bewerbung aktualisieren",
+
+  "status": {
+    "all": "Alle Status",
+    "saved": "Gespeichert",
+    "applied": "Beworben",
+    "waiting": "Wartend",
+    "interview": "Interview",
+    "rejected": "Abgelehnt",
+    "offer": "Angebot"
+  },
+
+  "search_placeholder": "Suche nach Firma, Position, Notizen...",
+  "reset": "Zurücksetzen",
+  "open_vacancy": "Stelle öffnen",
+  "applied_at": "Beworben am",
+  "created_at": "Erstellt am",
+  "no_notes": "Keine Notizen",
+  "edit": "Bearbeiten",
+  "delete": "Löschen",
+
+  "summary": {
+    "total": "Gesamt",
+    "active": "Aktiv",
+    "interviews": "Interviews",
+    "offers": "Angebote",
+    "status_distribution": "Statusverteilung"
+  },
+
+  "dashboard": {
+    "title": "JobRadar Dashboard",
+    "subtitle": "Verwalte deine Bewerbungen an einem Ort"
+  },
+
+  "add_application": "Bewerbung hinzufügen",
+  "loading_applications": "Bewerbungen werden geladen...",
+  "no_applications_found": "Keine Bewerbungen gefunden.",
+
+  "loading": "Lädt...",
+  "logout": "Abmelden",
+  "cancel": "Abbrechen",
+  "close": "Schließen",
+
+  "auth": {
+    "register": "Registrieren",
+    "login": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "first_name": "Vorname",
+    "last_name": "Nachname",
+    "create_account": "Konto erstellen",
+    "no_account": "Noch kein Konto?",
+    "have_account": "Bereits ein Konto?"
+  },
+
+  "errors": {
+    "login_failed": "Anmeldung fehlgeschlagen",
+    "registration_failed": "Registrierung fehlgeschlagen"
+  },
+
+  "history": {
+    "title": "Statusverlauf",
+    "no_history": "Noch kein Verlauf.",
+    "no_date": "Kein Datum"
+  },
+
+  "history_button": "Verlauf",
+
+  "activity": {
+    "title": "Letzte Aktivitäten",
+    "no_activity": "Noch keine Aktivitäten.",
+    "created": "Erstellt"
+  },
+
+  "time": {
+    "just_now": "gerade eben",
+    "min_ago": "Min. zuvor",
+    "hour_ago": "Std. zuvor"
+  },
+
+  "show": "Anzeigen",
+  "hide": "Ausblenden"
+}

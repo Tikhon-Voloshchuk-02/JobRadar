@@ -1,0 +1,18 @@
+.recent-activity__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-btn {
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  background: rgba(59, 130, 246, 0.4);
+}

@@ -1,4 +1,5 @@
 import { STATUS_OPTIONS } from "../utils/statusOptions";
+import { useTranslation } from "react-i18next";
 
 export default function FilterBar({
   searchTerm,
@@ -7,28 +8,31 @@ export default function FilterBar({
   onStatusChange,
   onReset,
 }) {
+    const { t } = useTranslation();
+
   return (
-    <div className="filter-bar">
-      <input
-        type="text"
-        placeholder="Search by company, position, notes..."
-        value={searchTerm}
-        onChange={(e) => onSearchChange(e.target.value)}
-      />
+      <div className="filter-bar">
+        <input
+          type="text"
+          placeholder={t("search_placeholder")}
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+        />
 
-      <select
-        value={selectedStatus}
-        onChange={(e) => onStatusChange(e.target.value)}
-      >
-        <option value="ALL">All statuses</option>
-        {STATUS_OPTIONS.map((status) => (
-          <option key={status} value={status}>
-                {status === "ALL" ? "All statuses" : status}
-          </option>
-        ))}
-      </select>
+        <select
+          value={selectedStatus}
+          onChange={(e) => onStatusChange(e.target.value)}
+        >
+          <option value="ALL">{t("status.all")}</option>
 
-      <button onClick={onReset}>Reset</button>
-    </div>
-  );
-}
+          {STATUS_OPTIONS.map((status) => (
+            <option key={status} value={status}>
+              {t(`status.${status.toLowerCase()}`)}
+            </option>
+          ))}
+        </select>
+
+        <button onClick={onReset}>{t("reset")}</button>
+      </div>
+    );
+  }
