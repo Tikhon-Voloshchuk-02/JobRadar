@@ -48,7 +48,7 @@ public class ApplicationSecurityTest {
         app.setPosition("Java Developer");
         app.setStatus(ApplicationStatus.APPLIED);
 
-        when(applicationService.getAllApplications()).thenReturn(List.of(app));
+        when(applicationService.getApplications(null, null)).thenReturn(List.of(app));
 
         mockMvc.perform(get("/api/applications"))
                 .andExpect(status().isOk());

@@ -60,6 +60,7 @@ public class User implements UserDetails {
         return id;
     }
 
+
     public String getFirstname() {
         return firstname;
     }
@@ -105,6 +106,10 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public void setId(Long id){
+        this.id=id;
     }
 
     @Override

@@ -1,4 +1,9 @@
 import { STATUS_OPTIONS } from "../utils/statusOptions";
+import "./ApplicationCard.css";
+
+function getStatusClass(status) {
+  return `status-badge status-${status.toLowerCase()}`;
+}
 
 export default function ApplicationCard({
   application,
@@ -15,16 +20,24 @@ export default function ApplicationCard({
           <p>{application.position}</p>
         </div>
 
-        <select
-          value={application.status}
-          onChange={(e) => onStatusChange?.(application.id, e.target.value)}
-        >
-          {STATUS_OPTIONS.filter((status) => status !== "ALL").map((status) => (
-            <option key={status} value={status}>
-              {status}
-            </option>
-          ))}
-        </select>
+        <div className="application-card__status-control">
+          <span className={getStatusClass(application.status)}>
+            {application.status}
+          </span>
+
+          <select
+            value={application.status}
+            onChange={(e) =>
+              onStatusChange?.(application.id, e.target.value)
+            }
+          >
+            {STATUS_OPTIONS.filter((status) => status !== "ALL").map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="application-card__body">
