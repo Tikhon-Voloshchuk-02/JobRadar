@@ -92,16 +92,26 @@ export async function getApplicationHistory(id) {
 }
 
 export async function getDashboardSummary() {
-  const token = localStorage.getItem("token");
-
   const response = await fetch("/api/dashboard/summary", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    method: "GET",
+    headers: getAuthHeaders(),
   });
 
   if (!response.ok) {
     throw new Error("Failed to fetch dashboard summary");
+  }
+
+  return response.json();
+}
+
+export async function getRecentActivity() {
+  const response = await fetch("/api/dashboard/recent-activity", {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch recent activity");
   }
 
   return response.json();

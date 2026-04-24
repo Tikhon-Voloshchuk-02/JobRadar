@@ -54,7 +54,8 @@ button:hover {
 
 .summary-card,
 .application-form,
-.history-panel {
+.history-panel,
+.recent-activity {
   background: #1e293b;
   border: 1px solid #334155;
   border-radius: 16px;
@@ -62,7 +63,8 @@ button:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
-.summary-card h3 {
+.summary-card h3,
+.recent-activity h3 {
   margin: 0 0 12px;
   color: #94a3b8;
   font-size: 14px;
@@ -74,10 +76,6 @@ button:hover {
   font-size: 32px;
   font-weight: 700;
   color: #f8fafc;
-}
-
-.status-distribution-card {
-  margin-bottom: 24px;
 }
 
 .status-distribution-card {
@@ -111,6 +109,62 @@ button:hover {
 .status-pill strong {
   color: #f8fafc;
   font-size: 16px;
+}
+
+/* Recent Activity */
+.recent-activity {
+  margin-bottom: 24px;
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.timeline-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.timeline-content {
+  min-width: 0;
+}
+
+.timeline-time {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.timeline-title {
+  color: #f8fafc;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.timeline-status {
+  margin-top: 6px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .application-form {
@@ -174,6 +228,10 @@ textarea {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .status-distribution-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
@@ -197,15 +255,12 @@ textarea {
   .dashboard-summary {
     grid-template-columns: 1fr;
   }
-}
-@media (max-width: 900px) {
-  .status-distribution-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 
-@media (max-width: 600px) {
   .status-distribution-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .timeline {
+    grid-template-columns: 1fr;
   }
 }

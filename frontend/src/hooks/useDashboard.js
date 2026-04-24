@@ -8,6 +8,7 @@ import {
   updateApplicationStatus,
   getApplicationHistory,
   getDashboardSummary,
+  getRecentActivity
 } from "../api/applications";
 
 const EMPTY_FORM = {
@@ -45,9 +46,12 @@ export function useDashboard() {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [historyEntries, setHistoryEntries] = useState([]);
 
+  const [recentActivity, setRecentActivity] = useState([]);
+
   useEffect(() => {
     loadApplications();
     loadSummary();
+    loadRecentActivity();
   }, []);
 
   async function loadApplications() {
@@ -70,6 +74,15 @@ export function useDashboard() {
       setSummary(data);
     } catch (err) {
       console.error("Failed to load dashboard summary", err);
+    }
+  }
+
+  async function loadRecentActivity() {
+    try {
+      const data = await getRecentActivity();
+      setRecentActivity(data);
+    } catch (err) {
+      console.error("Failed to load recent activity", err);
     }
   }
 
@@ -126,6 +139,7 @@ export function useDashboard() {
 
       await loadApplications();
       await loadSummary();
+      await loadRecentActivity();
 
       resetForm();
       setShowForm(false);
@@ -146,6 +160,7 @@ export function useDashboard() {
       await deleteApplication(id);
       await loadApplications();
       await loadSummary();
+      await loadRecentActivity();
     } catch (err) {
       setError(err.message || "Failed to delete application");
     }
@@ -162,6 +177,7 @@ export function useDashboard() {
       );
 
       await loadSummary();
+      await loadRecentActivity();
     } catch (err) {
       setError(err.message || "Failed to update status");
     }
@@ -221,6 +237,7 @@ export function useDashboard() {
     handleDelete,
     handleStatusChange,
     handleViewHistory,
+    recentActivity,
 
     showHistory,
     selectedApplication,

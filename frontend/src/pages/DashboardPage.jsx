@@ -5,6 +5,7 @@ import ApplicationCard from "../components/ApplicationCard";
 import DashboardSummary from "../components/DashboardSummary";
 import ApplicationForm from "../components/ApplicationForm";
 import HistoryPanel from "../components/HistoryPanel";
+import RecentActivity from "../components/RecentActivity";
 
 import { useDashboard } from "../hooks/useDashboard";
 
@@ -16,6 +17,7 @@ export default function DashboardPage() {
     error,
 
     summary,
+    recentActivity,
 
     searchTerm,
     selectedStatus,
@@ -64,6 +66,7 @@ export default function DashboardPage() {
       </header>
 
       <DashboardSummary summary={summary} />
+      <RecentActivity activities={recentActivity} />
 
       {showForm && (
         <ApplicationForm

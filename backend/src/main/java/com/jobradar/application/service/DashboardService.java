@@ -1,22 +1,29 @@
 package com.jobradar.application.service;
 
 import com.jobradar.application.dto.DashboardSummaryResponse;
+import com.jobradar.application.dto.RecentActivityResponse;
 import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.ApplicationRepository;
+import com.jobradar.application.repository.StatusHistoryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Service
 public class DashboardService {
 
     private final ApplicationRepository applicationRepository;
+    private final StatusHistoryRepository statusHistoryRepository;
 
-    public DashboardService(ApplicationRepository applicationRepository){
-        this.applicationRepository=applicationRepository;
+    public DashboardService(ApplicationRepository applicationRepository,
+                            StatusHistoryRepository statusHistoryRepository) {
+        this.applicationRepository = applicationRepository;
+        this.statusHistoryRepository = statusHistoryRepository;
     }
 
     public DashboardSummaryResponse getSummary (User user){
@@ -52,4 +59,37 @@ public class DashboardService {
 
         return distribution;
     }
+
+    public List<RecentActivityResponse> getRecentActivity(User user){
+        List<RecentActivityResponse> createdActivities = applicationRepository.findTop5ByUserOrderByCreatedAtDesc(user)
+                .stream()
+                .map(application -> new RecentActivityResponse(
+                        "CREARED",
+                        application.getCompany(),
+                        application.getPosition(),
+                        null,
+                        application.getStatus(),
+                        application.getCreatedAt()
+                ))
+                .toList();
+        List<RecentActivityResponse> statusActivities =
+                statusHistoryRepository.findTop5ByApplicationUserOrderByChangedAtDesc(user)
+                        .stream()
+                        .map(history -> new RecentActivityResponse(
+                                "STATUS-CHANGED",
+                                history.getApplication().getCompany(),
+                                history.getApplication().getPosition(),
+                                history.getOldStatus(),
+                                history.getNewStatus(),
+                                history.getChangedAt()
+                        ))
+                        .toList();
+
+        return Stream.concat(createdActivities.stream(), statusActivities.stream())
+                .sorted(Comparator.comparing(RecentActivityResponse::getTimestamp).reversed())
+                .limit(10)
+                .toList();
+    }
+
+
 }

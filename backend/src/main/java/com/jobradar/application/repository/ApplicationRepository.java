@@ -13,6 +13,7 @@ import java.util.List;
 public interface ApplicationRepository extends JpaRepository <Application, Long> {
 
     List<Application> findByUser(User user);
+    List<Application> findTop5ByUserOrderByCreatedAtDesc(User user);
 
     long countByUser(User user);
     long countByUserAndStatus(User user, ApplicationStatus status);
