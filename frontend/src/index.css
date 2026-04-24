@@ -90,3 +90,22 @@ p {
 #root {
   width: 100%;
 }
+
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-light: #334155;
+
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+
+  --primary: #6366f1;
+  --danger: #ef4444;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+}

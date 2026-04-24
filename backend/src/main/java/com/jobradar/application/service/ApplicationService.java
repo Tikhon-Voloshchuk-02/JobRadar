@@ -9,7 +9,6 @@ import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.StatusHistoryRepository;
 import com.jobradar.application.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

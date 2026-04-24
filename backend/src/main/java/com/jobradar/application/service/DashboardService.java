@@ -6,7 +6,9 @@ import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.ApplicationRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DashboardService {
@@ -35,6 +37,19 @@ public class DashboardService {
                 user,
                 ApplicationStatus.OFFER
         );
-        return new DashboardSummaryResponse(total, active, interviews, offers);
+        Map<ApplicationStatus, Long> statusDistribution = getStatusDistribution(user);
+
+        return new DashboardSummaryResponse(total, active, interviews, offers, statusDistribution);
+    }
+
+    private Map<ApplicationStatus, Long> getStatusDistribution(User user) {
+        Map<ApplicationStatus, Long> distribution = new EnumMap<>(ApplicationStatus.class);
+
+        for (ApplicationStatus status : ApplicationStatus.values()) {
+            long count = applicationRepository.countByUserAndStatus(user, status);
+            distribution.put(status, count);
+        }
+
+        return distribution;
     }
 }

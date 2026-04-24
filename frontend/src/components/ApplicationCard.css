@@ -1,0 +1,155 @@
+.application-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: 0.15s ease;
+  min-height: 230px;
+}
+
+.application-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+/* TOP */
+.application-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.application-card__top h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #f8fafc;
+}
+
+.application-card__top p {
+  margin: 4px 0 0;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* SELECT */
+.application-card select {
+  min-width: 110px;
+  max-width: 120px;
+  height: 34px;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #0f172a;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+
+.application-card select:focus {
+  outline: none;
+  border-color: #60a5fa;
+}
+
+/* BODY */
+.application-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #cbd5f5;
+}
+
+.application-card__body p {
+  margin: 0;
+}
+
+.application-card__body a {
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.application-card__body a:hover {
+  text-decoration: underline;
+}
+
+/* NOTES */
+.application-card__body p:last-child {
+  background: #0f172a;
+  padding: 8px;
+  border-radius: 8px;
+  color: #e5e7eb;
+}
+
+/* ACTIONS */
+.application-card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.application-card__actions button {
+  flex: 1;
+  font-size: 13px;
+  padding: 8px;
+  background: #1f2937;
+}
+
+/* DELETE */
+.application-card__actions button:last-child {
+  background: #ef4444;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Цвета */
+.status-saved {
+  background: #475569;
+  color: #e2e8f0;
+}
+
+.status-applied {
+  background: #2563eb;
+  color: white;
+}
+
+.status-waiting {
+  background: #f59e0b;
+  color: black;
+}
+
+.status-interview {
+  background: #7c3aed;
+  color: white;
+}
+
+.status-offer {
+  background: #10b981;
+  color: black;
+}
+
+.status-rejected {
+  background: #ef4444;
+  color: white;
+}
+
+.application-card select {
+  opacity: 0.7;
+}
+
+.application-card select:hover {
+  opacity: 1;
+}
