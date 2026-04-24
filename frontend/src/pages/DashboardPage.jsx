@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { logout } from "../auth/auth";
 
 import FilterBar from "../components/FilterBar";
@@ -6,12 +8,15 @@ import DashboardSummary from "../components/DashboardSummary";
 import ApplicationForm from "../components/ApplicationForm";
 import HistoryPanel from "../components/HistoryPanel";
 import RecentActivity from "../components/RecentActivity";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 import { useDashboard } from "../hooks/useDashboard";
 
 import "./DashboardPage.css";
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
+
   const {
     loading,
     error,
@@ -52,16 +57,18 @@ export default function DashboardPage() {
     <div className="dashboard-page">
       <header className="dashboard-header">
         <div>
-          <h1>JobRadar Dashboard</h1>
-          <p>Track your applications in one place</p>
+          <h1>{t("dashboard.title")}</h1>
+          <p>{t("dashboard.subtitle")}</p>
         </div>
 
         <div className="dashboard-header__actions">
+          <LanguageSwitcher />
+
           <button onClick={toggleForm}>
-            {showForm ? "Cancel" : "Add application"}
+            {showForm ? t("cancel") : t("add_application")}
           </button>
 
-          <button onClick={handleLogout}>Logout</button>
+          <button onClick={handleLogout}>{t("logout")}</button>
         </div>
       </header>
 
@@ -88,11 +95,11 @@ export default function DashboardPage() {
         }}
       />
 
-      {loading && <p>Loading applications...</p>}
+      {loading && <p>{t("loading_applications")}</p>}
       {error && <p className="error-text">{error}</p>}
 
       {!loading && !error && filteredApplications.length === 0 && (
-        <p>No applications found.</p>
+        <p>{t("no_applications_found")}</p>
       )}
 
       <div className="applications-grid">

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 import { registerRequest } from "../api/api";
 
 import "./RegisterPage.css";
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -31,7 +34,7 @@ function RegisterPage() {
 
       navigate("/login");
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError(err.message || t("errors.registration_failed"));
     } finally {
       setLoading(false);
     }
@@ -40,12 +43,12 @@ function RegisterPage() {
   return (
     <div className="register-page">
       <div className="register-card">
-        <h1>Register</h1>
+        <h1>{t("auth.register")}</h1>
 
         <form className="register-form" onSubmit={handleSubmit}>
           <input
             type="text"
-            placeholder="First name"
+            placeholder={t("auth.first_name")}
             value={firstname}
             onChange={(e) => setFirstname(e.target.value)}
             required
@@ -53,7 +56,7 @@ function RegisterPage() {
 
           <input
             type="text"
-            placeholder="Last name"
+            placeholder={t("auth.last_name")}
             value={lastname}
             onChange={(e) => setLastname(e.target.value)}
             required
@@ -61,7 +64,7 @@ function RegisterPage() {
 
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t("auth.email")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -69,21 +72,22 @@ function RegisterPage() {
 
           <input
             type="password"
-            placeholder="Password"
+            placeholder={t("auth.password")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
 
           <button type="submit" disabled={loading}>
-            {loading ? "Loading..." : "Create account"}
+            {loading ? t("loading") : t("auth.create_account")}
           </button>
         </form>
 
         {error && <p className="register-error">{error}</p>}
 
         <p className="register-footer">
-          Already have an account? <Link to="/login">Login</Link>
+          {t("auth.have_account")}{" "}
+          <Link to="/login">{t("auth.login")}</Link>
         </p>
       </div>
     </div>

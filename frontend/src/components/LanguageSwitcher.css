@@ -1,0 +1,94 @@
+.language-switcher {
+  display: flex;
+  gap: 8px;
+}
+
+.language-switcher button {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  background: rgba(37, 99, 235, 0.15);
+  color: #dbeafe;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.language-switcher button:hover {
+  background: rgba(37, 99, 235, 0.3);
+}
+
+.language-switcher button.active {
+  background: #2563eb;
+  color: white;
+}
+.language-switcher {
+  display: flex;
+  gap: 8px;
+}
+
+.language-switcher button {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  background: rgba(37, 99, 235, 0.15);
+  color: #dbeafe;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.language-switcher button:hover {
+  background: rgba(37, 99, 235, 0.3);
+}
+
+.language-switcher button.active {
+  background: #2563eb;
+  color: white;
+}
+
+.language-switcher img {
+  display: block;
+}
+
+.language-switcher {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.language-switcher button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  width: auto;
+  height: 44px;
+  padding: 8px 12px;
+
+  border-radius: 10px;
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  background: rgba(37, 99, 235, 0.15);
+  color: #dbeafe;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.language-switcher button:hover {
+  background: rgba(37, 99, 235, 0.3);
+}
+
+.language-switcher button.active {
+  background: #2563eb;
+  color: white;
+}
+
+.language-switcher button img {
+  width: 20px !important;
+  height: 14px !important;
+  max-width: 20px;
+  max-height: 14px;
+  object-fit: cover;
+  border-radius: 2px;
+  display: inline-block;
+  flex-shrink: 0;
+}

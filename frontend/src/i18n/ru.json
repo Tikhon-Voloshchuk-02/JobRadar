@@ -1,0 +1,89 @@
+{
+  "company": "Компания",
+  "position": "Позиция",
+  "vacancy_link": "Ссылка на вакансию",
+  "notes": "Заметки",
+  "save_application": "Сохранить заявку",
+  "update_application": "Обновить заявку",
+
+  "status": {
+    "all": "Все статусы",
+    "saved": "Сохранено",
+    "applied": "Отклик отправлен",
+    "waiting": "Ожидание",
+    "interview": "Интервью",
+    "rejected": "Отказ",
+    "offer": "Оффер"
+  },
+
+  "search_placeholder": "Поиск по компании, позиции, заметкам...",
+  "reset": "Сброс",
+  "open_vacancy": "Открыть вакансию",
+  "applied_at": "Отклик отправлен",
+  "created_at": "Создано",
+  "no_notes": "Нет заметок",
+  "edit": "Редактировать",
+  "delete": "Удалить",
+
+  "summary": {
+    "total": "Всего",
+    "active": "Активные",
+    "interviews": "Интервью",
+    "offers": "Офферы",
+    "status_distribution": "Распределение статусов"
+  },
+
+  "dashboard": {
+    "title": "JobRadar",
+    "subtitle": "Отслеживай отклики в одном месте"
+  },
+
+  "add_application": "Добавить заявку",
+  "loading_applications": "Загрузка заявок...",
+  "no_applications_found": "Заявки не найдены.",
+
+  "loading": "Загрузка...",
+  "logout": "Выйти",
+  "cancel": "Отмена",
+  "close": "Закрыть",
+
+  "auth": {
+    "register": "Регистрация",
+    "login": "Войти",
+    "email": "Email",
+    "password": "Пароль",
+    "first_name": "Имя",
+    "last_name": "Фамилия",
+    "create_account": "Создать аккаунт",
+    "no_account": "Нет аккаунта?",
+    "have_account": "Уже есть аккаунт?"
+  },
+
+  "errors": {
+    "login_failed": "Ошибка входа",
+    "registration_failed": "Ошибка регистрации"
+  },
+
+  "history": {
+    "title": "История статусов",
+    "no_history": "Истории пока нет.",
+    "no_date": "Нет даты"
+  },
+
+  "history_button": "История",
+
+  "activity": {
+    "title": "Последняя активность",
+    "no_activity": "Пока нет активности.",
+    "created": "Создано"
+  },
+
+  "time": {
+    "just_now": "только что",
+    "min_ago": "мин назад",
+    "hour_ago": "ч назад"
+  },
+
+  "show": "Показать",
+  "hide": "Скрыть"
+}
