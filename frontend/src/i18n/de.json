@@ -85,5 +85,19 @@
   },
 
   "show": "Anzeigen",
-  "hide": "Ausblenden"
+  "hide": "Ausblenden",
+
+
+  "documents": {
+    "title": "Dokumente",
+    "upload": "Hochladen",
+    "download": "Herunterladen",
+    "delete": "Löschen",
+    "empty": "Keine Dokumente angehängt",
+    "types": {
+      "cv": "Lebenslauf",
+      "cover_letter": "Anschreiben",
+      "other": "Sonstiges"
+    }
+  }
 }
