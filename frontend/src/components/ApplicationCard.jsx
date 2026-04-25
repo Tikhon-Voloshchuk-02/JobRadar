@@ -2,6 +2,8 @@ import { STATUS_OPTIONS } from "../utils/statusOptions";
 import { useTranslation } from "react-i18next";
 import "./ApplicationCard.css";
 
+import DocumentSection from "./DocumentSection";
+
 function getStatusClass(status) {
   return `status-badge status-${status.toLowerCase()}`;
 }
@@ -42,6 +44,8 @@ export default function ApplicationCard({
             </select>
           </div>
         </div>
+
+        <DocumentSection applicationId={application.id} editable={false} />
 
         <div className="application-card__body">
           {application.link && (

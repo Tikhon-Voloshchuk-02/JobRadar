@@ -81,6 +81,7 @@ export default function DashboardPage() {
           onChange={handleFormChange}
           onSubmit={handleSubmitApplication}
           isEditing={!!editingApplicationId}
+          applicationId={editingApplicationId}
         />
       )}
 
