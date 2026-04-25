@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import java.net.MalformedURLException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -77,8 +81,40 @@ public class DocumentService {
         document.setApplication(application);
 
         documentRepository.save(document);
+    }
 
+    // < ----- download DOcs ----- >
+    public Resource downloadDocument(Long documentId){
+        Document doc = documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException("Document isn't found =("));
 
+        try {
+            Path path = Paths.get(doc.getFilePath());
+            Resource res = new UrlResource(path.toUri());
+
+            if(!res.exists() || !res.isReadable()){
+                throw new RuntimeException("File not found OR now readable =(");
+            }
+
+            return res;
+
+        } catch (MalformedURLException e){
+            throw new RuntimeException("FIle download failed", e);
+        }
+    }
+
+    // < ----- delete DOcs ----- >
+    public void deleteDocument(Long documentId) {
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+
+        try {
+            Files.deleteIfExists(Paths.get(document.getFilePath()));
+        } catch (IOException e) {
+            throw new RuntimeException("Could not delete file", e);
+        }
+
+        documentRepository.delete(document);
     }
 
     // < ----- Response DOcs ----- >
