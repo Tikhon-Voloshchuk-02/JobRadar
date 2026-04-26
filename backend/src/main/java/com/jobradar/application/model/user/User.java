@@ -41,6 +41,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Application> applications = new ArrayList<>();
 
+
+// GOOGLE
+    private String googleId;
+    private String name;
+    private String pictureUrl;
+
     public User() {}
 
     public User(String firstname, String lastname, String email, String password, Role role) {
@@ -137,4 +143,27 @@ public class User implements UserDetails {
         return true;
     }
 
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
 }

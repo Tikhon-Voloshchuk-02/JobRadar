@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { loginRequest } from "../api/api";
 import { saveToken } from "../auth/auth";
 
+import { GoogleLogin } from "@react-oauth/google";
+
 import "./LoginPage.css";
 
 function LoginPage() {
@@ -60,14 +62,53 @@ function LoginPage() {
           </button>
         </form>
 
+        <div className="google-login-wrapper" style={{ marginTop: "20px" }}>
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                setError("");
+                setLoading(true);
+
+                const response = await fetch("/api/auth/google", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    idToken: credentialResponse.credential,
+                  }),
+                });
+
+                if (!response.ok) {
+                  throw new Error("Google login failed");
+                }
+
+                const data = await response.json();
+
+                saveToken(data.token);
+                navigate("/dashboard");
+              } catch (err) {
+                console.error(err);
+                setError("Google login failed");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            onError={() => {
+              console.log("Google Login Failed");
+              setError("Google login failed");
+            }}
+          />
+        </div>
+
         {error && <p className="login-error">{error}</p>}
 
         <p className="login-footer">
-          {t("auth.no_account")} <Link to="/register">{t("auth.register")}</Link>
+          {t("auth.no_account")}{" "}
+          <Link to="/register">{t("auth.register")}</Link>
         </p>
       </div>
     </div>
   );
 }
-
 export default LoginPage;

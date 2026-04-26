@@ -1,6 +1,7 @@
 package com.jobradar.application.controller;
 
 import com.jobradar.application.dto.AuthResponse;
+import com.jobradar.application.dto.GoogleAuthRequest;
 import com.jobradar.application.dto.LoginRequest;
 import com.jobradar.application.dto.RegisterRequest;
 import com.jobradar.application.model.user.User;
@@ -34,5 +35,13 @@ public class AuthController {
         AuthResponse response= authService.login(request);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponse> loginWithGoogle(
+            @RequestBody GoogleAuthRequest request
+    ) {
+        return ResponseEntity.ok(authService.loginWithGoogle(request));
+    }
+
 
 }

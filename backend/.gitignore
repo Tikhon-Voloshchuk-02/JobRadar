@@ -66,11 +66,16 @@ logs/
 
 src/main/resources/application-local.yaml
 
-# Docs (not part of runtime code)
+# Docs
 docs/
+docs/*.pdf
+docs/*.docx
 
-# Future python microservice (not used yet)
+# Python service (пока не используем)
 python-service/
+
+# Local scripts
+*.bat
 
 # Node
 frontend/node_modules/
@@ -79,5 +84,7 @@ frontend/node_modules/
 backend/target/
 frontend/dist/
 
-# Env
+# env
 .env
+frontend/.env
+backend/.env
