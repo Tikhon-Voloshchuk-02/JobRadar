@@ -85,5 +85,19 @@
   },
 
   "show": "Show",
+
+  "documents": {
+    "title": "Documents",
+    "empty": "No documents yet.",
+    "upload": "Upload",
+    "download": "Download",
+    "delete": "Delete",
+    "types": {
+      "cv": "CV",
+      "cover_letter": "Cover letter",
+      "other": "Other"
+    }
+  },
+
   "hide": "Hide"
 }

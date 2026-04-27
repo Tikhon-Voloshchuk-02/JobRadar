@@ -1,0 +1,67 @@
+# =====================
+# ENV / SECRETS
+# =====================
+.env
+.env.*
+frontend/.env
+backend/.env
+
+# =====================
+# FRONTEND (React / Vite)
+# =====================
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# =====================
+# BACKEND (Spring Boot)
+# =====================
+backend/target/
+backend/*.log
+
+# =====================
+# TEST / TEMP
+# =====================
+backend/src/test/resources/
+
+# =====================
+# PYTHON SERVICE
+# =====================
+python-service/__pycache__/
+python-service/.venv/
+python-service/venv/
+
+# =====================
+# IDE
+# =====================
+.idea/
+.vscode/
+*.iml
+
+# =====================
+# OS
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# LOGS
+# =====================
+*.log
+
+# =====================
+# DOCKER
+# =====================
+docker-compose.override.yml
+
+# =====================
+# TEMP FILES
+# =====================
+*.tmp
+*.swp
+*.bak
+
+# =====================
+# OPTIONAL (если не хочешь пушить docs)
+# =====================
+# docs/
