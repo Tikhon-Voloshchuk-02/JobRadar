@@ -61,7 +61,12 @@ docker-compose.override.yml
 *.swp
 *.bak
 
-# =====================
-# OPTIONAL (если не хочешь пушить docs)
-# =====================
-# docs/
+
+# docs
+docs/
+
+# python 
+python-service/
+
+# local script 
+rebuild-local.bat
