@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +42,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Application> applications = new ArrayList<>();
 
-
 // GOOGLE
     private String googleId;
     private String name;
@@ -56,6 +56,13 @@ public class User implements UserDetails {
         this.password = password;
         this.role = role;
     }
+
+    @Column(nullable = false)
+    private boolean emailVerified = false;
+
+    private String emailVerificationToken;
+
+    private LocalDateTime emailVerificationTokenExpiresAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
