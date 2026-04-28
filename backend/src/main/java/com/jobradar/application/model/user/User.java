@@ -57,7 +57,7 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean emailVerified = false;
 
     private String emailVerificationToken;

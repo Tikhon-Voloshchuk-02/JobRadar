@@ -15,8 +15,17 @@ function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  function getLoginErrorMessage(err) {
+    if (err.message === "Email not verified") {
+      return t("auth.email_not_verified");
+    }
+
+    return err.message || t("errors.login_failed");
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -29,7 +38,7 @@ function LoginPage() {
       saveToken(data.token);
       navigate("/dashboard");
     } catch (err) {
-      setError(err.message || t("errors.login_failed"));
+      setError(getLoginErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -80,7 +89,7 @@ function LoginPage() {
                 });
 
                 if (!response.ok) {
-                  throw new Error("Google login failed");
+                  throw new Error(t("errors.google_login_failed"));
                 }
 
                 const data = await response.json();
@@ -89,14 +98,13 @@ function LoginPage() {
                 navigate("/dashboard");
               } catch (err) {
                 console.error(err);
-                setError("Google login failed");
+                setError(err.message || t("errors.google_login_failed"));
               } finally {
                 setLoading(false);
               }
             }}
             onError={() => {
-              console.log("Google Login Failed");
-              setError("Google login failed");
+              setError(t("errors.google_login_failed"));
             }}
           />
         </div>
@@ -111,4 +119,5 @@ function LoginPage() {
     </div>
   );
 }
+
 export default LoginPage;

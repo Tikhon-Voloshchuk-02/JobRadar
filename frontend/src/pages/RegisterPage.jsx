@@ -16,12 +16,14 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     setError("");
+    setSuccess("");
     setLoading(true);
 
     try {
@@ -32,7 +34,19 @@ function RegisterPage() {
         password,
       });
 
-      navigate("/login");
+      setSuccess(t("auth.check_email"));
+
+      // clean form
+      setFirstname("");
+      setLastname("");
+      setEmail("");
+      setPassword("");
+
+      //  2 second redirect
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+
     } catch (err) {
       setError(err.message || t("errors.registration_failed"));
     } finally {
@@ -84,6 +98,7 @@ function RegisterPage() {
         </form>
 
         {error && <p className="register-error">{error}</p>}
+        {success && <p className="register-success">{success}</p>}
 
         <p className="register-footer">
           {t("auth.have_account")}{" "}

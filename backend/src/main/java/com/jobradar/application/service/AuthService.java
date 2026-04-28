@@ -68,8 +68,8 @@ public class AuthService {
         try {
             emailService.sendVerificationEmail(user.getEmail(), token);
         } catch (Exception e) {
-          //  userRepository.delete(user);
-            throw new RuntimeException("Failed to send verification email");
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send verification email", e);
         }
 
         return user;
