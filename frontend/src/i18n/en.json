@@ -56,7 +56,8 @@
     "last_name": "Last name",
     "create_account": "Create account",
     "no_account": "Don’t have an account?",
-    "have_account": "Already have an account?"
+    "have_account": "Already have an account?",
+    "email_not_verified": "Please verify your email before logging in"
   },
 
   "errors": {

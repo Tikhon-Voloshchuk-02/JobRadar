@@ -56,7 +56,8 @@
     "last_name": "Nachname",
     "create_account": "Konto erstellen",
     "no_account": "Noch kein Konto?",
-    "have_account": "Bereits ein Konto?"
+    "have_account": "Bereits ein Konto?",
+    "email_not_verified": "Bitte bestätige deine E-Mail, bevor du dich anmeldest"
   },
 
   "errors": {

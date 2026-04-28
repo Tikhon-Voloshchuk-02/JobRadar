@@ -56,7 +56,8 @@
     "last_name": "Фамилия",
     "create_account": "Создать аккаунт",
     "no_account": "Нет аккаунта?",
-    "have_account": "Уже есть аккаунт?"
+    "have_account": "Уже есть аккаунт?",
+    "email_not_verified": "Пожалуйста, подтвердите email перед входом"
   },
 
   "errors": {
