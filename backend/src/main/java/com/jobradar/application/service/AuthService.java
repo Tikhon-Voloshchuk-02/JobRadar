@@ -5,6 +5,7 @@ import com.jobradar.application.dto.GoogleAuthRequest;
 import com.jobradar.application.dto.LoginRequest;
 import com.jobradar.application.dto.RegisterRequest;
 import com.jobradar.application.exception.EmailAlreadyExistsException;
+import com.jobradar.application.exception.EmailNotVerifiedException;
 import com.jobradar.application.model.user.Role;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
@@ -13,6 +14,10 @@ import com.jobradar.application.security.JwtService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Service
@@ -22,20 +27,24 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService,
-                       GoogleTokenVerifierService googleTokenVerifierService) {
+                       GoogleTokenVerifierService googleTokenVerifierService,
+                       EmailService emailService) {
 
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
-        this.googleTokenVerifierService=googleTokenVerifierService;
-
+        this.googleTokenVerifierService = googleTokenVerifierService;
+        this.emailService = emailService;
     }
 
+    @Transactional
     public User register(RegisterRequest request){
+
         if(userRepository.existsByEmail(request.getEmail())){
             throw new EmailAlreadyExistsException(request.getEmail());
         }
@@ -47,36 +56,44 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER); //USER-role auto
 
-        return userRepository.save(user);
+        user.setEmailVerified(false);
 
+        String token = UUID.randomUUID().toString();
+        user.setEmailVerificationToken(token);
+        user.setEmailVerificationTokenExpiresAt(LocalDateTime.now().plusHours(24));
+
+        userRepository.save(user);
+
+        //check Email
+        try {
+            emailService.sendVerificationEmail(user.getEmail(), token);
+        } catch (Exception e) {
+          //  userRepository.delete(user);
+            throw new RuntimeException("Failed to send verification email");
+        }
+
+        return user;
     }
 
     public AuthResponse login(LoginRequest request){
-        System.out.println("LOGIN email = " + request.getEmail());
-        System.out.println("LOGIN password = " + request.getPassword());
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
-
-        System.out.println("USER FOUND = " + user.getEmail());
-        System.out.println("HASH = " + user.getPassword());
 
         boolean passwordMatches = passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword()
         );
 
-        System.out.println("PASSWORD MATCHES = " + passwordMatches);
-
         if(!passwordMatches){
             throw new BadCredentialsException("Invalid Email/Password");
         }
 
-        System.out.println("GENERATING TOKEN...");
+        if (!user.isEmailVerified()) {
+            throw new EmailNotVerifiedException();
+        }
 
         String token = jwtService.generateToken(user);
-
-        System.out.println("TOKEN GENERATED");
 
         return new AuthResponse(token);
     }
@@ -100,8 +117,12 @@ public class AuthService {
                     existingUser.setGoogleId(googleId);
                     existingUser.setName(name);
                     existingUser.setPictureUrl(pictureUrl);
+
+                    existingUser.setEmailVerified(true);
+
                     return userRepository.save(existingUser);
                 })
+
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setEmail(email);
@@ -112,6 +133,9 @@ public class AuthService {
                     newUser.setLastname(lastname);
                     newUser.setPassword(passwordEncoder.encode("GOOGLE_AUTH_USER"));
                     newUser.setRole(Role.USER);
+
+                    newUser.setEmailVerified(true);
+
                     return userRepository.save(newUser);
                 });
 

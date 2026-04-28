@@ -173,4 +173,15 @@ public class User implements UserDetails {
     public void setGoogleId(String googleId) {
         this.googleId = googleId;
     }
+
+    public boolean isEmailVerified() { return emailVerified; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
+    public String getEmailVerificationToken() { return emailVerificationToken; }
+    public void setEmailVerificationToken(String emailVerificationToken) { this.emailVerificationToken = emailVerificationToken; }
+    public LocalDateTime getEmailVerificationTokenExpiresAt() {
+        return emailVerificationTokenExpiresAt;
+    }
+    public void setEmailVerificationTokenExpiresAt(LocalDateTime expiresAt) {
+        this.emailVerificationTokenExpiresAt = expiresAt;
+    }
 }
