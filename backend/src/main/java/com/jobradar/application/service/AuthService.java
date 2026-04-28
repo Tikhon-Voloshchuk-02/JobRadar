@@ -143,4 +143,29 @@ public class AuthService {
 
         return new AuthResponse(token);
     }
+
+
+    /*Confirmation of the user's email by verification token.
+    - user follows the link from the email --> system searches for the user by token
+    --> The validity period --> is valid - email is marked as confirmed
+     */
+    @Transactional
+    public void verifyEmail(String token){
+
+
+        User user = userRepository.findByEmailVerificationToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid verification Token"));
+
+        if(user.getEmailVerificationTokenExpiresAt()==null ||
+                user.getEmailVerificationTokenExpiresAt().isBefore(LocalDateTime.now())){
+
+            throw new RuntimeException("Verification Token expired =)");
+        }
+
+        user.setEmailVerified(true);
+        user.setEmailVerificationToken(null);
+        user.setEmailVerificationTokenExpiresAt(null);
+
+        userRepository.save(user);
+    }
 }
