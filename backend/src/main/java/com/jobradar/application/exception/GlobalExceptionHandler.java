@@ -32,4 +32,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Map.of("error", ex.getMessage()));
     }
+
+    @ExceptionHandler(EmailSendingException.class)
+    public ResponseEntity<Map<String, String>> handleEmailSendingException(EmailSendingException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(Map.of("error", "Could not send verification email"));
+    }
+
 }

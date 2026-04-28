@@ -10,4 +10,10 @@ public class FrontendController {
     public String forward(){
         return "forward:/index.html";
     }
+
+    @GetMapping("/verify-email")
+    public String verifyEmailPage() {
+        return "forward:/index.html";
+    }
+
 }

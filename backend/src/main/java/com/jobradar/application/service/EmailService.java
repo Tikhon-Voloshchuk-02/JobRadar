@@ -1,5 +1,6 @@
 package com.jobradar.application.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -7,12 +8,16 @@ import org.springframework.mail.javamail.JavaMailSender;
 @Service
 public class EmailService {
 
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
+
     private final JavaMailSender mailSender;
     public EmailService(JavaMailSender mailSender) { this.mailSender = mailSender; }
 
     public void sendVerificationEmail(String to, String token) {
 
-        String link = "http://localhost:5173/verify-email?token=" + token;
+        String link = frontendUrl + "/verify-email?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);

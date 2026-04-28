@@ -6,7 +6,6 @@ services:
       POSTGRES_DB: jobradar
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-
     ports:
       - "5432:5432"
     volumes:
@@ -27,12 +26,15 @@ services:
     environment:
       JWT_SECRET: ${JWT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/jobradar
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 
       MAIL_USERNAME: ${MAIL_USERNAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+      APP_FRONTEND_URL: ${APP_FRONTEND_URL:-http://localhost:8080}
 
     ports:
       - "8080:8080"

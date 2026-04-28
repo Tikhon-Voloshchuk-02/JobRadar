@@ -6,6 +6,7 @@ import com.jobradar.application.dto.LoginRequest;
 import com.jobradar.application.dto.RegisterRequest;
 import com.jobradar.application.exception.EmailAlreadyExistsException;
 import com.jobradar.application.exception.EmailNotVerifiedException;
+import com.jobradar.application.exception.EmailSendingException;
 import com.jobradar.application.model.user.Role;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
@@ -68,8 +69,7 @@ public class AuthService {
         try {
             emailService.sendVerificationEmail(user.getEmail(), token);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to send verification email", e);
+            throw new EmailSendingException(e);
         }
 
         return user;

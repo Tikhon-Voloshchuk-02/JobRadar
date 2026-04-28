@@ -20,7 +20,7 @@ function VerifyEmailPage() {
     async function verify() {
       try {
         const response = await fetch(
-          `/api/auth/verify-email?token=${token}`
+          `/api/auth/verify-email?token=${encodeURIComponent(token)}`
         );
 
         if (!response.ok) {

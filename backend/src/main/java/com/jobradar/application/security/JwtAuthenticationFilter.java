@@ -34,28 +34,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        System.out.println("PATH = " + request.getServletPath());
-        System.out.println("AUTH HEADER = " + authHeader);
+        //System.out.println("PATH = " + request.getServletPath());
+        //System.out.println("AUTH HEADER = " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println("NO BEARER TOKEN");
+            //System.out.println("NO BEARER TOKEN");
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
             String jwt = authHeader.substring(7);
-            System.out.println("JWT = " + jwt);
+            //System.out.println("JWT = " + jwt);
 
             String userEmail = jwtService.extractUsername(jwt);
-            System.out.println("JWT SUBJECT = " + userEmail);
+            //System.out.println("JWT SUBJECT = " + userEmail);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-                System.out.println("LOADED USER = " + userDetails.getUsername());
+                //System.out.println("LOADED USER = " + userDetails.getUsername());
 
                 boolean valid = jwtService.isTokenValid(jwt, userEmail);
-                System.out.println("TOKEN VALID = " + valid);
+                //System.out.println("TOKEN VALID = " + valid);
 
                 if (valid) {
                     UsernamePasswordAuthenticationToken authToken =
@@ -70,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     );
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    System.out.println("AUTHENTICATION SET");
+                    //System.out.println("AUTHENTICATION SET");
                 }
             }
         } catch (Exception e) {
