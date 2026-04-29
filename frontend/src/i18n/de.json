@@ -57,12 +57,15 @@
     "create_account": "Konto erstellen",
     "no_account": "Noch kein Konto?",
     "have_account": "Bereits ein Konto?",
-    "email_not_verified": "Bitte bestätige deine E-Mail, bevor du dich anmeldest"
+    "email_not_verified": "Bitte bestätige deine E-Mail, bevor du dich anmeldest",
+    "resend_verification_email": "Bestätigungs-E-Mail erneut senden",
+    "verification_email_sent": "Falls diese E-Mail existiert, wurde eine Bestätigungs-E-Mail gesendet"
   },
 
   "errors": {
     "login_failed": "Anmeldung fehlgeschlagen",
-    "registration_failed": "Registrierung fehlgeschlagen"
+    "registration_failed": "Registrierung fehlgeschlagen",
+    "resend_verification_failed": "Bestätigungs-E-Mail konnte nicht erneut gesendet werden"
   },
 
   "history": {

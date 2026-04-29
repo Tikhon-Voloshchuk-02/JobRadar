@@ -57,12 +57,15 @@
     "create_account": "Create account",
     "no_account": "Don’t have an account?",
     "have_account": "Already have an account?",
-    "email_not_verified": "Please verify your email before logging in"
+    "email_not_verified": "Please verify your email before logging in",
+    "resend_verification_email": "Send verification email again",
+    "verification_email_sent": "If this email exists, verification email was sent"
   },
 
   "errors": {
     "login_failed": "Login failed",
-    "registration_failed": "Registration failed"
+    "registration_failed": "Registration failed",
+    "resend_verification_failed": "Failed to resend verification email"
   },
 
   "history": {

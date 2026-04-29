@@ -57,12 +57,15 @@
     "create_account": "Создать аккаунт",
     "no_account": "Нет аккаунта?",
     "have_account": "Уже есть аккаунт?",
-    "email_not_verified": "Пожалуйста, подтвердите email перед входом"
+    "email_not_verified": "Пожалуйста, подтвердите email перед входом",
+    "resend_verification_email": "Отправить письмо подтверждения ещё раз",
+    "verification_email_sent": "Если этот email существует, письмо подтверждения было отправлено"
   },
 
   "errors": {
     "login_failed": "Ошибка входа",
-    "registration_failed": "Ошибка регистрации"
+    "registration_failed": "Ошибка регистрации",
+    "resend_verification_failed": "Не удалось отправить письмо подтверждения повторно"
   },
 
   "history": {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import { loginRequest } from "../api/api";
+import { loginRequest, resendVerificationEmail } from "../api/api";
 import { saveToken } from "../auth/auth";
 
 import { GoogleLogin } from "@react-oauth/google";
@@ -19,8 +19,12 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [resendSuccess, setResendSuccess] = useState("");
+  const [showResendButton, setShowResendButton] = useState(false);
+
   function getLoginErrorMessage(err) {
     if (err.message === "Email not verified") {
+      setShowResendButton(true);
       return t("auth.email_not_verified");
     }
 
@@ -31,6 +35,8 @@ function LoginPage() {
     e.preventDefault();
 
     setError("");
+    setResendSuccess("");
+    setShowResendButton(false);
     setLoading(true);
 
     try {
@@ -39,6 +45,25 @@ function LoginPage() {
       navigate("/dashboard");
     } catch (err) {
       setError(getLoginErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResendVerification() {
+    setError("");
+    setResendSuccess("");
+
+    try {
+      setLoading(true);
+      const data = await resendVerificationEmail(email);
+      setResendSuccess(
+        data.message || t("auth.verification_email_sent")
+      );
+    } catch (err) {
+      setError(
+        err.message || t("errors.resend_verification_failed")
+      );
     } finally {
       setLoading(false);
     }
@@ -110,6 +135,21 @@ function LoginPage() {
         </div>
 
         {error && <p className="login-error">{error}</p>}
+
+        {showResendButton && (
+          <button
+            type="button"
+            className="resend-verification-button"
+            onClick={handleResendVerification}
+            disabled={loading || !email}
+          >
+            {t("auth.resend_verification_email")}
+          </button>
+        )}
+
+        {resendSuccess && (
+          <p className="login-success">{resendSuccess}</p>
+        )}
 
         <p className="login-footer">
           {t("auth.no_account")}{" "}
