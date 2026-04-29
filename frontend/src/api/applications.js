@@ -1,6 +1,6 @@
 import { getToken } from "../auth/auth";
 
-const API_BASE = "http://localhost:8080/api/applications";
+const API_BASE = "/api/applications";
 
 function getAuthHeaders() {
   const token = getToken();
