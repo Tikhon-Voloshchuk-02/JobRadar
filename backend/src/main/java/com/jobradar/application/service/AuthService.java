@@ -1,9 +1,6 @@
 package com.jobradar.application.service;
 
-import com.jobradar.application.dto.AuthResponse;
-import com.jobradar.application.dto.GoogleAuthRequest;
-import com.jobradar.application.dto.LoginRequest;
-import com.jobradar.application.dto.RegisterRequest;
+import com.jobradar.application.dto.*;
 import com.jobradar.application.exception.EmailAlreadyExistsException;
 import com.jobradar.application.exception.EmailNotVerifiedException;
 import com.jobradar.application.exception.EmailSendingException;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -167,5 +165,27 @@ public class AuthService {
         user.setEmailVerificationTokenExpiresAt(null);
 
         userRepository.save(user);
+    }
+
+    public void resendVerificationEmail(ResendVerificationRequest request){
+        Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+
+        if(optionalUser.isEmpty()){
+            return;
+        }
+        User user = optionalUser.get();
+
+        if(user.isEmailVerified()){
+            throw new IllegalStateException("Email is already verified");
+        }
+        String token = UUID.randomUUID().toString();
+
+        user.setEmailVerificationToken(token);
+        user.setEmailVerificationTokenExpiresAt(LocalDateTime.now().plusHours(24));
+
+        userRepository.save(user);
+
+        emailService.sendVerificationEmail(user.getEmail(), token);
+
     }
 }
