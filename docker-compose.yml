@@ -38,6 +38,9 @@ services:
 
       APP_FRONTEND_URL: ${APP_FRONTEND_URL:-http://localhost:8080}
 
+    volumes:
+    - ./uploads:/app/uploads
+
     ports:
       - "8080:8080"
     restart: always
