@@ -70,6 +70,3 @@ python-service/
 
 # local script 
 rebuild-local.bat
-
-backend/src/main/resources/static/assets/
-backend/src/main/resources/static/index.html

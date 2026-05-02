@@ -47,6 +47,25 @@ export async function deleteDocument(documentId) {
   }
 }
 
-export function downloadDocument(documentId) {
-  window.open(`${API_URL}/documents/${documentId}/download`, "_blank");
+export async function downloadDocument(documentId, fileName = "document") {
+  const response = await fetch(`${API_URL}/documents/${documentId}/download`, {
+    method: "GET",
+    headers: authHeaders(), // ← ВОТ ГЛАВНОЕ
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to download document");
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+
+  a.remove();
+  window.URL.revokeObjectURL(url);
 }

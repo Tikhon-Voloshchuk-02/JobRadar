@@ -96,7 +96,10 @@ function DocumentSection({ applicationId, editable = false }) {
               </div>
 
               <div className="document-item__actions">
-                <button type="button" onClick={() => downloadDocument(doc.id)}>
+                <button
+                  type="button"
+                  onClick={() => downloadDocument(doc.id, doc.originalFileName)}
+                >
                   {t("documents.download")}
                 </button>
 
