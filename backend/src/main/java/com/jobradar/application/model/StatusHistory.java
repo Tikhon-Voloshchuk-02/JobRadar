@@ -20,6 +20,11 @@ public class StatusHistory {
     @Column(nullable = false)
     private ApplicationStatus newStatus;
 
+//Enum: StatusChangeSource
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusChangeSource source;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime changedAt;
 
@@ -30,10 +35,14 @@ public class StatusHistory {
 
     public StatusHistory() { }
 
-    public StatusHistory(ApplicationStatus oldStatus, ApplicationStatus newStatus, Application application) {
+    public StatusHistory(ApplicationStatus oldStatus,
+                         ApplicationStatus newStatus,
+                         Application application,
+                         StatusChangeSource source) {
         this.oldStatus = oldStatus;
         this.newStatus = newStatus;
         this.application = application;
+        this.source = source;
     }
 
     @PrePersist
@@ -54,4 +63,7 @@ public class StatusHistory {
     public Application getApplication() { return application; }
 
     public void setApplication(Application application) { this.application = application; }
+
+    public StatusChangeSource getSource() { return source; }
+    public void setSource(StatusChangeSource source) { this.source = source; }
 }

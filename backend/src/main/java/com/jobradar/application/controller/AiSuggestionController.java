@@ -39,6 +39,25 @@ public class AiSuggestionController {
         return aiSuggestionService.getPendingSuggestionResponses(user);
     }
 
+//ACCEPT
+    @PostMapping("/{id}/accept")
+    public AiSuggestionResponse acceptSuggestion(@PathVariable Long id, Authentication auth){
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return aiSuggestionService.acceptSuggestion(id, user);
+    }
+
+//REJECT
+    @PostMapping("/{id}/reject")
+    public AiSuggestionResponse rejectSuggestion(@PathVariable Long id,
+                                                 Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return aiSuggestionService.rejectSuggestion(id, user);
+    }
+
     @PostMapping("/test")
     public String createTestSuggestion(Authentication authentication) {
 

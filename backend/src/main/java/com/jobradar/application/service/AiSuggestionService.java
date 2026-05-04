@@ -2,12 +2,18 @@ package com.jobradar.application.service;
 
 import com.jobradar.application.dto.AiSuggestionResponse;
 import com.jobradar.application.model.Application;
+import com.jobradar.application.model.ApplicationStatus;
+import com.jobradar.application.model.StatusChangeSource;
+import com.jobradar.application.model.StatusHistory;
 import com.jobradar.application.model.ai.AiSuggestion;
 import com.jobradar.application.model.ai.SuggestionStatus;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.AiSuggestionRepository;
 
+import com.jobradar.application.repository.ApplicationRepository;
+import com.jobradar.application.repository.StatusHistoryRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,8 +22,16 @@ import java.util.List;
 public class AiSuggestionService {
     private final AiSuggestionRepository aiSuggestionRepository;
 
-    public AiSuggestionService(AiSuggestionRepository aiSuggestionRepository) {
+    private final ApplicationRepository applicationRepository;
+    private final StatusHistoryRepository statusHistoryRepository;
+
+    public AiSuggestionService(AiSuggestionRepository aiSuggestionRepository,
+                               ApplicationRepository applicationRepository,
+                               StatusHistoryRepository statusHistoryRepository) {
         this.aiSuggestionRepository = aiSuggestionRepository;
+        this.applicationRepository = applicationRepository;
+        this.statusHistoryRepository=statusHistoryRepository;
+
     }
 
     public List<AiSuggestion> getPendingSuggestions(User user){
@@ -43,6 +57,7 @@ public class AiSuggestionService {
      * @param user current user
      * @return AiSuggestionResponse with updated status
      */
+    @Transactional
     public AiSuggestionResponse rejectSuggestion(Long suggestionId, User user){
         AiSuggestion suggestion = aiSuggestionRepository.findById(suggestionId)
                 .orElseThrow(() -> new RuntimeException("suggestion not found"));
@@ -82,6 +97,7 @@ public class AiSuggestionService {
      * @param user current user
      * @return AiSuggestionResponse with updated status
      */
+    @Transactional
     public AiSuggestionResponse acceptSuggestion(Long suggestionId, User user){
 
         AiSuggestion suggestion = aiSuggestionRepository.findById(suggestionId)
@@ -95,10 +111,27 @@ public class AiSuggestionService {
         if (suggestion.getSuggestionStatus() != SuggestionStatus.PENDING) {
             throw new RuntimeException("Suggestion is already processed");
         }
-    // We receive a related request
+    // Get the related application
         Application application = suggestion.getApplication();
 
-        application.setStatus(suggestion.getSuggestedStatus());
+        ApplicationStatus oldStatus = application.getStatus();
+        ApplicationStatus newStatus = suggestion.getSuggestedStatus();
+
+        if (oldStatus != newStatus) {
+            application.setStatus(newStatus);
+
+            Application savedApplication = applicationRepository.save(application);
+
+            StatusHistory historyEntry = new StatusHistory(
+                    oldStatus,
+                    newStatus,
+                    savedApplication,
+                    StatusChangeSource.AI_GMAIL
+            );
+
+            statusHistoryRepository.save(historyEntry);
+        }
+
         suggestion.setSuggestionStatus(SuggestionStatus.ACCEPTED);
 
         AiSuggestion saved = aiSuggestionRepository.save(suggestion);

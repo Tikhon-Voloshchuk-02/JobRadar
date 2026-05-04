@@ -3,6 +3,7 @@ package com.jobradar.application.service;
 import com.jobradar.application.exception.ApplicationNotFoundException;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ApplicationStatus;
+import com.jobradar.application.model.StatusChangeSource;
 import com.jobradar.application.model.StatusHistory;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.ApplicationRepository;
@@ -103,7 +104,12 @@ public class ApplicationService {
 
         Application savedApplication = applicationRepository.save(application);
 
-        StatusHistory historyEntry = new StatusHistory(oldStatus, newStatus, savedApplication);
+        StatusHistory historyEntry = new StatusHistory(
+                oldStatus,
+                newStatus,
+                savedApplication,
+                StatusChangeSource.MANUAL
+        );
         statusHistoryRepository.save(historyEntry);
 
         return savedApplication;
