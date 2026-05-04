@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AiSuggestionRepository  extends JpaRepository<AiSuggestion, Long> {
-    List<AiSuggestion> findByApplication_UserSuggestionStatus(User user, SuggestionStatus suggestionStatus);
+    List<AiSuggestion> findByApplication_UserAndSuggestionStatus(User user, SuggestionStatus suggestionStatus);
 }

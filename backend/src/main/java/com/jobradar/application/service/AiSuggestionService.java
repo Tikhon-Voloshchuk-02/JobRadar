@@ -20,7 +20,7 @@ public class AiSuggestionService {
     }
 
     public List<AiSuggestion> getPendingSuggestions(User user){
-        return aiSuggestionRepository.findByApplication_UserSuggestionStatus(user, SuggestionStatus.PENDING);
+        return aiSuggestionRepository.findByApplication_UserAndSuggestionStatus(user, SuggestionStatus.PENDING);
     }
 
     public AiSuggestionResponse toResponse(AiSuggestion suggestion) {

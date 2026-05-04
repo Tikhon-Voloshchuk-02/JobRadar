@@ -1,7 +1,12 @@
 package com.jobradar.application.controller;
 
 import com.jobradar.application.dto.AiSuggestionResponse;
+import com.jobradar.application.model.Application;
+import com.jobradar.application.model.ApplicationStatus;
+import com.jobradar.application.model.ai.AiSuggestion;
+import com.jobradar.application.model.ai.ConfidenceLevel;
 import com.jobradar.application.model.user.User;
+import com.jobradar.application.repository.AiSuggestionRepository;
 import com.jobradar.application.repository.UserRepository;
 import com.jobradar.application.service.AiSuggestionService;
 import org.springframework.security.core.Authentication;
@@ -16,10 +21,14 @@ public class AiSuggestionController {
         private final AiSuggestionService aiSuggestionService;
         private final UserRepository userRepository;
 
+    private final AiSuggestionRepository aiSuggestionRepository;
+
     public AiSuggestionController(AiSuggestionService aiSuggestionService,
-                                  UserRepository userRepository) {
+                                  UserRepository userRepository,
+                                  AiSuggestionRepository aiSuggestionRepository) {
         this.aiSuggestionService = aiSuggestionService;
         this.userRepository = userRepository;
+        this.aiSuggestionRepository=aiSuggestionRepository;
     }
 
     @GetMapping("/pending")
@@ -28,5 +37,29 @@ public class AiSuggestionController {
                 .orElseThrow(() -> new RuntimeException("USer not found"));
 
         return aiSuggestionService.getPendingSuggestionResponses(user);
+    }
+
+    @PostMapping("/test")
+    public String createTestSuggestion(Authentication authentication) {
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+        Application application = user.getApplications().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No applications"));
+
+        AiSuggestion suggestion = new AiSuggestion();
+        suggestion.setApplication(application);
+        suggestion.setCurrentStatus(application.getStatus());
+        suggestion.setSuggestedStatus(ApplicationStatus.INTERVIEW);
+        suggestion.setConfidence(ConfidenceLevel.HIGH);
+        suggestion.setReason("Test suggestion: interview invitation detected");
+        suggestion.setEmailSnippet("We invite you to an interview...");
+
+        aiSuggestionRepository.save(suggestion);
+
+        return "Test suggestion created";
     }
 }
