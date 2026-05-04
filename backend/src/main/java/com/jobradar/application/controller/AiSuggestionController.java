@@ -1,10 +1,8 @@
 package com.jobradar.application.controller;
 
 import com.jobradar.application.dto.AiSuggestionResponse;
-import com.jobradar.application.model.Application;
-import com.jobradar.application.model.ApplicationStatus;
-import com.jobradar.application.model.ai.AiSuggestion;
-import com.jobradar.application.model.ai.ConfidenceLevel;
+import com.jobradar.application.dto.FakeEmailAnalysisRequest;
+
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.AiSuggestionRepository;
 import com.jobradar.application.repository.UserRepository;
@@ -18,17 +16,14 @@ import java.util.List;
 @RequestMapping("/api/ai-suggestions")
 public class AiSuggestionController {
 
-        private final AiSuggestionService aiSuggestionService;
-        private final UserRepository userRepository;
-
-    private final AiSuggestionRepository aiSuggestionRepository;
+    private final AiSuggestionService aiSuggestionService;
+    private final UserRepository userRepository;
 
     public AiSuggestionController(AiSuggestionService aiSuggestionService,
-                                  UserRepository userRepository,
-                                  AiSuggestionRepository aiSuggestionRepository) {
+                                  UserRepository userRepository) {
         this.aiSuggestionService = aiSuggestionService;
         this.userRepository = userRepository;
-        this.aiSuggestionRepository=aiSuggestionRepository;
+
     }
 
     @GetMapping("/pending")
@@ -58,6 +53,15 @@ public class AiSuggestionController {
         return aiSuggestionService.rejectSuggestion(id, user);
     }
 
+    @PostMapping("/fake-analyze")
+    public AiSuggestionResponse analyzeFakeEmail(@RequestBody FakeEmailAnalysisRequest request,
+                                                 Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return aiSuggestionService.analyzeFakeEmail(request, user);
+    }
+/*
     @PostMapping("/test")
     public String createTestSuggestion(Authentication authentication) {
 
@@ -81,4 +85,6 @@ public class AiSuggestionController {
 
         return "Test suggestion created";
     }
+ */
+
 }

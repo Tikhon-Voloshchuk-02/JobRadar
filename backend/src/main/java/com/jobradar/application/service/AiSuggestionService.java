@@ -1,11 +1,13 @@
 package com.jobradar.application.service;
 
 import com.jobradar.application.dto.AiSuggestionResponse;
+import com.jobradar.application.dto.FakeEmailAnalysisRequest;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.StatusChangeSource;
 import com.jobradar.application.model.StatusHistory;
 import com.jobradar.application.model.ai.AiSuggestion;
+import com.jobradar.application.model.ai.ConfidenceLevel;
 import com.jobradar.application.model.ai.SuggestionStatus;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.AiSuggestionRepository;
@@ -37,7 +39,6 @@ public class AiSuggestionService {
     public List<AiSuggestion> getPendingSuggestions(User user){
         return aiSuggestionRepository.findByApplication_UserAndSuggestionStatus(user, SuggestionStatus.PENDING);
     }
-
 
     /**
      * Rejects the AI suggestion.
@@ -161,5 +162,107 @@ public class AiSuggestionService {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    /**
+     * Analyzes a "quasi-email" and creates an AiSuggestion.
+     *
+     * This is a temporary logic (Fake AI) that:
+     * - accepts the text of the letter (subject + sender + body)
+     * - searches for keywords
+     * - determines the expected status of the application
+     * - creates an AiSuggestion with the PENDING status
+
+     * Logic:
+     * 1. receive the Application by ID
+     * 2. verify that the application belongs to the current user
+     * 3. collect the text of the letter
+     * 4. apply simple rules (keywords)
+     * 5. create AiSuggestion
+     * 6. save and return DTO
+     *
+     * @param request data "letters"
+     * @param user current user
+     * @return AiSuggestionResponse
+     */
+    @Transactional
+    public AiSuggestionResponse analyzeFakeEmail(FakeEmailAnalysisRequest request, User user){
+        Application application = applicationRepository.findById(request.applicationId())
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        if (!application.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
+
+// collect the text of the letter in one line
+        String text = (
+                request.subject() + " " +
+                        request.sender() + " " +
+                        request.body()
+        ).toLowerCase();
+
+// Default values (if nothing is found)
+        ApplicationStatus suggestedStatus = ApplicationStatus.WAITING;
+        ConfidenceLevel confidence = ConfidenceLevel.LOW;
+        String reason = "Fake AI could not clearly determine the application status.";
+
+// The simplest "AI logic" (keywords)
+
+        // REJECTED
+        if (text.contains("unfortunately") ||
+                text.contains("regret") ||
+                text.contains("not selected")) {
+
+            suggestedStatus = ApplicationStatus.REJECTED;
+            confidence = ConfidenceLevel.HIGH;
+            reason = "Fake AI detected rejection-related keywords.";
+        }
+
+        // INTERVIEW
+        else if (text.contains("interview") ||
+                text.contains("call") ||
+                text.contains("meeting")) {
+
+            suggestedStatus = ApplicationStatus.INTERVIEW;
+            confidence = ConfidenceLevel.HIGH;
+            reason = "Fake AI detected interview-related keywords.";
+        }
+
+        // OFFER
+        else if (text.contains("offer") ||
+                text.contains("congratulations")) {
+
+            suggestedStatus = ApplicationStatus.OFFER;
+            confidence = ConfidenceLevel.HIGH;
+            reason = "Fake AI detected offer-related keywords.";
+        }
+
+        // WAITING / CONFIRMATION
+        else if (text.contains("received your application") ||
+                text.contains("we will review")) {
+
+            suggestedStatus = ApplicationStatus.WAITING;
+            confidence = ConfidenceLevel.MEDIUM;
+            reason = "Fake AI detected application confirmation / waiting-related keywords.";
+        }
+
+//Create AI-Suggestions
+        AiSuggestion suggestion = new AiSuggestion();
+        suggestion.setApplication(application);
+        suggestion.setCurrentStatus(application.getStatus());
+        suggestion.setSuggestedStatus(suggestedStatus);
+        suggestion.setConfidence(confidence);
+        suggestion.setReason(reason);
+
+// saving Part of the email (then we will show it to the user)
+        suggestion.setEmailSnippet(
+                request.body().length() > 500
+                        ? request.body().substring(0, 500)
+                        : request.body()
+        );
+
+//Save in DB
+        AiSuggestion saved = aiSuggestionRepository.save(suggestion);
+        return toResponse(saved);
     }
 }
