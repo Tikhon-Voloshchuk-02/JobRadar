@@ -1,5 +1,6 @@
 package com.jobradar.application.service;
 
+import com.jobradar.application.dto.AiSuggestionResponse;
 import com.jobradar.application.model.ai.AiSuggestion;
 import com.jobradar.application.model.ai.SuggestionStatus;
 import com.jobradar.application.model.user.User;
@@ -20,5 +21,29 @@ public class AiSuggestionService {
 
     public List<AiSuggestion> getPendingSuggestions(User user){
         return aiSuggestionRepository.findByApplication_UserSuggestionStatus(user, SuggestionStatus.PENDING);
+    }
+
+    public AiSuggestionResponse toResponse(AiSuggestion suggestion) {
+        return new AiSuggestionResponse(
+                suggestion.getId(),
+                suggestion.getApplication().getId(),
+                suggestion.getApplication().getCompany(),
+                suggestion.getApplication().getPosition(),
+                suggestion.getCurrentStatus(),
+                suggestion.getSuggestedStatus(),
+                suggestion.getConfidence(),
+                suggestion.getReason(),
+                suggestion.getEmailSnippet(),
+                suggestion.getSource(),
+                suggestion.getSuggestionStatus(),
+                suggestion.getCreatedAt()
+        );
+    }
+
+    public List<AiSuggestionResponse> getPendingSuggestionResponses(User user) {
+        return getPendingSuggestions(user)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 }
