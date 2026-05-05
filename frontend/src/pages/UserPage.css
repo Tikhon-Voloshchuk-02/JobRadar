@@ -28,8 +28,8 @@
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
 }
 
 .profile-grid div {
@@ -48,6 +48,10 @@
 
 .profile-grid strong {
   color: #f8fafc;
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .user-actions {
