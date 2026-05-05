@@ -18,7 +18,6 @@ export default function AiSuggestionsPage() {
     try {
       setLoading(true);
       setError("");
-
       const data = await getPendingAiSuggestions();
       setSuggestions(data);
     } catch (err) {
@@ -35,9 +34,7 @@ export default function AiSuggestionsPage() {
   async function handleAccept(id) {
     try {
       await acceptAiSuggestion(id);
-      setSuggestions((prev) =>
-        prev.filter((item) => item.id !== id)
-      );
+      setSuggestions((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       setError(err.message || "Failed to accept suggestion");
     }
@@ -46,12 +43,18 @@ export default function AiSuggestionsPage() {
   async function handleReject(id) {
     try {
       await rejectAiSuggestion(id);
-      setSuggestions((prev) =>
-        prev.filter((item) => item.id !== id)
-      );
+      setSuggestions((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       setError(err.message || "Failed to reject suggestion");
     }
+  }
+
+  function statusClass(status) {
+    return `status-pill status-${String(status).toLowerCase()}`;
+  }
+
+  function confidenceClass(confidence) {
+    return `confidence-badge confidence-${String(confidence).toLowerCase()}`;
   }
 
   return (
@@ -64,13 +67,18 @@ export default function AiSuggestionsPage() {
             <h1>AI Suggestions</h1>
             <p>Review suggested status updates before applying them.</p>
           </div>
+
+          <button className="refresh-button" onClick={loadSuggestions}>
+            Refresh
+          </button>
         </header>
 
-        {loading && <p>Loading suggestions...</p>}
+        {loading && <p className="loading-text">Loading suggestions...</p>}
         {error && <p className="error-text">{error}</p>}
 
         {!loading && !error && suggestions.length === 0 && (
           <div className="empty-state">
+            <div className="empty-state-icon">◎</div>
             <h2>No pending suggestions</h2>
             <p>New AI suggestions will appear here after email analysis.</p>
           </div>
@@ -85,20 +93,22 @@ export default function AiSuggestionsPage() {
                   <p>{suggestion.position}</p>
                 </div>
 
-                <span className="confidence-badge">
+                <span className={confidenceClass(suggestion.confidence)}>
                   {suggestion.confidence}
                 </span>
               </div>
 
               <div className="status-change">
-                <span>{suggestion.currentStatus}</span>
-                <span>→</span>
-                <span>{suggestion.suggestedStatus}</span>
+                <span className={statusClass(suggestion.currentStatus)}>
+                  {suggestion.currentStatus}
+                </span>
+                <span className="status-arrow">→</span>
+                <span className={statusClass(suggestion.suggestedStatus)}>
+                  {suggestion.suggestedStatus}
+                </span>
               </div>
 
-              <p className="suggestion-reason">
-                {suggestion.reason}
-              </p>
+              <p className="suggestion-reason">{suggestion.reason}</p>
 
               {suggestion.emailSnippet && (
                 <blockquote className="email-snippet">
@@ -107,12 +117,15 @@ export default function AiSuggestionsPage() {
               )}
 
               <div className="ai-suggestion-actions">
-                <button onClick={() => handleAccept(suggestion.id)}>
+                <button
+                  className="accept-button"
+                  onClick={() => handleAccept(suggestion.id)}
+                >
                   Accept
                 </button>
 
                 <button
-                  className="secondary-button"
+                  className="reject-button"
                   onClick={() => handleReject(suggestion.id)}
                 >
                   Reject

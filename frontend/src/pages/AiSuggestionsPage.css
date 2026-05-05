@@ -2,23 +2,56 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
-
-
   width: 100%;
-  max-width: 1100px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 36px 32px;
+}
+
+.ai-suggestions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
 }
 
 .ai-suggestions-header h1 {
   color: #ffffff;
-  font-size: 28px;
+  font-size: 34px;
   font-weight: 800;
+  margin: 0;
 }
 
 .ai-suggestions-header p {
   color: #94a3b8;
-  margin-top: 6px;
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+.refresh-button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.refresh-button:hover {
+  background: #1d4ed8;
+}
+
+.loading-text {
+  color: #94a3b8;
+}
+
+.error-text {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 12px;
+  padding: 12px 14px;
 }
 
 .ai-suggestions-list {
@@ -29,14 +62,12 @@
 .ai-suggestion-card {
   background: #0f172a;
   border: 1px solid #263449;
-  border-radius: 16px;
-  padding: 18px;
-
+  border-radius: 18px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-
-  transition: 0.2s ease;
+  gap: 16px;
+  transition: 0.18s ease;
 }
 
 .ai-suggestion-card:hover {
@@ -44,110 +75,179 @@
   transform: translateY(-2px);
 }
 
-/* Header карточки */
 .ai-suggestion-card__header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 16px;
 }
 
 .ai-suggestion-card__header h2 {
   color: #ffffff;
-  font-size: 18px;
+  font-size: 20px;
   margin: 0;
 }
 
 .ai-suggestion-card__header p {
   color: #9fb3d1;
-  margin: 2px 0 0;
+  margin: 4px 0 0;
 }
 
 .confidence-badge {
-  background: #1e293b;
-  color: #3b82f6;
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 7px 11px;
+  border-radius: 12px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
+  background: #1e293b;
+}
+
+.confidence-high {
+  color: #22c55e;
+}
+
+.confidence-medium {
+  color: #f59e0b;
+}
+
+.confidence-low {
+  color: #ef4444;
 }
 
 .status-change {
   display: flex;
   gap: 10px;
-  font-weight: 600;
-  color: #e2e8f0;
   align-items: center;
+  flex-wrap: wrap;
 }
 
+.status-arrow {
+  color: #64748b;
+  font-weight: 800;
+}
+
+.status-pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  background: #1e293b;
+  color: #cbd5e1;
+}
+
+.status-saved {
+  color: #94a3b8;
+}
+
+.status-applied {
+  color: #60a5fa;
+}
+
+.status-waiting {
+  color: #f59e0b;
+}
+
+.status-interview {
+  color: #a78bfa;
+}
+
+.status-rejected {
+  color: #ef4444;
+}
+
+.status-offer {
+  color: #22c55e;
+}
 
 .suggestion-reason {
-  color: #cbd5f5;
+  color: #dbeafe;
   font-size: 14px;
+  margin: 0;
 }
-
 
 .email-snippet {
   background: #020617;
   border: 1px solid #1e293b;
-  border-radius: 12px;
-  padding: 10px;
-  color: #94a3b8;
-  font-size: 13px;
-  line-height: 1.4;
+  border-radius: 14px;
+  padding: 13px 14px;
+  color: #b6c8e6;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
 }
-
 
 .ai-suggestion-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 6px;
+  gap: 12px;
+  margin-top: 4px;
 }
 
-
 .ai-suggestion-actions button {
-  padding: 8px 14px;
-  border-radius: 10px;
+  padding: 10px 16px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   transition: 0.15s ease;
 }
 
-/* Accept */
-.ai-suggestion-actions button:first-child {
+.accept-button {
   background: #22c55e;
   color: white;
 }
 
-.ai-suggestion-actions button:first-child:hover {
+.accept-button:hover {
   background: #16a34a;
 }
 
-/* Reject */
-.secondary-button {
+.reject-button {
   background: #1e293b;
   color: #94a3b8;
 }
 
-.secondary-button:hover {
+.reject-button:hover {
   background: #334155;
   color: white;
 }
 
-/* Empty state */
 .empty-state {
   background: #0f172a;
   border: 1px dashed #334155;
-  border-radius: 16px;
-  padding: 30px;
+  border-radius: 18px;
+  padding: 48px 30px;
   text-align: center;
+}
+
+.empty-state-icon {
+  color: #3b82f6;
+  font-size: 36px;
+  margin-bottom: 12px;
 }
 
 .empty-state h2 {
   color: white;
+  margin: 0;
 }
 
 .empty-state p {
   color: #94a3b8;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .ai-suggestions-page {
+    padding: 24px 18px;
+  }
+
+  .ai-suggestions-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ai-suggestions-header h1 {
+    font-size: 28px;
+  }
+
+  .ai-suggestion-card__header {
+    flex-direction: column;
+  }
 }

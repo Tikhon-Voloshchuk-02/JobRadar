@@ -2,6 +2,16 @@
   margin-top: 1rem;
   padding-top: 0.9rem;
   border-top: 1px solid rgba(148, 163, 184, 0.22);
+
+
+  width: 100%;
+  max-width: 600px;
+}
+
+.documents-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .document-section h4 {
@@ -11,16 +21,19 @@
   color: #f8fafc;
 }
 
+
 .document-empty {
   margin: 0;
   font-size: 0.9rem;
   color: #94a3b8;
 }
 
+/* upload */
 .document-upload {
   display: grid;
   gap: 0.55rem;
   margin-bottom: 0.8rem;
+  width: 100%;
 }
 
 .document-upload input,
@@ -43,22 +56,13 @@
   color: white;
 }
 
-.document-item__actions button {
-  border: none;
-  border-radius: 0.55rem;
-  padding: 0.42rem 0.65rem;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  background: #2563eb;
-  color: white;
-}
 
 .document-list {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
 }
+
 
 .document-item {
   display: grid;
@@ -108,6 +112,17 @@
 .document-item__actions {
   display: flex;
   gap: 0.45rem;
+}
+
+.document-item__actions button {
+  border: none;
+  border-radius: 0.55rem;
+  padding: 0.42rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
 }
 
 .document-item__delete {
