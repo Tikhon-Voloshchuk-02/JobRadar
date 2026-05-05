@@ -96,7 +96,7 @@ export async function resendVerificationEmail(email) {
   return response.json();
 }
 
-// <--- USER-Page --->
+// <--- GET - USER-Page --->
 export async function getCurrentUser() {
   const token = localStorage.getItem("token");
 
@@ -108,6 +108,26 @@ export async function getCurrentUser() {
 
   if (!response.ok) {
     throw new Error("Failed to load user profile");
+  }
+
+  return response.json();
+}
+
+// <--- MODIFIED - USER-Page --->
+export async function updateCurrentUser(data) {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch("/api/users/me", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update user profile");
   }
 
   return response.json();
