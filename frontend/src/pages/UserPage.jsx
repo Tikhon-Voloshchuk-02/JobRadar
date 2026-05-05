@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser, updateCurrentUser  } from "../api/api";
+import toast from "react-hot-toast";
 import "./UserPage.css";
 
 export default function UserPage() {
@@ -30,12 +31,16 @@ export default function UserPage() {
   async function handleSaveName() {
     try {
       setSaving(true);
+
       const updatedUser = await updateCurrentUser({ name: nameInput });
+
       setUser(updatedUser);
       setIsEditingName(false);
+
+      toast.success("Profile updated");
     } catch (err) {
       console.error(err);
-      setError("Could not update profile");
+      toast.error("Could not update profile");
     } finally {
       setSaving(false);
     }
@@ -91,7 +96,7 @@ export default function UserPage() {
                   disabled={saving}
                 />
 
-                <button onClick={handleSaveName} disabled={saving}>
+                <button onClick={handleSaveName} disabled={saving || !nameInput.trim()}>
                   {saving ? "Saving..." : "Save"}
                 </button>
 
