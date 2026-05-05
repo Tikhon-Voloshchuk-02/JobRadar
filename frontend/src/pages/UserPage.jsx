@@ -42,8 +42,24 @@ export default function UserPage() {
   return (
     <div className="user-page">
       <div className="user-card">
-        <h1>Profile</h1>
-        <p className="user-subtitle">Account overview and integrations</p>
+
+        <div className="user-header">
+          <div className="avatar">
+            {user.name
+              ? user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase()
+              : "U"}
+          </div>
+
+          <div>
+            <h1>Profile</h1>
+            <p className="user-subtitle">Account overview and integrations</p>
+          </div>
+        </div>
 
         <div className="profile-grid">
           <div>
@@ -53,24 +69,32 @@ export default function UserPage() {
 
           <div>
             <span>Email</span>
-            <strong>{user.email}</strong>
+            <strong className="profile-value">{user.email}</strong>
           </div>
 
           <div>
             <span>Email verification</span>
-            <strong>{user.emailVerified ? "Verified" : "Not verified"}</strong>
+            <strong>
+              {user.emailVerified ? "Verified" : "Not verified"}
+            </strong>
           </div>
 
           <div>
             <span>Gmail</span>
-            <strong>{user.gmailConnected ? "Connected" : "Not connected"}</strong>
+            <strong>
+              {user.gmailConnected ? "Connected" : "Not connected"}
+            </strong>
           </div>
 
           <div>
             <span>Created</span>
             <strong>
               {user.createdAt
-                ? new Date(user.createdAt).toLocaleDateString()
+                ? new Date(user.createdAt).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })
                 : "—"}
             </strong>
           </div>
