@@ -60,6 +60,9 @@ public class User implements UserDetails {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean emailVerified = false;
 
+    @Column(nullable = true, updatable = false)
+    private LocalDateTime createdAt;
+
     private String emailVerificationToken;
 
     private LocalDateTime emailVerificationTokenExpiresAt;
@@ -184,4 +187,14 @@ public class User implements UserDetails {
     public void setEmailVerificationTokenExpiresAt(LocalDateTime expiresAt) {
         this.emailVerificationTokenExpiresAt = expiresAt;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
 }
