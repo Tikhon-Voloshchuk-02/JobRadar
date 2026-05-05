@@ -263,4 +263,29 @@ textarea {
   .timeline {
     grid-template-columns: 1fr;
   }
+
+  .app-layout {
+    min-height: 100vh;
+    background: #0b1120;
+  }
+
+
 }
+
+/* SIDEBAR PANEL*/
+  .app-layout .dashboard-page {
+    margin-left: 60px !important;
+    width: calc(100vw - 60px) !important;
+    max-width: none !important;
+    box-sizing: border-box;
+  }
+
+  .app-layout.sidebar-open .dashboard-page {
+    margin-left: 240px !important;
+    width: calc(100vw - 240px) !important;
+  }
+
+  .app-layout.sidebar-closed .dashboard-page {
+    margin-left: 60px !important;
+    width: calc(100vw - 60px) !important;
+  }

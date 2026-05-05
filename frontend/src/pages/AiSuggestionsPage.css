@@ -1,0 +1,133 @@
+.ai-suggestions-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.ai-suggestions-header h1 {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.ai-suggestions-header p {
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+.ai-suggestions-list {
+  display: grid;
+  gap: 18px;
+}
+
+/* Карточка */
+.ai-suggestion-card {
+  background: #0f172a;
+  border: 1px solid #263449;
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Header карточки */
+.ai-suggestion-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-suggestion-card__header h2 {
+  color: #ffffff;
+  font-size: 18px;
+  margin: 0;
+}
+
+.ai-suggestion-card__header p {
+  color: #9fb3d1;
+  margin: 0;
+}
+
+/* Confidence */
+.confidence-badge {
+  background: #1e293b;
+  color: #3b82f6;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Статусы */
+.status-change {
+  display: flex;
+  gap: 10px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+/* Reason */
+.suggestion-reason {
+  color: #cbd5f5;
+  font-size: 14px;
+}
+
+/* Email snippet */
+.email-snippet {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 10px;
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+/* Кнопки */
+.ai-suggestion-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.ai-suggestion-actions button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Accept */
+.ai-suggestion-actions button:first-child {
+  background: #22c55e;
+  color: white;
+}
+
+/* Reject */
+.secondary-button {
+  background: #1e293b;
+  color: #94a3b8;
+}
+
+.secondary-button:hover {
+  background: #334155;
+  color: white;
+}
+
+/* Empty state */
+.empty-state {
+  background: #0f172a;
+  border: 1px dashed #334155;
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+}
+
+.empty-state h2 {
+  color: white;
+}
+
+.empty-state p {
+  color: #94a3b8;
+}

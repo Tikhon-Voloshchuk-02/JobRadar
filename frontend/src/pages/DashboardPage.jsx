@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 import { logout } from "../auth/auth";
 
@@ -11,11 +12,14 @@ import RecentActivity from "../components/RecentActivity";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 import { useDashboard } from "../hooks/useDashboard";
+import Sidebar from "../components/Sidebar";
 
 import "./DashboardPage.css";
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const {
     loading,
@@ -54,75 +58,79 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="dashboard-page">
-      <header className="dashboard-header">
-        <div>
-          <h1>{t("dashboard.title")}</h1>
-          <p>{t("dashboard.subtitle")}</p>
-        </div>
+    <div className={`app-layout ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
 
-        <div className="dashboard-header__actions">
-          <LanguageSwitcher />
+      <main className="dashboard-page">
+        <header className="dashboard-header">
+          <div>
+            <h1>{t("dashboard.title")}</h1>
+            <p>{t("dashboard.subtitle")}</p>
+          </div>
 
-          <button onClick={toggleForm}>
-            {showForm ? t("cancel") : t("add_application")}
-          </button>
+          <div className="dashboard-header__actions">
+            <LanguageSwitcher />
 
-          <button onClick={handleLogout}>{t("logout")}</button>
-        </div>
-      </header>
+            <button onClick={toggleForm}>
+              {showForm ? t("cancel") : t("add_application")}
+            </button>
 
-      <DashboardSummary summary={summary} />
-      <RecentActivity activities={recentActivity} />
+            <button onClick={handleLogout}>{t("logout")}</button>
+          </div>
+        </header>
 
-      {showForm && (
-        <ApplicationForm
-          formData={formData}
-          onChange={handleFormChange}
-          onSubmit={handleSubmitApplication}
-          isEditing={!!editingApplicationId}
-          applicationId={editingApplicationId}
-        />
-      )}
+        <DashboardSummary summary={summary} />
+        <RecentActivity activities={recentActivity} />
 
-      <FilterBar
-        searchTerm={searchTerm}
-        selectedStatus={selectedStatus}
-        onSearchChange={setSearchTerm}
-        onStatusChange={setSelectedStatus}
-        onReset={() => {
-          setSearchTerm("");
-          setSelectedStatus("ALL");
-        }}
-      />
-
-      {loading && <p>{t("loading_applications")}</p>}
-      {error && <p className="error-text">{error}</p>}
-
-      {!loading && !error && filteredApplications.length === 0 && (
-        <p>{t("no_applications_found")}</p>
-      )}
-
-      <div className="applications-grid">
-        {filteredApplications.map((application) => (
-          <ApplicationCard
-            key={application.id}
-            application={application}
-            onEdit={handleEdit}
-            onViewHistory={handleViewHistory}
-            onDelete={handleDelete}
-            onStatusChange={handleStatusChange}
+        {showForm && (
+          <ApplicationForm
+            formData={formData}
+            onChange={handleFormChange}
+            onSubmit={handleSubmitApplication}
+            isEditing={!!editingApplicationId}
+            applicationId={editingApplicationId}
           />
-        ))}
-      </div>
+        )}
 
-      {showHistory && (
-        <HistoryPanel
-          selectedApplication={selectedApplication}
-          historyEntries={historyEntries}
-          onClose={closeHistory}
+        <FilterBar
+          searchTerm={searchTerm}
+          selectedStatus={selectedStatus}
+          onSearchChange={setSearchTerm}
+          onStatusChange={setSelectedStatus}
+          onReset={() => {
+            setSearchTerm("");
+            setSelectedStatus("ALL");
+          }}
         />
-      )}
+
+        {loading && <p>{t("loading_applications")}</p>}
+        {error && <p className="error-text">{error}</p>}
+
+        {!loading && !error && filteredApplications.length === 0 && (
+          <p>{t("no_applications_found")}</p>
+        )}
+
+        <div className="applications-grid">
+          {filteredApplications.map((application) => (
+            <ApplicationCard
+              key={application.id}
+              application={application}
+              onEdit={handleEdit}
+              onViewHistory={handleViewHistory}
+              onDelete={handleDelete}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
+        </div>
+
+        {showHistory && (
+          <HistoryPanel
+            selectedApplication={selectedApplication}
+            historyEntries={historyEntries}
+            onClose={closeHistory}
+          />
+        )}
+      </main>
     </div>
   );
 }

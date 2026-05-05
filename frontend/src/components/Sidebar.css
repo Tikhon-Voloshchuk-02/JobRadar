@@ -1,0 +1,80 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background: #0f172a;
+  border-right: 1px solid #263449;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.sidebar.open {
+  width: 240px;
+}
+
+.sidebar.closed {
+  width: 60px;
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 18px;
+  margin: 12px;
+}
+
+.sidebar-toggle:hover {
+  color: white;
+}
+
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-weight: 800;
+  font-size: 20px;
+  margin: 20px 16px 30px;
+}
+
+.sidebar-logo-icon {
+  color: #3b82f6;
+}
+
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+/* Ссылки */
+.sidebar-link {
+  color: #9fb3d1;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background: #1e293b;
+  color: white;
+}
+
+/* Активная */
+.sidebar-link.active {
+  background: #2563eb;
+  color: white;
+}
+
+.sidebar {
+  box-sizing: border-box;
+}
