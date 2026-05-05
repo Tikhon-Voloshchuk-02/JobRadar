@@ -1,0 +1,70 @@
+.user-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.user-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.user-card h1 {
+  margin: 0;
+  color: #f8fafc;
+}
+
+.user-subtitle {
+  margin-top: 8px;
+  margin-bottom: 24px;
+  color: #94a3b8;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.profile-grid div {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.profile-grid span {
+  display: block;
+  margin-bottom: 8px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.profile-grid strong {
+  color: #f8fafc;
+}
+
+.user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.secondary-button {
+  background: #334155;
+}
+
+.danger-button {
+  background: #dc2626;
+}
+
+.user-error {
+  color: #f87171;
+}

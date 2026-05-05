@@ -27,7 +27,7 @@ function Sidebar({ open, setOpen }) {
               AI Suggestions
             </NavLink>
 
-            <NavLink to="/profile" className="sidebar-link">
+            <NavLink to="/user" className="sidebar-link">
               Profile
             </NavLink>
           </nav>

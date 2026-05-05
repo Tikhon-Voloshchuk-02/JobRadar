@@ -12,14 +12,17 @@ import RecentActivity from "../components/RecentActivity";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 
 import { useDashboard } from "../hooks/useDashboard";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 import "./DashboardPage.css";
+
 
 export default function DashboardPage() {
   const { t } = useTranslation();
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const navigate = useNavigate();
 
   const {
     loading,
@@ -70,6 +73,10 @@ export default function DashboardPage() {
 
           <div className="dashboard-header__actions">
             <LanguageSwitcher />
+
+            <button onClick={() => navigate("/user")}>
+              Profile
+            </button>
 
             <button onClick={toggleForm}>
               {showForm ? t("cancel") : t("add_application")}

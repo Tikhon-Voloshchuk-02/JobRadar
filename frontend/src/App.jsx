@@ -5,6 +5,7 @@ import DashboardPage from "./pages/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import AiSuggestionsPage from "./pages/AiSuggestionsPage";
+import UserPage from "./pages/UserPage";
 
 function App() {
   return (
@@ -14,6 +15,24 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <UserPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/user"
+        element={
+          <ProtectedRoute>
+            <UserPage />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/dashboard"

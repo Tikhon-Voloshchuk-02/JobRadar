@@ -95,3 +95,20 @@ export async function resendVerificationEmail(email) {
 
   return response.json();
 }
+
+// <--- USER-Page --->
+export async function getCurrentUser() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch("/api/users/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to load user profile");
+  }
+
+  return response.json();
+}
