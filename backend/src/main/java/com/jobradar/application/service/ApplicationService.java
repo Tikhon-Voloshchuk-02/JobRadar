@@ -78,8 +78,10 @@ public class ApplicationService {
         return applicationRepository.save(existingApplication);
     }
 
+    @Transactional
     public void deleteApplication(Long id) {
         Application application = getApplicationById(id);
+        statusHistoryRepository.deleteByApplicationId(application.getId());
         applicationRepository.delete(application);
     }
 
