@@ -103,5 +103,8 @@
     }
   },
 
-  "hide": "Ausblenden"
+  "hide": "Ausblenden",
+
+  "edit_application": "Bewerbung bearbeiten",
+  "edit_application_hint": "Aktualisiere die Bewerbungsdaten und speichere die Änderungen."
 }

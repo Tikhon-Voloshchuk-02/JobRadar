@@ -10,6 +10,7 @@ import ApplicationForm from "../components/ApplicationForm";
 import HistoryPanel from "../components/HistoryPanel";
 import RecentActivity from "../components/RecentActivity";
 import LanguageSwitcher from "../components/LanguageSwitcher";
+import EditApplicationModal from "../components/EditApplicationModal";
 
 import { useDashboard } from "../hooks/useDashboard";
 import { useNavigate } from "react-router-dom";
@@ -37,9 +38,11 @@ export default function DashboardPage() {
     setSelectedStatus,
 
     showForm,
+    showEditModal,
     formData,
     editingApplicationId,
     toggleForm,
+    closeEditModal,
     handleFormChange,
     handleSubmitApplication,
 
@@ -94,10 +97,19 @@ export default function DashboardPage() {
             formData={formData}
             onChange={handleFormChange}
             onSubmit={handleSubmitApplication}
-            isEditing={!!editingApplicationId}
-            applicationId={editingApplicationId}
+            isEditing={false}
+            applicationId={null}
           />
         )}
+
+        <EditApplicationModal
+          open={showEditModal}
+          formData={formData}
+          applicationId={editingApplicationId}
+          onChange={handleFormChange}
+          onSubmit={handleSubmitApplication}
+          onClose={closeEditModal}
+        />
 
         <FilterBar
           searchTerm={searchTerm}

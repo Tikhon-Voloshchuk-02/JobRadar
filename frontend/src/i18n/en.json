@@ -103,5 +103,8 @@
     }
   },
 
-  "hide": "Hide"
+  "hide": "Hide",
+
+  "edit_application": "Edit application",
+  "edit_application_hint": "Update the application details and save your changes."
 }

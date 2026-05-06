@@ -45,6 +45,8 @@ export function useDashboard() {
   const [showHistory, setShowHistory] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [historyEntries, setHistoryEntries] = useState([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+
 
   const [recentActivity, setRecentActivity] = useState([]);
 
@@ -112,7 +114,8 @@ export function useDashboard() {
   }
 
   function handleEdit(application) {
-    setShowForm(true);
+    setShowForm(false);
+    setShowEditModal(true);
     setEditingApplicationId(application.id);
 
     setFormData({
@@ -123,6 +126,11 @@ export function useDashboard() {
       notes: application.notes || "",
       appliedAt: application.appliedAt || "",
     });
+  }
+
+  function closeEditModal() {
+    setShowEditModal(false);
+    resetForm();
   }
 
   async function handleSubmitApplication(e) {
@@ -143,6 +151,7 @@ export function useDashboard() {
 
       resetForm();
       setShowForm(false);
+      setShowEditModal(false);
       setSelectedStatus("ALL");
       setSearchTerm("");
     } catch (err) {
@@ -226,9 +235,11 @@ export function useDashboard() {
     setSelectedStatus,
 
     showForm,
+    showEditModal,
     formData,
     editingApplicationId,
     toggleForm,
+    closeEditModal,
     handleFormChange,
     handleSubmitApplication,
 
