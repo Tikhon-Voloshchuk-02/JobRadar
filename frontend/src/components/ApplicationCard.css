@@ -36,24 +36,65 @@
   font-size: 14px;
 }
 
-/* SELECT */
+/* STATUS */
+.application-card__status-control {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
 .application-card select {
-  min-width: 110px;
-  max-width: 120px;
-  height: 34px;
+  width: 150px;
+  height: 38px;
   border: 1px solid #475569;
-  border-radius: 8px;
-  padding: 6px 8px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 700;
   background: #0f172a;
   color: #e5e7eb;
   cursor: pointer;
 }
 
+.application-card select:hover {
+  border-color: #64748b;
+}
+
 .application-card select:focus {
   outline: none;
   border-color: #60a5fa;
+}
+
+/* STATUS COLORS */
+.status-saved {
+  background: #475569;
+  color: #f8fafc;
+}
+
+.status-applied {
+  background: #2563eb;
+  color: white;
+}
+
+.status-waiting {
+  background: #f59e0b;
+  color: #111827;
+}
+
+.status-interview {
+  background: #7c3aed;
+  color: white;
+}
+
+.status-offer {
+  background: #10b981;
+  color: #052e16;
+}
+
+.status-rejected {
+  background: #ef4444;
+  color: white;
 }
 
 /* BODY */
@@ -101,55 +142,7 @@
   background: #1f2937;
 }
 
-/* DELETE */
+/* DELETE BUTTON */
 .application-card__actions button:last-child {
   background: #ef4444;
-}
-
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Цвета */
-.status-saved {
-  background: #475569;
-  color: #e2e8f0;
-}
-
-.status-applied {
-  background: #2563eb;
-  color: white;
-}
-
-.status-waiting {
-  background: #f59e0b;
-  color: black;
-}
-
-.status-interview {
-  background: #7c3aed;
-  color: white;
-}
-
-.status-offer {
-  background: #10b981;
-  color: black;
-}
-
-.status-rejected {
-  background: #ef4444;
-  color: white;
-}
-
-.application-card select {
-  opacity: 0.7;
-}
-
-.application-card select:hover {
-  opacity: 1;
 }

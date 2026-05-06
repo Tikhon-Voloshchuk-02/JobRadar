@@ -5,7 +5,7 @@ import "./ApplicationCard.css";
 import DocumentSection from "./DocumentSection";
 
 function getStatusClass(status) {
-  return `status-badge status-${status.toLowerCase()}`;
+  return `status-select status-${status.toLowerCase()}`;
 }
 
 export default function ApplicationCard({
@@ -15,59 +15,59 @@ export default function ApplicationCard({
   onViewHistory,
   onStatusChange,
 }) {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
   return (
-      <div className="application-card">
-        <div className="application-card__top">
-          <div>
-            <h3>{application.company}</h3>
-            <p>{application.position}</p>
-          </div>
-
-          <div className="application-card__status-control">
-            <span className={getStatusClass(application.status)}>
-              {t(`status.${application.status.toLowerCase()}`)}
-            </span>
-
-            <select
-              value={application.status}
-              onChange={(e) =>
-                onStatusChange?.(application.id, e.target.value)
-              }
-            >
-              {STATUS_OPTIONS.filter((status) => status !== "ALL").map((status) => (
-                <option key={status} value={status}>
-                  {t(`status.${status.toLowerCase()}`)}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="application-card">
+      <div className="application-card__top">
+        <div>
+          <h3>{application.company}</h3>
+          <p>{application.position}</p>
         </div>
 
-        <DocumentSection applicationId={application.id} editable={false} />
-
-        <div className="application-card__body">
-          {application.link && (
-            <p>
-              <a href={application.link} target="_blank" rel="noreferrer">
-                {t("open_vacancy")}
-              </a>
-            </p>
-          )}
-
-          <p><strong>{t("applied_at")}:</strong> {application.appliedAt || "—"}</p>
-          <p><strong>{t("created_at")}:</strong> {application.createdAt || "—"}</p>
-          <p><strong>{t("notes")}:</strong> {application.notes || t("no_notes")}</p>
-        </div>
-
-        <div className="application-card__actions">
-          <button onClick={() => onEdit?.(application)}>{t("edit")}</button>
-          <button onClick={() => onViewHistory?.(application)}>
-            {t("history_button")}
-          </button>
-          <button onClick={() => onDelete?.(application.id)}>{t("delete")}</button>
+        <div className="application-card__status-control">
+          <select
+            value={application.status}
+            onChange={(e) => onStatusChange?.(application.id, e.target.value)}
+          >
+            {STATUS_OPTIONS.filter((status) => status !== "ALL").map((status) => (
+              <option key={status} value={status}>
+                {t(`status.${status.toLowerCase()}`)}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
-    );
-  }
+
+      <DocumentSection applicationId={application.id} editable={false} />
+
+      <div className="application-card__body">
+        {application.link && (
+          <p>
+            <a href={application.link} target="_blank" rel="noreferrer">
+              {t("open_vacancy")}
+            </a>
+          </p>
+        )}
+
+        <p>
+          <strong>{t("applied_at")}:</strong> {application.appliedAt || "—"}
+        </p>
+        <p>
+          <strong>{t("created_at")}:</strong> {application.createdAt || "—"}
+        </p>
+        <p>
+          <strong>{t("notes")}:</strong> {application.notes || t("no_notes")}
+        </p>
+      </div>
+
+      <div className="application-card__actions">
+        <button onClick={() => onEdit?.(application)}>{t("edit")}</button>
+        <button onClick={() => onViewHistory?.(application)}>
+          {t("history_button")}
+        </button>
+        <button onClick={() => onDelete?.(application.id)}>{t("delete")}</button>
+      </div>
+    </div>
+  );
+}
