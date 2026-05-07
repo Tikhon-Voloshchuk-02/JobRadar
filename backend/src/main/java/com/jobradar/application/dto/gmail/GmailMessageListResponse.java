@@ -1,4 +1,4 @@
-package com.jobradar.application.dto;
+package com.jobradar.application.dto.gmail;
 
 import java.util.List;
 

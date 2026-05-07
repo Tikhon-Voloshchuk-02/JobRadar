@@ -1,6 +1,7 @@
 package com.jobradar.application.service.gmail;
 
-import com.jobradar.application.dto.GmailMessageListResponse;
+import com.jobradar.application.dto.gmail.GmailMessageDetailResponse;
+import com.jobradar.application.dto.gmail.GmailMessageListResponse;
 import com.jobradar.application.gmail.*;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
@@ -199,4 +200,22 @@ public class GmailService {
                 .body(GmailMessageListResponse.class);
     }
 
+    /**
+     * Retrieves full Gmail message details by message id
+     *
+     * Flow:
+     * - obtains a valid access token
+     * - calls Gmail API messages.get endpoint
+     * - returns message metadata, headers, snippet and payload
+     *
+     */
+    public GmailMessageDetailResponse getMessage(User user, String messageId){
+        String accessToken = gmailTokenService.getValidAccessToken(user);
+
+        return restClient.get()
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messageId)
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(GmailMessageDetailResponse.class);
+    }
 }

@@ -1,6 +1,7 @@
 package com.jobradar.application.controller;
 
-import com.jobradar.application.dto.GmailMessageListResponse;
+import com.jobradar.application.dto.gmail.GmailMessageDetailResponse;
+import com.jobradar.application.dto.gmail.GmailMessageListResponse;
 import com.jobradar.application.dto.google.GoogleTokenResponse;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.model.user.User;
@@ -69,6 +70,15 @@ public class GmailController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return gmailService.listMessages(user);
+    }
+
+    @GetMapping("/messages/{messageId}")
+    public GmailMessageDetailResponse getMessage(@PathVariable String messageId, Authentication auth){
+
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User nor found"));
+
+        return gmailService.getMessage(user, messageId);
     }
 
     @PostMapping("/disconnect")

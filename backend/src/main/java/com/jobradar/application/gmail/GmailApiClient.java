@@ -1,6 +1,6 @@
 package com.jobradar.application.gmail;
 
-import com.jobradar.application.dto.GmailMessageListResponse;
+import com.jobradar.application.dto.gmail.GmailMessageListResponse;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.service.gmail.GmailTokenService;
 import org.springframework.stereotype.Service;
