@@ -2,6 +2,7 @@ package com.jobradar.application.controller;
 
 import com.jobradar.application.dto.GoogleTokenResponse;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
+import com.jobradar.application.service.GmailConnectionService;
 import com.jobradar.application.service.GmailService;
 import com.jobradar.application.service.GoogleOAuthService;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,15 @@ import java.util.Map;
 public class GmailController {
 
     private final GmailService gmailService;
+    private final GmailConnectionService gmailConnectionService;
     private final GoogleOAuthService googleOAuthService;
 
     public GmailController(GmailService gmailService,
-                           GoogleOAuthService googleOAuthService) {
+                           GoogleOAuthService googleOAuthService,
+                           GmailConnectionService gmailConnectionService) {
         this.gmailService = gmailService;
-        this.googleOAuthService=googleOAuthService;
+        this.googleOAuthService = googleOAuthService;
+        this.gmailConnectionService = gmailConnectionService;
     }
 
     @GetMapping("/status")
@@ -41,13 +45,13 @@ public class GmailController {
             @RequestParam String code,
             @RequestParam String state
     ) {
-
         GoogleTokenResponse tokenResponse =
                 googleOAuthService.exchangeCodeForTokens(code);
 
+        gmailConnectionService.saveTokens(state, tokenResponse);
+
         return ResponseEntity.ok(Map.of(
-                "message", "Token exchange successful",
-                "state", state
+                "message", "Gmail connected successfully"
         ));
     }
 

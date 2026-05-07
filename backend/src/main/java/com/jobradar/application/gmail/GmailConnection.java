@@ -21,6 +21,15 @@ public class GmailConnection {
     private LocalDateTime connectedAt;
     private LocalDateTime disconnectedAt;
 
+
+    @Column(columnDefinition = "TEXT")
+    private String accessToken;
+
+    @Column(columnDefinition = "TEXT")
+    private String refreshToken;
+
+    private LocalDateTime expiresAt;
+
     public Long getId(){return id;}
     public User getUser() {return user;}
     public String getGoogleEmail() {return googleEmail; }
@@ -37,4 +46,13 @@ public class GmailConnection {
     public void setConnectedAt(LocalDateTime connectedAt) { this.connectedAt = connectedAt; }
     public void setDisconnectedAt(LocalDateTime disconnectedAt) { this.disconnectedAt = disconnectedAt; }
 
+
+    public String getAccessToken() { return accessToken; }
+    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
+
+    public String getRefreshToken() { return refreshToken; }
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
+
+    public LocalDateTime getExpiresAt() { return expiresAt; }
+    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
 }
