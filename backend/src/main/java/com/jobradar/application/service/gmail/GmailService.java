@@ -1,11 +1,13 @@
 package com.jobradar.application.service.gmail;
 
+import com.jobradar.application.dto.GmailMessageListResponse;
 import com.jobradar.application.gmail.*;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,16 +18,21 @@ public class GmailService {
     private final GmailConnectionRepository gmailConnectionRepository;
     private final GmailOAuthStateRepository gmailOAuthStateRepository;
     private final UserRepository userRepository;
+    private final GmailTokenService gmailTokenService;
+    private final RestClient restClient;
 
     @Value("${GOOGLE_CLIENT_ID}")
     private String googleClientId;
 
     public GmailService(GmailConnectionRepository gmailConnectionRepository,
                         GmailOAuthStateRepository gmailOAuthStateRepository,
-                        UserRepository userRepository) {
+                        UserRepository userRepository,
+                        GmailTokenService gmailTokenService) {
         this.gmailConnectionRepository = gmailConnectionRepository;
-        this.gmailOAuthStateRepository=gmailOAuthStateRepository;
+        this.gmailOAuthStateRepository = gmailOAuthStateRepository;
         this.userRepository = userRepository;
+        this.gmailTokenService = gmailTokenService;
+        this.restClient = RestClient.create();
     }
 
     private User getCurrentUser(Authentication auth) {
@@ -102,6 +109,23 @@ public class GmailService {
         );
     }
 
+
+    /**
+     * Creates a temporary OAuth state for the current authenticated user.
+     *
+     * The state is used to:
+     * - protect against CSRF attacks during OAuth flow
+     * - bind the Google OAuth callback to a specific user
+     * - validate that the callback belongs to the original request
+     *
+     * Flow:
+     * - generate random UUID state
+     * - store state in database
+     * - bind state to current user
+     * - mark state as unused
+     *
+     * Returns: generated OAuth state string
+     */
     public String createOAuthStateForCurrentUser(Authentication authentication) {
 
         User currentUser = getCurrentUser(authentication);
@@ -118,6 +142,24 @@ public class GmailService {
         return oauthState.getState();
     }
 
+    /**
+     * Builds Google OAuth URL for Gmail connection.
+     *
+     * The URL:
+     * - requests Gmail readonly access
+     * - requests offline access (refresh token)
+     * - includes OAuth state for security validation
+     * - redirects back to backend callback endpoint
+     *
+     * Scopes:
+     * - openid
+     * - email
+     * - profile
+     * - gmail.readonly
+     *
+     * Returns:
+     * - complete Google OAuth authorization URL
+     */
     public String buildGoogleOAuthUrl(Authentication authentication) {
 
         String state = createOAuthStateForCurrentUser(authentication);
@@ -131,6 +173,30 @@ public class GmailService {
                 + "&access_type=offline"
                 + "&prompt=consent"
                 + "&state=" + state;
+    }
+
+    /**
+     * Retrieves recent Gmail messages for the given user.
+     *
+     * Flow:
+     * - obtains a valid access token
+     * - refreshes token automatically if expired
+     * - calls Gmail API messages.list endpoint
+     * - returns message ids and thread ids
+     *
+     * Used for:
+     * - Gmail integration testing
+     * - future email processing pipeline
+     * - AI email analysis
+     */
+    public GmailMessageListResponse listMessages(User user) {
+        String accessToken = gmailTokenService.getValidAccessToken(user);
+
+        return restClient.get()
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10")
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(GmailMessageListResponse.class);
     }
 
 }

@@ -30,7 +30,7 @@ public class GmailTokenService {
     @Transactional
     public String getValidAccessToken(User user) {
         GmailConnection connection = gmailConnectionRepository
-                .findByUserIdAndActiveTrue(user.getId())
+                .findByUserIdAndConnectedTrue(user.getId())
                 .orElseThrow(() -> new RuntimeException("Gmail is not connected"));
 
         if (isAccessTokenStillValid(connection)) {
