@@ -1,7 +1,10 @@
 package com.jobradar.application.controller;
 
+import com.jobradar.application.dto.GoogleTokenResponse;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.service.GmailService;
+import com.jobradar.application.service.GoogleOAuthService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,8 +15,13 @@ import java.util.Map;
 public class GmailController {
 
     private final GmailService gmailService;
+    private final GoogleOAuthService googleOAuthService;
 
-    public GmailController(GmailService gmailService) { this.gmailService = gmailService; }
+    public GmailController(GmailService gmailService,
+                           GoogleOAuthService googleOAuthService) {
+        this.gmailService = gmailService;
+        this.googleOAuthService=googleOAuthService;
+    }
 
     @GetMapping("/status")
     public GmailConnectionStatusResponse getStatus(Authentication auth) {
@@ -29,11 +37,14 @@ public class GmailController {
     }
 
     @GetMapping("/oauth/callback")
-    public Map<String, String> oauthCallback(@RequestParam String code) {
-        return Map.of(
-                "message", "Google OAuth callback received",
-                "code", code
-        );
+    public ResponseEntity<GoogleTokenResponse> oauthCallback(
+            @RequestParam String code
+    ) {
+
+        GoogleTokenResponse tokenResponse =
+                googleOAuthService.exchangeCodeForTokens(code);
+
+        return ResponseEntity.ok(tokenResponse);
     }
 
     @PostMapping("/disconnect")
