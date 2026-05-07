@@ -1,8 +1,6 @@
 package com.jobradar.application.service;
 
-import com.jobradar.application.gmail.GmailConnection;
-import com.jobradar.application.gmail.GmailConnectionRepository;
-import com.jobradar.application.gmail.GmailConnectionStatusResponse;
+import com.jobradar.application.gmail.*;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,19 +8,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class GmailService {
 
     private final GmailConnectionRepository gmailConnectionRepository;
+    private final GmailOAuthStateRepository gmailOAuthStateRepository;
     private final UserRepository userRepository;
 
     @Value("${GOOGLE_CLIENT_ID}")
     private String googleClientId;
 
     public GmailService(GmailConnectionRepository gmailConnectionRepository,
+                        GmailOAuthStateRepository gmailOAuthStateRepository,
                         UserRepository userRepository) {
         this.gmailConnectionRepository = gmailConnectionRepository;
+        this.gmailOAuthStateRepository=gmailOAuthStateRepository;
         this.userRepository = userRepository;
     }
 
@@ -100,7 +102,25 @@ public class GmailService {
         );
     }
 
-    public String buildGoogleOAuthUrl() {
+    public String createOAuthStateForCurrentUser(Authentication authentication) {
+
+        User currentUser = getCurrentUser(authentication);
+
+        GmailOAuthState oauthState = new GmailOAuthState();
+
+        oauthState.setState(UUID.randomUUID().toString());
+        oauthState.setUserId(currentUser.getId());
+        oauthState.setCreatedAt(LocalDateTime.now());
+        oauthState.setUsed(false);
+
+        gmailOAuthStateRepository.save(oauthState);
+
+        return oauthState.getState();
+    }
+
+    public String buildGoogleOAuthUrl(Authentication authentication) {
+
+        String state = createOAuthStateForCurrentUser(authentication);
 
         return "https://accounts.google.com/o/oauth2/v2/auth"
                 + "?client_id=" + googleClientId
@@ -109,7 +129,8 @@ public class GmailService {
                 + "&scope="
                 + "openid%20email%20profile%20https://www.googleapis.com/auth/gmail.readonly"
                 + "&access_type=offline"
-                + "&prompt=consent";
+                + "&prompt=consent"
+                + "&state=" + state;
     }
 
 }

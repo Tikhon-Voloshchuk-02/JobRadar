@@ -29,22 +29,26 @@ public class GmailController {
     }
 
     @GetMapping("/connect")
-    public Map<String, String> connect() {
+    public Map<String, String> connect(Authentication authentication) {
         return Map.of(
                 "url",
-                gmailService.buildGoogleOAuthUrl()
+                gmailService.buildGoogleOAuthUrl(authentication)
         );
     }
 
     @GetMapping("/oauth/callback")
-    public ResponseEntity<GoogleTokenResponse> oauthCallback(
-            @RequestParam String code
+    public ResponseEntity<Map<String, String>> oauthCallback(
+            @RequestParam String code,
+            @RequestParam String state
     ) {
 
         GoogleTokenResponse tokenResponse =
                 googleOAuthService.exchangeCodeForTokens(code);
 
-        return ResponseEntity.ok(tokenResponse);
+        return ResponseEntity.ok(Map.of(
+                "message", "Token exchange successful",
+                "state", state
+        ));
     }
 
     @PostMapping("/disconnect")
