@@ -14,8 +14,10 @@ import com.jobradar.application.repository.AiSuggestionRepository;
 
 import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.StatusHistoryRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -68,8 +70,11 @@ public class AiSuggestionService {
         }
 
         // Check: suggestion has not been processed yet
-        if(suggestion.getSuggestionStatus() != SuggestionStatus.PENDING){
-            throw new RuntimeException("SUggestion is already processed");
+        if (suggestion.getSuggestionStatus() != SuggestionStatus.PENDING) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Suggestion is already processed"
+            );
         }
 
         //Changing the suggestion status to - REJECTED
@@ -110,7 +115,7 @@ public class AiSuggestionService {
         }
     // Verification: suggestion has not been processed yet
         if (suggestion.getSuggestionStatus() != SuggestionStatus.PENDING) {
-            throw new RuntimeException("Suggestion is already processed");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Suggestion is already processed");
         }
     // Get the related application
         Application application = suggestion.getApplication();
