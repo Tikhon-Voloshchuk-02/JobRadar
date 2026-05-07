@@ -20,19 +20,26 @@ public class GmailService {
     private final GmailOAuthStateRepository gmailOAuthStateRepository;
     private final UserRepository userRepository;
     private final GmailTokenService gmailTokenService;
+    private final ProcessedEmailRepository processedEmailRepository;
+
     private final RestClient restClient;
+
 
     @Value("${GOOGLE_CLIENT_ID}")
     private String googleClientId;
 
     public GmailService(GmailConnectionRepository gmailConnectionRepository,
-                        GmailOAuthStateRepository gmailOAuthStateRepository,
-                        UserRepository userRepository,
-                        GmailTokenService gmailTokenService) {
+                         GmailOAuthStateRepository gmailOAuthStateRepository,
+                         UserRepository userRepository,
+                         GmailTokenService gmailTokenService,
+                         ProcessedEmailRepository processedEmailRepository) {
+
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailOAuthStateRepository = gmailOAuthStateRepository;
         this.userRepository = userRepository;
         this.gmailTokenService = gmailTokenService;
+        this.processedEmailRepository = processedEmailRepository;
+
         this.restClient = RestClient.create();
     }
 
@@ -77,7 +84,7 @@ public class GmailService {
      * - gets the current user
      * - searches for an existing GmailConnection
      * - either creates a new
-     one * - marks Gmail as connected
+     * - marks Gmail as connected
      * - saves the connection date
      *
      * Used for:
@@ -108,6 +115,37 @@ public class GmailService {
                 saved.getGoogleEmail(),
                 saved.getConnectedAt()
         );
+    }
+
+    //Marks Gmail message as processed
+    public void markMessageAsProcessed(User user,
+                                       String gmailMessageId,
+                                       boolean jobRelated,
+                                       String sender,
+                                       String subject,
+                                       String snippet) {
+
+        if (isMessageAlreadyProcessed(gmailMessageId)) { return; }
+
+        ProcessedEmail processedEmail = new ProcessedEmail();
+
+        processedEmail.setUser(user);
+        processedEmail.setGmailMessageId(gmailMessageId);
+
+        processedEmail.setJobRelated(jobRelated);
+        processedEmail.setProcessed(true);
+
+        processedEmail.setSender(sender);
+        processedEmail.setSubject(subject);
+        processedEmail.setSnippet(snippet);
+
+        processedEmail.setProcessedAt(LocalDateTime.now());
+
+        processedEmailRepository.save(processedEmail);
+    }
+
+    public boolean isMessageAlreadyProcessed(String gmailMessageId) {
+        return processedEmailRepository.existsByGmailMessageId(gmailMessageId);
     }
 
 
@@ -218,4 +256,6 @@ public class GmailService {
                 .retrieve()
                 .body(GmailMessageDetailResponse.class);
     }
+
+
 }

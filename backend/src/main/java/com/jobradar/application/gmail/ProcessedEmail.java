@@ -14,7 +14,7 @@ public class ProcessedEmail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // used to protect against repeated processing.
+    // Gmail message ID is used to prevent duplicate processing
     @Column(unique = true, nullable = false)
     private String gmailMessageId;
 
@@ -30,6 +30,8 @@ public class ProcessedEmail {
     private boolean jobRelated;
 
     private boolean processed;
+
+    private LocalDateTime processedAt;
 
     @ManyToOne(optional = false)
     private User user;
@@ -57,6 +59,9 @@ public class ProcessedEmail {
 
     public boolean isProcessed() { return processed; }
     public void setProcessed(boolean processed) { this.processed = processed; }
+
+    public LocalDateTime getProcessedAt() { return processedAt; }
+    public void setProcessedAt(LocalDateTime processedAt) { this.processedAt = processedAt; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
