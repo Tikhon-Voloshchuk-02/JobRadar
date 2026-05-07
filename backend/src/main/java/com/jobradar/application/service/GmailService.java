@@ -1,5 +1,6 @@
 package com.jobradar.application.service;
 
+import com.jobradar.application.gmail.GmailConnection;
 import com.jobradar.application.gmail.GmailConnectionRepository;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.model.user.User;
@@ -55,6 +56,44 @@ public class GmailService {
             connection.setDisconnectedAt(LocalDateTime.now());
             gmailConnectionRepository.save(connection);
         });
+    }
+    /**
+     * Mock Gmail connection for development/testing.
+
+     * - gets the current user
+     * - searches for an existing GmailConnection
+     * - either creates a new
+     one * - marks Gmail as connected
+     * - saves the connection date
+     *
+     * Used for:
+     * - backend flow testing
+     * - UserPage checks
+     * - frontend integration
+     * - AI pipeline development before Gmail API connection
+     */
+    public GmailConnectionStatusResponse mockConnect(Authentication auth) {
+        User user = getCurrentUser(auth);
+
+        GmailConnection connection = gmailConnectionRepository.findByUser(user)
+                .orElseGet(() -> {
+                    GmailConnection newConnection = new GmailConnection();
+                    newConnection.setUser(user);
+                    return newConnection;
+                });
+
+        connection.setConnected(true);
+        connection.setGoogleEmail(user.getEmail());
+        connection.setConnectedAt(LocalDateTime.now());
+        connection.setDisconnectedAt(null);
+
+        GmailConnection saved = gmailConnectionRepository.save(connection);
+
+        return new GmailConnectionStatusResponse(
+                saved.isConnected(),
+                saved.getGoogleEmail(),
+                saved.getConnectedAt()
+        );
     }
 
 }

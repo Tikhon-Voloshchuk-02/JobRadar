@@ -33,4 +33,9 @@ public class GmailController {
     public void disconnect(Authentication auth) {
         gmailService.disconnect(auth);
     }
+
+    @PostMapping("/mock-connect")
+    public GmailConnectionStatusResponse mockConnect(Authentication auth) {
+        return gmailService.mockConnect(auth);
+    }
 }
