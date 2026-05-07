@@ -1,6 +1,7 @@
 package com.jobradar.application.controller;
 
 import com.jobradar.application.dto.*;
+import com.jobradar.application.dto.google.GoogleAuthRequest;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.service.AuthService;
 import jakarta.validation.Valid;

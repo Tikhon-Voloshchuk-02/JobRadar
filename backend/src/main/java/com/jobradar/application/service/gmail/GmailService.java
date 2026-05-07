@@ -1,4 +1,4 @@
-package com.jobradar.application.service;
+package com.jobradar.application.service.gmail;
 
 import com.jobradar.application.gmail.*;
 import com.jobradar.application.model.user.User;

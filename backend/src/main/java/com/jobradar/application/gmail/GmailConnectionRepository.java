@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface GmailConnectionRepository extends JpaRepository<GmailConnection, Long> {
     Optional<GmailConnection> findByUser(User user);
+
+    Optional<GmailConnection> findByUserIdAndActiveTrue(Long userId);
 }

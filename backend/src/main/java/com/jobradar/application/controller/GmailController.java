@@ -1,9 +1,9 @@
 package com.jobradar.application.controller;
 
-import com.jobradar.application.dto.GoogleTokenResponse;
+import com.jobradar.application.dto.google.GoogleTokenResponse;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
-import com.jobradar.application.service.GmailConnectionService;
-import com.jobradar.application.service.GmailService;
+import com.jobradar.application.service.gmail.GmailConnectionService;
+import com.jobradar.application.service.gmail.GmailService;
 import com.jobradar.application.service.GoogleOAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

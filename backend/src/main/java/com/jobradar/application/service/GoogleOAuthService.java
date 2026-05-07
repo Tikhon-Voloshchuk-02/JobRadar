@@ -1,6 +1,6 @@
 package com.jobradar.application.service;
 
-import com.jobradar.application.dto.GoogleTokenResponse;
+import com.jobradar.application.dto.google.GoogleTokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
-package com.jobradar.application.service;
+package com.jobradar.application.service.gmail;
 
-import com.jobradar.application.dto.GoogleTokenResponse;
+import com.jobradar.application.dto.google.GoogleTokenResponse;
 import com.jobradar.application.gmail.GmailConnection;
 import com.jobradar.application.gmail.GmailConnectionRepository;
 import com.jobradar.application.gmail.GmailOAuthState;

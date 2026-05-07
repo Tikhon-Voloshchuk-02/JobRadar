@@ -1,6 +1,7 @@
 package com.jobradar.application.service;
 
 import com.jobradar.application.dto.*;
+import com.jobradar.application.dto.google.GoogleAuthRequest;
 import com.jobradar.application.exception.EmailAlreadyExistsException;
 import com.jobradar.application.exception.EmailNotVerifiedException;
 import com.jobradar.application.exception.EmailSendingException;
