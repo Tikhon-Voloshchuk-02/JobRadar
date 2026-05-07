@@ -80,6 +80,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/gmail/oauth/callback").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
         )

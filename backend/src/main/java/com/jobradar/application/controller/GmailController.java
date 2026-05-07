@@ -3,10 +3,7 @@ package com.jobradar.application.controller;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.service.GmailService;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -24,9 +21,19 @@ public class GmailController {
     }
 
     @GetMapping("/connect")
-    public Map<String, String> connect(Authentication auth) {
-        String url = gmailService.getConnectUrl(auth);
-        return Map.of("url", url);
+    public Map<String, String> connect() {
+        return Map.of(
+                "url",
+                gmailService.buildGoogleOAuthUrl()
+        );
+    }
+
+    @GetMapping("/oauth/callback")
+    public Map<String, String> oauthCallback(@RequestParam String code) {
+        return Map.of(
+                "message", "Google OAuth callback received",
+                "code", code
+        );
     }
 
     @PostMapping("/disconnect")

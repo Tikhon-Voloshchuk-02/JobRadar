@@ -16,6 +16,19 @@ spring:
           starttls:
             enable: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+              - https://www.googleapis.com/auth/gmail.readonly
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -34,4 +47,3 @@ google:
 app:
   upload-dir: uploads/
   frontend-url: ${APP_FRONTEND_URL:http://localhost:8080}
-

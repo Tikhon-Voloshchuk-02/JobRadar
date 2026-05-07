@@ -2,13 +2,14 @@ package com.jobradar.application.gmail;
 
 import com.jobradar.application.model.user.User;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "processed_emails")
 public class ProcessedEmail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

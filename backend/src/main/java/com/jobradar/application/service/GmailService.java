@@ -5,6 +5,7 @@ import com.jobradar.application.gmail.GmailConnectionRepository;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,9 @@ public class GmailService {
 
     private final GmailConnectionRepository gmailConnectionRepository;
     private final UserRepository userRepository;
+
+    @Value("${GOOGLE_CLIENT_ID}")
+    private String googleClientId;
 
     public GmailService(GmailConnectionRepository gmailConnectionRepository,
                         UserRepository userRepository) {
@@ -94,6 +98,18 @@ public class GmailService {
                 saved.getGoogleEmail(),
                 saved.getConnectedAt()
         );
+    }
+
+    public String buildGoogleOAuthUrl() {
+
+        return "https://accounts.google.com/o/oauth2/v2/auth"
+                + "?client_id=" + googleClientId
+                + "&redirect_uri=http://localhost:8080/api/gmail/oauth/callback"
+                + "&response_type=code"
+                + "&scope="
+                + "openid%20email%20profile%20https://www.googleapis.com/auth/gmail.readonly"
+                + "&access_type=offline"
+                + "&prompt=consent";
     }
 
 }
