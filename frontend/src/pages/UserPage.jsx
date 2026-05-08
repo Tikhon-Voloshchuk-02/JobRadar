@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, updateCurrentUser  } from "../api/api";
 import toast from "react-hot-toast";
 import "./UserPage.css";
+
+import {
+  getCurrentUser,
+  updateCurrentUser,
+  connectGmail,
+  disconnectGmail,
+} from "../api/api";
 
 export default function UserPage() {
   const [user, setUser] = useState(null);
@@ -43,6 +49,30 @@ export default function UserPage() {
       toast.error("Could not update profile");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleConnectGmail() {
+    try {
+      const data = await connectGmail();
+      window.location.href = data.url;
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not connect Gmail");
+    }
+  }
+
+  async function handleDisconnectGmail() {
+    try {
+      await disconnectGmail();
+
+      const updatedUser = await getCurrentUser();
+      setUser(updatedUser);
+
+      toast.success("Gmail disconnected");
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not disconnect Gmail");
     }
   }
 
@@ -159,9 +189,15 @@ export default function UserPage() {
         </div>
 
         <div className="user-actions">
-          <button className="secondary-button" disabled>
-            Connect Gmail
-          </button>
+          {user.gmailConnected ? (
+            <button className="secondary-button" onClick={handleDisconnectGmail}>
+              Disconnect Gmail
+            </button>
+          ) : (
+            <button className="secondary-button" onClick={handleConnectGmail}>
+              Connect Gmail
+            </button>
+          )}
 
           <button className="danger-button" onClick={handleLogout}>
             Logout

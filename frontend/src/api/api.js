@@ -132,3 +132,40 @@ export async function updateCurrentUser(data) {
 
   return response.json();
 }
+
+// <---- CONNECTION GOOGLE-EMAIL ---->
+export async function connectGmail() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch("/api/gmail/connect", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not start Gmail connection");
+  }
+
+  return response.json();
+}
+
+// <---- DISCONNECTION GOOGLE-EMAIL ---->
+export async function disconnectGmail() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch("/api/gmail/disconnect", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not disconnect Gmail");
+  }
+
+  return response.json();
+}
+

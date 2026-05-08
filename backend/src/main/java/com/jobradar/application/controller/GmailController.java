@@ -82,7 +82,7 @@ public class GmailController {
     public GmailMessageDetailResponse getMessage(@PathVariable String messageId, Authentication auth){
 
         User user = userRepository.findByEmail(auth.getName())
-                .orElseThrow(() -> new RuntimeException("User nor found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         return gmailService.getMessage(user, messageId);
     }
@@ -93,8 +93,12 @@ public class GmailController {
     }
 
     @PostMapping("/disconnect")
-    public void disconnect(Authentication auth) {
+    public ResponseEntity<Map<String, String>> disconnect(Authentication auth) {
         gmailService.disconnect(auth);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Gmail disconnected successfully"
+        ));
     }
 
     @PostMapping("/mock-connect")
