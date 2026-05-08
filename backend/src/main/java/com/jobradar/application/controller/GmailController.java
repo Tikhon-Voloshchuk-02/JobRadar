@@ -1,18 +1,21 @@
 package com.jobradar.application.controller;
 
 import com.jobradar.application.dto.gmail.GmailMessageDetailResponse;
+import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.dto.gmail.GmailMessageListResponse;
 import com.jobradar.application.dto.google.GoogleTokenResponse;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
 import com.jobradar.application.service.gmail.GmailConnectionService;
+import com.jobradar.application.service.gmail.GmailEmailProcessingService;
 import com.jobradar.application.service.gmail.GmailService;
 import com.jobradar.application.service.GoogleOAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,16 +26,19 @@ public class GmailController {
     private final GmailConnectionService gmailConnectionService;
     private final GoogleOAuthService googleOAuthService;
     private final UserRepository userRepository;
+    private final GmailEmailProcessingService gmailEmailProcessingService;
 
     public GmailController(GmailService gmailService,
                            GoogleOAuthService googleOAuthService,
                            GmailConnectionService gmailConnectionService,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           GmailEmailProcessingService gmailEmailProcessingService) {
 
         this.gmailService = gmailService;
         this.googleOAuthService = googleOAuthService;
         this.gmailConnectionService = gmailConnectionService;
         this.userRepository = userRepository;
+        this.gmailEmailProcessingService=gmailEmailProcessingService;
     }
 
     @GetMapping("/status")
@@ -79,6 +85,11 @@ public class GmailController {
                 .orElseThrow(() -> new RuntimeException("User nor found"));
 
         return gmailService.getMessage(user, messageId);
+    }
+
+    @GetMapping("/emails")
+    public List<GmailMessageDto> getEmails(Authentication auth) {
+        return gmailEmailProcessingService.fetchRecentEmails(auth);
     }
 
     @PostMapping("/disconnect")

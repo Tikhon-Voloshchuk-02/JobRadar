@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface GmailConnectionRepository extends JpaRepository<GmailConnection, Long> {
+
     Optional<GmailConnection> findByUser(User user);
+
+    Optional<GmailConnection> findByUserId(Long userId);
 
     Optional<GmailConnection> findByUserIdAndConnectedTrue(Long userId);
 }
