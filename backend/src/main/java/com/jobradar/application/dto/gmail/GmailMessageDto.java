@@ -7,6 +7,7 @@ public record GmailMessageDto(
         String subject,
         String from,
         String snippet,
+        String bodyText,
         Instant receivedAt
 ) {
 }

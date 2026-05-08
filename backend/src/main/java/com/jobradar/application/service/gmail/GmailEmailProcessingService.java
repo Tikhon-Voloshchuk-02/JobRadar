@@ -21,13 +21,11 @@ import org.springframework.web.client.RestClient;
 
 import com.jobradar.application.model.user.User;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -126,6 +124,7 @@ public class GmailEmailProcessingService {
             String snippet = (String) fullMessage.get("snippet");
 
             String internalDateRaw = (String) fullMessage.get("internalDate");
+            String bodyText = extractBodyText(fullMessage);
 
             Instant receivedAt = Instant.ofEpochMilli(
                     Long.parseLong(internalDateRaw)
@@ -136,6 +135,7 @@ public class GmailEmailProcessingService {
                     subject,
                     from,
                     snippet,
+                    bodyText,
                     receivedAt
             );
 
@@ -162,6 +162,27 @@ public class GmailEmailProcessingService {
         return result;
     }
 
+    /**
+     * Extracts readable email body text from a full Gmail API message response.
+     *
+     * Workflow:
+     * 1. Access the root Gmail payload object
+     * 2. Traverse nested MIME parts recursively
+     * 3. Extract text/plain sections
+     * 4. Decode Base64Url encoded content
+     *
+     * @param fullMessage full Gmail API message response
+     * @return extracted plain text body or empty string if unavailable
+     */
+    private String extractBodyText(Map fullMessage) {
+        Map payload = (Map) fullMessage.get("payload");
+
+        if (payload == null) {
+            return "";
+        }
+
+        return extractBodyFromPayload(payload);
+    }
 
     /**
      * Extracts a specific header value from a Gmail API message payload.
@@ -268,11 +289,7 @@ public class GmailEmailProcessingService {
                 .findFirst();
     }
 
-    private void createAiSuggestion(
-            Application application,
-            GmailMessageDto email,
-            EmailAnalysisResult analysis
-    ) {
+    private void createAiSuggestion( Application application, GmailMessageDto email,  EmailAnalysisResult analysis) {
 
         AiSuggestion suggestion = new AiSuggestion();
 
@@ -281,10 +298,89 @@ public class GmailEmailProcessingService {
         suggestion.setSuggestedStatus(analysis.suggestedStatus());
         suggestion.setConfidence(analysis.confidence());
         suggestion.setReason(analysis.reason());
-        suggestion.setEmailSnippet(email.snippet());
+
+        String preview = email.bodyText() != null && !email.bodyText().isBlank()
+                ? email.bodyText()
+                : email.snippet();
+
+        if (preview != null) {
+
+            preview = preview
+                    .replaceAll("\\s+", " ")
+                    .trim();
+
+            if (preview.length() > 500) {
+                preview = preview.substring(0, 500) + "...";
+            }
+        }
+
+        suggestion.setEmailSnippet(preview);
 
         suggestion.setSuggestionStatus(SuggestionStatus.PENDING);
 
         aiSuggestionRepository.save(suggestion);
+    }
+
+    /**
+     * Recursively traverses Gmail MIME payload structure
+     * and extracts all text/plain content.
+     *
+     * Gmail messages may contain:
+     * - multipart/alternative
+     * - multipart/mixed
+     * - nested MIME sections
+     * - attachments
+     * - HTML + plain text versions
+     *
+     * This method walks through nested parts and collects
+     * readable plain text sections for AI analysis.
+     *
+     * @param payload Gmail MIME payload or sub-part
+     * @return concatenated plain text body content
+     */
+    private String extractBodyFromPayload(Map payload) {
+        String mimeType = (String) payload.get("mimeType");
+
+        if ("text/plain".equalsIgnoreCase(mimeType)) {
+            return decodeBody(payload);
+        }
+
+        List<Map<String, Object>> parts =
+                (List<Map<String, Object>>) payload.get("parts");
+
+        if (parts == null) {
+            return "";
+        }
+
+        StringBuilder result = new StringBuilder();
+
+        for (Map<String, Object> part : parts) {
+            result.append(extractBodyFromPayload(part)).append(" ");
+        }
+
+        return result.toString().trim();
+    }
+
+    /**
+     * Decodes Gmail message body content.
+     *
+     * Gmail API returns email body data as Base64Url-encoded text,
+     * not regular Base64. This method decodes it into UTF-8 plain text.
+     *
+     * @param payload Gmail MIME payload containing body.data
+     * @return decoded text content or empty string if body data is missing
+     */
+    private String decodeBody(Map payload) {
+        Map body = (Map) payload.get("body");
+
+        if (body == null || body.get("data") == null) {
+            return "";
+        }
+
+        String data = (String) body.get("data");
+
+        byte[] decodedBytes = Base64.getUrlDecoder().decode(data);
+
+        return new String(decodedBytes, StandardCharsets.UTF_8);
     }
 }

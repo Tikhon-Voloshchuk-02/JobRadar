@@ -105,8 +105,9 @@ public class EmailAnalysisService {
     private String buildText(GmailMessageDto email) {
         return String.join(" ",
                 nullToEmpty(email.subject()),
+                nullToEmpty(email.from()),
                 nullToEmpty(email.snippet()),
-                nullToEmpty(email.from())
+                nullToEmpty(email.bodyText())
         );
     }
 
