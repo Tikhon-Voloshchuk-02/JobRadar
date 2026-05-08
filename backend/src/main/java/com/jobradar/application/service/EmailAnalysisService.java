@@ -69,6 +69,28 @@ public class EmailAnalysisService {
             );
         }
 
+        if (containsAny(text,
+                "werkstudent",
+                "praktikum",
+                "praktikant",
+                "stepstone",
+                "candidate",
+                "candidates",
+                "job",
+                "career",
+                "position",
+                "stelle")) {
+
+            return new EmailAnalysisResult(
+                    true,
+                    ApplicationStatus.WAITING,
+                    ConfidenceLevel.MEDIUM,
+                    "Email appears related to job search"
+            );
+        }
+
+
+
         return new EmailAnalysisResult(
                 false,
                 null,
