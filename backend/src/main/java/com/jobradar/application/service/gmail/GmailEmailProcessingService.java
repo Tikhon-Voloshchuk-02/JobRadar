@@ -4,6 +4,8 @@ import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.gmail.GmailConnection;
 import com.jobradar.application.gmail.GmailConnectionRepository;
 
+import com.jobradar.application.gmail.ProcessedEmail;
+import com.jobradar.application.gmail.ProcessedEmailRepository;
 import com.jobradar.application.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import org.springframework.web.client.RestClient;
 import com.jobradar.application.model.user.User;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,16 +26,20 @@ public class GmailEmailProcessingService {
     private final GmailConnectionRepository gmailConnectionRepository;
     private final GmailTokenService gmailTokenService;
     private final UserRepository userRepository;
+
+    private final ProcessedEmailRepository processedEmailRepository;
     private final RestClient restClient;
 
 
 
     public GmailEmailProcessingService(GmailConnectionRepository gmailConnectionRepository,
                                        GmailTokenService gmailTokenService,
-                                       UserRepository userRepository) {
+                                       UserRepository userRepository,
+                                       ProcessedEmailRepository processedEmailRepository) {
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailTokenService = gmailTokenService;
         this.userRepository = userRepository;
+        this.processedEmailRepository = processedEmailRepository;
         this.restClient = RestClient.create();
     }
 
@@ -57,7 +65,7 @@ public class GmailEmailProcessingService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        GmailConnection connection = gmailConnectionRepository
+        gmailConnectionRepository
                 .findByUserId(user.getId())
                 .orElseThrow(() -> new RuntimeException("Gmail is not connected"));
 
@@ -78,6 +86,10 @@ public class GmailEmailProcessingService {
 
         for (Map<String, Object> message : messages) {
             String messageId = (String) message.get("id");
+
+            if (processedEmailRepository.existsByUserAndGmailMessageId(user, messageId)) {
+                continue;
+            }
 
             Map fullMessage = restClient.get()
                     .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messageId)
@@ -100,7 +112,22 @@ public class GmailEmailProcessingService {
                     receivedAt
             );
 
-            if (isJobRelated(dto)) {
+            boolean jobRelated = isJobRelated(dto);
+
+            ProcessedEmail processedEmail = new ProcessedEmail();
+            processedEmail.setUser(user);
+            processedEmail.setGmailMessageId(messageId);
+            processedEmail.setSender(from);
+            processedEmail.setSubject(subject);
+            processedEmail.setSnippet(snippet);
+            processedEmail.setReceivedAt(LocalDateTime.ofInstant(receivedAt, ZoneId.systemDefault()));
+            processedEmail.setJobRelated(jobRelated);
+            processedEmail.setProcessed(true);
+            processedEmail.setProcessedAt(LocalDateTime.now());
+
+            processedEmailRepository.save(processedEmail);
+
+            if (jobRelated) {
                 result.add(dto);
             }
         }
@@ -160,7 +187,6 @@ public class GmailEmailProcessingService {
                 || text.contains("application")
                 || text.contains("applied")
                 || text.contains("interview")
-                || text.contains("position")
                 || text.contains("recruit")
                 || text.contains("hr")
                 || text.contains("offer")
@@ -173,7 +199,6 @@ public class GmailEmailProcessingService {
                 || text.contains("praktikum")
                 || text.contains("werkstudent")
                 || text.contains("vorstellungsgespräch")
-                || text.contains("interview")
                 || text.contains("absage")
                 || text.contains("zusage");
     }

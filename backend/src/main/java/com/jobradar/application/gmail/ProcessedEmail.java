@@ -7,7 +7,12 @@ import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "processed_emails")
+@Table(
+        name = "processed_emails",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "gmailMessageId"})
+        }
+)
 public class ProcessedEmail {
 
     @Id
@@ -15,7 +20,7 @@ public class ProcessedEmail {
     private Long id;
 
     // Gmail message ID is used to prevent duplicate processing
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String gmailMessageId;
 
     private String sender;
@@ -27,9 +32,11 @@ public class ProcessedEmail {
 
     private LocalDateTime receivedAt;
 
-    private boolean jobRelated;
+    @Column(nullable = false)
+    private boolean jobRelated = false;
 
-    private boolean processed;
+    @Column(nullable = false)
+    private boolean processed = false;
 
     private LocalDateTime processedAt;
 

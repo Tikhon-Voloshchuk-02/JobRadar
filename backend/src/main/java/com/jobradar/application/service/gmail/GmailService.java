@@ -125,7 +125,7 @@ public class GmailService {
                                        String subject,
                                        String snippet) {
 
-        if (isMessageAlreadyProcessed(gmailMessageId)) { return; }
+        if (isMessageAlreadyProcessed(user, gmailMessageId)) { return; }
 
         ProcessedEmail processedEmail = new ProcessedEmail();
 
@@ -144,8 +144,8 @@ public class GmailService {
         processedEmailRepository.save(processedEmail);
     }
 
-    public boolean isMessageAlreadyProcessed(String gmailMessageId) {
-        return processedEmailRepository.existsByGmailMessageId(gmailMessageId);
+    public boolean isMessageAlreadyProcessed(User user, String gmailMessageId) {
+        return processedEmailRepository.existsByUserAndGmailMessageId(user, gmailMessageId);
     }
 
 
