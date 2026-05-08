@@ -1,5 +1,6 @@
 package com.jobradar.application.service.gmail;
 
+import com.jobradar.application.dto.gmail.EmailAnalysisResult;
 import com.jobradar.application.dto.gmail.GmailEmailAnalysisResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.gmail.GmailConnection;
@@ -7,6 +8,11 @@ import com.jobradar.application.gmail.GmailConnectionRepository;
 
 import com.jobradar.application.gmail.ProcessedEmail;
 import com.jobradar.application.gmail.ProcessedEmailRepository;
+import com.jobradar.application.model.Application;
+import com.jobradar.application.model.ai.AiSuggestion;
+import com.jobradar.application.model.ai.SuggestionStatus;
+import com.jobradar.application.repository.AiSuggestionRepository;
+import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.UserRepository;
 import com.jobradar.application.service.EmailAnalysisService;
 import org.springframework.security.core.Authentication;
@@ -21,6 +27,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -35,19 +42,27 @@ public class GmailEmailProcessingService {
     private final ProcessedEmailRepository processedEmailRepository;
     private final RestClient restClient;
 
+    private final AiSuggestionRepository aiSuggestionRepository;
+    private final ApplicationRepository applicationRepository;
+
 
 
     public GmailEmailProcessingService(GmailConnectionRepository gmailConnectionRepository,
                                        GmailTokenService gmailTokenService,
                                        EmailAnalysisService emailAnalysisService,
                                        UserRepository userRepository,
-                                       ProcessedEmailRepository processedEmailRepository) {
+                                       ProcessedEmailRepository processedEmailRepository,
+                                       AiSuggestionRepository aiSuggestionRepository,
+                                       ApplicationRepository applicationRepository) {
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailTokenService = gmailTokenService;
         this.userRepository = userRepository;
         this.emailAnalysisService=emailAnalysisService;
         this.processedEmailRepository = processedEmailRepository;
         this.restClient = RestClient.create();
+
+        this.aiSuggestionRepository=aiSuggestionRepository;
+        this.applicationRepository=applicationRepository;
     }
 
 
@@ -215,16 +230,61 @@ public class GmailEmailProcessingService {
                 || text.contains("zusage");
     }
 
-    public List<GmailEmailAnalysisResponse> analyzeRecentEmails(Authentication auth){
+    public List<GmailEmailAnalysisResponse> analyzeRecentEmails(Authentication auth) {
+        String email = auth.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         List<GmailMessageDto> emails = fetchRecentEmails(auth);
 
         return emails.stream()
-                .map(email -> new GmailEmailAnalysisResponse
-                        (
-                        email,
-                        emailAnalysisService.analyze(email)
-                        )
-                    )
+                .map(gmailEmail -> {
+                    EmailAnalysisResult analysis = emailAnalysisService.analyze(gmailEmail);
+
+                    if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
+                        findMatchingApplication(user, gmailEmail)
+                                .ifPresent(application -> createAiSuggestion(application, gmailEmail, analysis));
+                    }
+
+                    return new GmailEmailAnalysisResponse(gmailEmail, analysis);
+                })
                 .toList();
+    }
+
+    private Optional<Application> findMatchingApplication(User user, GmailMessageDto email){
+
+        String text = String.join(" ",
+                safe(email.subject()),
+                safe(email.from()),
+                safe(email.snippet())
+        ).toLowerCase();
+
+        return applicationRepository.findByUser(user).stream()
+                .filter(application ->
+                        text.contains(safe(application.getCompany()).toLowerCase())
+                        || text.contains(safe(application.getPosition()).toLowerCase())
+                )
+                .findFirst();
+    }
+
+    private void createAiSuggestion(
+            Application application,
+            GmailMessageDto email,
+            EmailAnalysisResult analysis
+    ) {
+
+        AiSuggestion suggestion = new AiSuggestion();
+
+        suggestion.setApplication(application);
+        suggestion.setCurrentStatus(application.getStatus());
+        suggestion.setSuggestedStatus(analysis.suggestedStatus());
+        suggestion.setConfidence(analysis.confidence());
+        suggestion.setReason(analysis.reason());
+        suggestion.setEmailSnippet(email.snippet());
+
+        suggestion.setSuggestionStatus(SuggestionStatus.PENDING);
+
+        aiSuggestionRepository.save(suggestion);
     }
 }
