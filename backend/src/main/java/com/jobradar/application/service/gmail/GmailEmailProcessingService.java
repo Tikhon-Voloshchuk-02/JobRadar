@@ -1,5 +1,6 @@
 package com.jobradar.application.service.gmail;
 
+import com.jobradar.application.dto.gmail.GmailEmailAnalysisResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.gmail.GmailConnection;
 import com.jobradar.application.gmail.GmailConnectionRepository;
@@ -7,6 +8,7 @@ import com.jobradar.application.gmail.GmailConnectionRepository;
 import com.jobradar.application.gmail.ProcessedEmail;
 import com.jobradar.application.gmail.ProcessedEmailRepository;
 import com.jobradar.application.repository.UserRepository;
+import com.jobradar.application.service.EmailAnalysisService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -20,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class GmailEmailProcessingService {
 
@@ -27,6 +31,7 @@ public class GmailEmailProcessingService {
     private final GmailTokenService gmailTokenService;
     private final UserRepository userRepository;
 
+    private final EmailAnalysisService emailAnalysisService;
     private final ProcessedEmailRepository processedEmailRepository;
     private final RestClient restClient;
 
@@ -34,11 +39,13 @@ public class GmailEmailProcessingService {
 
     public GmailEmailProcessingService(GmailConnectionRepository gmailConnectionRepository,
                                        GmailTokenService gmailTokenService,
+                                       EmailAnalysisService emailAnalysisService,
                                        UserRepository userRepository,
                                        ProcessedEmailRepository processedEmailRepository) {
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailTokenService = gmailTokenService;
         this.userRepository = userRepository;
+        this.emailAnalysisService=emailAnalysisService;
         this.processedEmailRepository = processedEmailRepository;
         this.restClient = RestClient.create();
     }
@@ -60,6 +67,7 @@ public class GmailEmailProcessingService {
      * @return list of recent Gmail messages
      */
     public List<GmailMessageDto> fetchRecentEmails(Authentication auth) {
+
         String email = auth.getName();
 
         User user = userRepository.findByEmail(email)
@@ -85,6 +93,7 @@ public class GmailEmailProcessingService {
         List<GmailMessageDto> result = new ArrayList<>();
 
         for (Map<String, Object> message : messages) {
+
             String messageId = (String) message.get("id");
 
             if (processedEmailRepository.existsByUserAndGmailMessageId(user, messageId)) {
@@ -102,7 +111,10 @@ public class GmailEmailProcessingService {
             String snippet = (String) fullMessage.get("snippet");
 
             String internalDateRaw = (String) fullMessage.get("internalDate");
-            Instant receivedAt = Instant.ofEpochMilli(Long.parseLong(internalDateRaw));
+
+            Instant receivedAt = Instant.ofEpochMilli(
+                    Long.parseLong(internalDateRaw)
+            );
 
             GmailMessageDto dto = new GmailMessageDto(
                     messageId,
@@ -120,16 +132,16 @@ public class GmailEmailProcessingService {
             processedEmail.setSender(from);
             processedEmail.setSubject(subject);
             processedEmail.setSnippet(snippet);
-            processedEmail.setReceivedAt(LocalDateTime.ofInstant(receivedAt, ZoneId.systemDefault()));
+            processedEmail.setReceivedAt(
+                    LocalDateTime.ofInstant(receivedAt, ZoneId.systemDefault())
+            );
             processedEmail.setJobRelated(jobRelated);
             processedEmail.setProcessed(true);
             processedEmail.setProcessedAt(LocalDateTime.now());
 
             processedEmailRepository.save(processedEmail);
 
-            if (jobRelated) {
-                result.add(dto);
-            }
+            result.add(dto);
         }
 
         return result;
@@ -201,5 +213,18 @@ public class GmailEmailProcessingService {
                 || text.contains("vorstellungsgespräch")
                 || text.contains("absage")
                 || text.contains("zusage");
+    }
+
+    public List<GmailEmailAnalysisResponse> analyzeRecentEmails(Authentication auth){
+        List<GmailMessageDto> emails = fetchRecentEmails(auth);
+
+        return emails.stream()
+                .map(email -> new GmailEmailAnalysisResponse
+                        (
+                        email,
+                        emailAnalysisService.analyze(email)
+                        )
+                    )
+                .toList();
     }
 }

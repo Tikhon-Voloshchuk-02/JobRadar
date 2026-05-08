@@ -1,5 +1,6 @@
 package com.jobradar.application.controller;
 
+import com.jobradar.application.dto.gmail.GmailEmailAnalysisResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDetailResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.dto.gmail.GmailMessageListResponse;
@@ -90,6 +91,11 @@ public class GmailController {
     @GetMapping("/emails")
     public List<GmailMessageDto> getEmails(Authentication auth) {
         return gmailEmailProcessingService.fetchRecentEmails(auth);
+    }
+
+    @GetMapping("/emails/analyze")
+    public List<GmailEmailAnalysisResponse> analyzeEmails(Authentication auth){
+        return gmailEmailProcessingService.analyzeRecentEmails(auth);
     }
 
     @PostMapping("/disconnect")
