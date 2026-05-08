@@ -24,7 +24,7 @@ public class GmailEmailProcessingService {
     private final UserRepository userRepository;
     private final RestClient restClient;
 
-    
+
 
     public GmailEmailProcessingService(GmailConnectionRepository gmailConnectionRepository,
                                        GmailTokenService gmailTokenService,
@@ -92,13 +92,17 @@ public class GmailEmailProcessingService {
             String internalDateRaw = (String) fullMessage.get("internalDate");
             Instant receivedAt = Instant.ofEpochMilli(Long.parseLong(internalDateRaw));
 
-            result.add(new GmailMessageDto(
+            GmailMessageDto dto = new GmailMessageDto(
                     messageId,
                     subject,
                     from,
                     snippet,
                     receivedAt
-            ));
+            );
+
+            if (isJobRelated(dto)) {
+                result.add(dto);
+            }
         }
 
         return result;
@@ -138,5 +142,39 @@ public class GmailEmailProcessingService {
                 .map(header -> header.get("value"))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value;
+    }
+
+    private boolean isJobRelated(GmailMessageDto email) {
+        String text = String.join(" ",
+                safe(email.subject()),
+                safe(email.from()),
+                safe(email.snippet())
+        ).toLowerCase();
+
+        return text.contains("job")
+                || text.contains("career")
+                || text.contains("application")
+                || text.contains("applied")
+                || text.contains("interview")
+                || text.contains("position")
+                || text.contains("recruit")
+                || text.contains("hr")
+                || text.contains("offer")
+                || text.contains("unfortunately")
+                || text.contains("thank you for applying")
+                || text.contains("bewerbung")
+                || text.contains("karriere")
+                || text.contains("stelle")
+                || text.contains("position")
+                || text.contains("praktikum")
+                || text.contains("werkstudent")
+                || text.contains("vorstellungsgespräch")
+                || text.contains("interview")
+                || text.contains("absage")
+                || text.contains("zusage");
     }
 }
