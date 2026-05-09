@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ai-suggestions")
@@ -34,6 +35,15 @@ public class AiSuggestionController {
         return aiSuggestionService.getPendingSuggestionResponses(user);
     }
 
+    @GetMapping ("/pending/count")
+    public Map<String, Long> countPendingSuggestions(Authentication auth){
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        long count = aiSuggestionService.countPendingSuggestions(user);
+        return Map.of("count", count);
+    }
+
 //ACCEPT
     @PostMapping("/{id}/accept")
     public AiSuggestionResponse acceptSuggestion(@PathVariable Long id, Authentication auth){
@@ -53,6 +63,7 @@ public class AiSuggestionController {
         return aiSuggestionService.rejectSuggestion(id, user);
     }
 
+    /*
     @PostMapping("/fake-analyze")
     public AiSuggestionResponse analyzeFakeEmail(@RequestBody FakeEmailAnalysisRequest request,
                                                  Authentication authentication) {
@@ -61,30 +72,7 @@ public class AiSuggestionController {
 
         return aiSuggestionService.analyzeFakeEmail(request, user);
     }
-/*
-    @PostMapping("/test")
-    public String createTestSuggestion(Authentication authentication) {
+    */
 
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-
-        Application application = user.getApplications().stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No applications"));
-
-        AiSuggestion suggestion = new AiSuggestion();
-        suggestion.setApplication(application);
-        suggestion.setCurrentStatus(application.getStatus());
-        suggestion.setSuggestedStatus(ApplicationStatus.INTERVIEW);
-        suggestion.setConfidence(ConfidenceLevel.HIGH);
-        suggestion.setReason("Test suggestion: interview invitation detected");
-        suggestion.setEmailSnippet("We invite you to an interview...");
-
-        aiSuggestionRepository.save(suggestion);
-
-        return "Test suggestion created";
-    }
- */
 
 }
