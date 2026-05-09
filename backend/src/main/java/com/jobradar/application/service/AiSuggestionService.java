@@ -85,6 +85,13 @@ public class AiSuggestionService {
         return toResponse(saved);
     }
 
+    public long countPendingSuggestions(User user) {
+        return aiSuggestionRepository.countByApplication_UserAndSuggestionStatus(
+                user,
+                SuggestionStatus.PENDING
+        );
+    }
+
     /**
      * Accepts the AI suggestion and updates the application status.
      *
@@ -270,4 +277,6 @@ public class AiSuggestionService {
         AiSuggestion saved = aiSuggestionRepository.save(suggestion);
         return toResponse(saved);
     }
+
+
 }
