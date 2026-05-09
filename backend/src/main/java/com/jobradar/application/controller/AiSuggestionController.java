@@ -63,7 +63,7 @@ public class AiSuggestionController {
         return aiSuggestionService.rejectSuggestion(id, user);
     }
 
-    /*
+
     @PostMapping("/fake-analyze")
     public AiSuggestionResponse analyzeFakeEmail(@RequestBody FakeEmailAnalysisRequest request,
                                                  Authentication authentication) {
@@ -72,7 +72,7 @@ public class AiSuggestionController {
 
         return aiSuggestionService.analyzeFakeEmail(request, user);
     }
-    */
+
 
 
 }

@@ -92,7 +92,8 @@ public class GmailEmailProcessingService {
 
         String accessToken = gmailTokenService.getValidAccessToken(user);
 
-        String url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10";
+        String url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=30&q=Senacor";
+        //String url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10";
 
         Map response = restClient.get()
                 .uri(url)
