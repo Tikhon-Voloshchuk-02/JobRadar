@@ -67,3 +67,20 @@ export async function analyzeFakeEmail(data) {
 
   return response.json();
 }
+
+export async function acceptAllAiSuggestions() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE}/accept-all`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to accept all suggestions");
+  }
+
+  return response.json();
+}

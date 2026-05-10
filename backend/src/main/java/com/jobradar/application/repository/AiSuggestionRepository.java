@@ -1,5 +1,6 @@
 package com.jobradar.application.repository;
 
+import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ai.AiSuggestion;
 import com.jobradar.application.model.ai.SuggestionStatus;
 import com.jobradar.application.model.user.User;
@@ -12,4 +13,6 @@ public interface AiSuggestionRepository  extends JpaRepository<AiSuggestion, Lon
     List<AiSuggestion> findByApplication_UserAndSuggestionStatus(User user, SuggestionStatus suggestionStatus);
 
     long countByApplication_UserAndSuggestionStatus(User user, SuggestionStatus suggestionStatus);
+
+    void deleteByApplication(Application application);
 }

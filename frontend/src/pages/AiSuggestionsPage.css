@@ -30,7 +30,14 @@
   font-size: 16px;
 }
 
-.refresh-button {
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.refresh-button,
+.accept-all-button {
   background: #2563eb;
   color: white;
   border: none;
@@ -38,10 +45,17 @@
   padding: 10px 16px;
   cursor: pointer;
   font-weight: 700;
+  transition: 0.15s ease;
 }
 
-.refresh-button:hover {
+.refresh-button:hover,
+.accept-all-button:hover {
   background: #1d4ed8;
+}
+
+.accept-all-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .loading-text {
@@ -243,6 +257,12 @@
   .ai-suggestions-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .ai-suggestions-header h1 {

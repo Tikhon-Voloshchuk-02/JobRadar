@@ -4,6 +4,7 @@ import {
   getPendingAiSuggestions,
   acceptAiSuggestion,
   rejectAiSuggestion,
+  acceptAllAiSuggestions
 } from "../api/aiSuggestions";
 
 import "./AiSuggestionsPage.css";
@@ -40,6 +41,16 @@ export default function AiSuggestionsPage() {
     }
   }
 
+  async function handleAcceptAll() {
+    try {
+      setError("");
+      await acceptAllAiSuggestions();
+      setSuggestions([]);
+    } catch (err) {
+      setError(err.message || "Failed to accept all suggestions");
+    }
+  }
+
   async function handleReject(id) {
     try {
       await rejectAiSuggestion(id);
@@ -68,9 +79,20 @@ export default function AiSuggestionsPage() {
             <p>Review suggested status updates before applying them.</p>
           </div>
 
-          <button className="refresh-button" onClick={loadSuggestions}>
-            Refresh
-          </button>
+          <div className="header-actions">
+            {suggestions.length > 0 && (
+              <button
+                className="accept-all-button"
+                onClick={handleAcceptAll}
+              >
+                Accept All
+              </button>
+            )}
+
+            <button className="refresh-button" onClick={loadSuggestions}>
+              Refresh
+            </button>
+          </div>
         </header>
 
         {loading && <p className="loading-text">Loading suggestions...</p>}
@@ -102,7 +124,9 @@ export default function AiSuggestionsPage() {
                 <span className={statusClass(suggestion.currentStatus)}>
                   {suggestion.currentStatus}
                 </span>
+
                 <span className="status-arrow">→</span>
+
                 <span className={statusClass(suggestion.suggestedStatus)}>
                   {suggestion.suggestedStatus}
                 </span>

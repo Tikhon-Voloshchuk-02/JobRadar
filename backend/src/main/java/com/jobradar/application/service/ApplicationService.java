@@ -6,6 +6,7 @@ import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.StatusChangeSource;
 import com.jobradar.application.model.StatusHistory;
 import com.jobradar.application.model.user.User;
+import com.jobradar.application.repository.AiSuggestionRepository;
 import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.StatusHistoryRepository;
 import com.jobradar.application.repository.UserRepository;
@@ -24,13 +25,16 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final StatusHistoryRepository statusHistoryRepository;
     private final UserRepository userRepository;
+    private final AiSuggestionRepository aiSuggestionRepository;
 
     public ApplicationService(ApplicationRepository applicationRepository,
                                  StatusHistoryRepository statusHistoryRepository,
-                                 UserRepository userRepository){
+                                 UserRepository userRepository,
+                              AiSuggestionRepository aiSuggestionRepository){
         this.applicationRepository=applicationRepository;
         this.statusHistoryRepository=statusHistoryRepository;
         this.userRepository=userRepository;
+        this.aiSuggestionRepository=aiSuggestionRepository;
     }
 
 
@@ -82,6 +86,9 @@ public class ApplicationService {
     @Transactional
     public void deleteApplication(Long id) {
         Application application = getApplicationById(id);
+
+        aiSuggestionRepository.deleteByApplication(application);
+
         statusHistoryRepository.deleteByApplicationId(application.getId());
         applicationRepository.delete(application);
     }
@@ -128,7 +135,6 @@ public class ApplicationService {
     @return the authenticated User entity
     @throws UsernameNotFoundException if the user cannot be found in the database
 */
-
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext()
                                             .getAuthentication()
