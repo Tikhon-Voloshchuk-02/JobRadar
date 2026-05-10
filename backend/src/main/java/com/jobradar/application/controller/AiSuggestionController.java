@@ -7,6 +7,7 @@ import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.AiSuggestionRepository;
 import com.jobradar.application.repository.UserRepository;
 import com.jobradar.application.service.AiSuggestionService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,6 +72,18 @@ public class AiSuggestionController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return aiSuggestionService.analyzeFakeEmail(request, user);
+    }
+
+    @PostMapping("/accept-all")
+    public ResponseEntity<?> acceptAll(Authentication auth){
+        int acceptedCount = aiSuggestionService.acceptAllPending(auth);
+
+        return ResponseEntity.ok(
+                Map.of(
+                    "message", "All pending Suggestions accepted",
+                    "acceptedCount", acceptedCount
+                )
+        );
     }
 
 
