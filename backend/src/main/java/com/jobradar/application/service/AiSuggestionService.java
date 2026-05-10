@@ -14,7 +14,9 @@ import com.jobradar.application.repository.AiSuggestionRepository;
 
 import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.StatusHistoryRepository;
+import com.jobradar.application.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,12 +31,16 @@ public class AiSuggestionService {
     private final ApplicationRepository applicationRepository;
     private final StatusHistoryRepository statusHistoryRepository;
 
+    private final UserRepository userRepository;
+
     public AiSuggestionService(AiSuggestionRepository aiSuggestionRepository,
                                ApplicationRepository applicationRepository,
-                               StatusHistoryRepository statusHistoryRepository) {
+                               StatusHistoryRepository statusHistoryRepository,
+                               UserRepository userRepository) {
         this.aiSuggestionRepository = aiSuggestionRepository;
         this.applicationRepository = applicationRepository;
         this.statusHistoryRepository=statusHistoryRepository;
+        this.userRepository=userRepository;
 
     }
 
@@ -278,5 +284,24 @@ public class AiSuggestionService {
         return toResponse(saved);
     }
 
+    @Transactional
+    public int acceptAllPending(Authentication auth){
+        User currentUser = getCurrentUser(auth);
+
+        List<AiSuggestion> pendingSuggestions =
+            aiSuggestionRepository.findByApplication_UserAndSuggestionStatus(currentUser, SuggestionStatus.PENDING);
+
+        for (AiSuggestion suggestion: pendingSuggestions){
+            acceptSuggestion(suggestion.getId(), currentUser);
+        }
+
+        return pendingSuggestions.size();
+    }
+
+    private User getCurrentUser(Authentication auth){
+        String email = auth.getName();
+
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
 }
