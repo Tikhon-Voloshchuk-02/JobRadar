@@ -12,16 +12,22 @@ import com.jobradar.application.service.gmail.GmailConnectionService;
 import com.jobradar.application.service.gmail.GmailEmailProcessingService;
 import com.jobradar.application.service.gmail.GmailService;
 import com.jobradar.application.service.GoogleOAuthService;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/gmail")
 public class GmailController {
+
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     private final GmailService gmailService;
     private final GmailConnectionService gmailConnectionService;
@@ -42,6 +48,8 @@ public class GmailController {
         this.gmailEmailProcessingService=gmailEmailProcessingService;
     }
 
+
+
     @GetMapping("/status")
     public GmailConnectionStatusResponse getStatus(Authentication auth) {
         return gmailService.getStatus(auth);
@@ -56,18 +64,21 @@ public class GmailController {
     }
 
     @GetMapping("/oauth/callback")
-    public ResponseEntity<Map<String, String>> oauthCallback(
+    public void oauthCallback(
             @RequestParam String code,
-            @RequestParam String state
-    ) {
-        GoogleTokenResponse tokenResponse =
-                googleOAuthService.exchangeCodeForTokens(code);
+            @RequestParam String state,
+            HttpServletResponse response
+    ) throws IOException {
+        try {
+            GoogleTokenResponse tokenResponse =
+                    googleOAuthService.exchangeCodeForTokens(code);
 
-        gmailConnectionService.saveTokens(state, tokenResponse);
+            gmailConnectionService.saveTokens(state, tokenResponse);
 
-        return ResponseEntity.ok(Map.of(
-                "message", "Gmail connected successfully"
-        ));
+            response.sendRedirect(frontendUrl + "/user?gmail=connected");
+        } catch (Exception e) {
+            response.sendRedirect(frontendUrl + "/user?gmail=error");
+        }
     }
 
     @GetMapping("/messages")
