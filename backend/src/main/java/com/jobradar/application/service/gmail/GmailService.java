@@ -82,6 +82,7 @@ public class GmailService {
             gmailConnectionRepository.save(connection);
         });
     }
+
     /**
      * Mock Gmail connection for development/testing.
 
@@ -312,6 +313,11 @@ public class GmailService {
                 .get("id")
                 .asText();
 
+        if (isMessageAlreadyProcessed(connection.getUser(), messageId)) {
+            System.out.println("Email already processed: " + messageId);
+            return;
+        }
+
         String messageResponse = restClient.get()
                 .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messageId)
                 .header("Authorization", "Bearer " + accessToken)
@@ -328,6 +334,21 @@ public class GmailService {
         System.out.println("From: " + from);
         System.out.println("Subject: " + subject);
         System.out.println("Snippet: " + snippet);
+
+        boolean jobRelated = isJobRelatedEmail(from, subject, snippet);
+
+        markMessageAsProcessed(connection.getUser(),  messageId,  jobRelated,
+                                from, subject,  snippet
+                              );
+
+        if (!jobRelated) {
+            System.out.println("Email is NOT job-related");
+
+            markAsRead(accessToken, messageId);
+            return;
+        }
+
+        System.out.println("Email IS job-related");
 
         markAsRead(accessToken, messageId);
     }
@@ -367,5 +388,29 @@ public class GmailService {
 
         return "";
     }
+
+    private boolean isJobRelatedEmail(String from, String subject, String snippet) {
+
+        String content = (
+                from + " " +
+                        subject + " " +
+                        snippet
+        ).toLowerCase();
+
+        return content.contains("bewerbung")
+                || content.contains("application")
+                || content.contains("interview")
+                || content.contains("rejection")
+                || content.contains("absage")
+                || content.contains("job")
+                || content.contains("karriere")
+                || content.contains("career")
+                || content.contains("stepstone")
+                || content.contains("linkedin")
+                || content.contains("indeed")
+                || content.contains("praktikum")
+                || content.contains("werkstudent");
+    }
+
 
 }
