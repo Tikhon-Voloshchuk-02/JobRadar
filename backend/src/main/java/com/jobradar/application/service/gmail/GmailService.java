@@ -318,8 +318,16 @@ public class GmailService {
                 .retrieve()
                 .body(String.class);
 
+        JsonNode messageRoot = objectMapper.readTree(messageResponse);
+
+        String snippet = messageRoot.path("snippet").asText("");
+        String subject = extractHeader(messageRoot, "Subject");
+        String from = extractHeader(messageRoot, "From");
+
         System.out.println("Message details received for id=" + messageId);
-        //System.out.println(messageResponse);
+        System.out.println("From: " + from);
+        System.out.println("Subject: " + subject);
+        System.out.println("Snippet: " + snippet);
 
         markAsRead(accessToken, messageId);
     }
@@ -338,6 +346,26 @@ public class GmailService {
                 .body(String.class);
 
         System.out.println("Marked Gmail message as read: " + messageId);
+    }
+
+    private String extractHeader (JsonNode messageRoot, String headerName) {
+        JsonNode headers = messageRoot
+                .path("payload")
+                .path("headers");
+
+        if (!headers.isArray()) {
+            return "";
+        }
+
+        for (JsonNode header : headers) {
+            String name = header.path("name").asText("");
+
+            if (headerName.equalsIgnoreCase(name)) {
+                return header.path("value").asText("");
+            }
+        }
+
+        return "";
     }
 
 }
