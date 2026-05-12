@@ -228,7 +228,8 @@ public class GmailEmailProcessingService {
         String text = String.join(" ",
                 safe(email.subject()),
                 safe(email.from()),
-                safe(email.snippet())
+                safe(email.snippet()),
+                safe(email.bodyText())
         ).toLowerCase();
 
         return text.contains("job")
@@ -279,14 +280,26 @@ public class GmailEmailProcessingService {
         String text = String.join(" ",
                 safe(email.subject()),
                 safe(email.from()),
-                safe(email.snippet())
+                safe(email.snippet()),
+                safe(email.bodyText())
         ).toLowerCase();
 
         return applicationRepository.findByUser(user).stream()
-                .filter(application ->
-                        text.contains(safe(application.getCompany()).toLowerCase())
-                        || text.contains(safe(application.getPosition()).toLowerCase())
-                )
+                .filter(application -> {
+
+                    String company = safe(application.getCompany()).toLowerCase();
+                    String position = safe(application.getPosition()).toLowerCase();
+
+                    String[] companyWords = company.split("\\s+");
+
+                    boolean companyMatch = Arrays.stream(companyWords)
+                            .anyMatch(word ->
+                                    word.length() > 3 && text.contains(word)
+                            );
+
+                    return companyMatch
+                            || text.contains(position);
+                })
                 .findFirst();
     }
 
@@ -384,4 +397,70 @@ public class GmailEmailProcessingService {
 
         return new String(decodedBytes, StandardCharsets.UTF_8);
     }
+
+
+    public void processSingleEmail(User user, String messageId, String accessToken) {
+
+        if (processedEmailRepository.existsByUserAndGmailMessageId(user, messageId)) {
+            System.out.println("Email already processed: " + messageId);
+            return;
+        }
+
+        Map fullMessage = restClient.get()
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messageId)
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(Map.class);
+
+        String subject = extractHeader(fullMessage, "Subject");
+        String from = extractHeader(fullMessage, "From");
+        String snippet = (String) fullMessage.get("snippet");
+        String bodyText = extractBodyText(fullMessage);
+
+        String internalDateRaw = (String) fullMessage.get("internalDate");
+        Instant receivedAt = Instant.ofEpochMilli(Long.parseLong(internalDateRaw));
+
+        GmailMessageDto dto = new GmailMessageDto(
+                messageId,
+                subject,
+                from,
+                snippet,
+                bodyText,
+                receivedAt
+        );
+
+        boolean jobRelated = isJobRelated(dto);
+
+        ProcessedEmail processedEmail = new ProcessedEmail();
+        processedEmail.setUser(user);
+        processedEmail.setGmailMessageId(messageId);
+        processedEmail.setSender(from);
+        processedEmail.setSubject(subject);
+        processedEmail.setSnippet(snippet);
+        processedEmail.setReceivedAt(
+                LocalDateTime.ofInstant(receivedAt, ZoneId.systemDefault())
+        );
+        processedEmail.setJobRelated(jobRelated);
+        processedEmail.setProcessed(true);
+        processedEmail.setProcessedAt(LocalDateTime.now());
+
+        processedEmailRepository.save(processedEmail);
+
+        EmailAnalysisResult analysis = emailAnalysisService.analyze(dto);
+
+        System.out.println("Email analysis result: " + analysis);
+
+        if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
+            Optional<Application> matchingApplication = findMatchingApplication(user, dto);
+
+            if (matchingApplication.isPresent()) {
+                createAiSuggestion(matchingApplication.get(), dto, analysis);
+                System.out.println("AI suggestion created for email: " + messageId);
+            } else {
+                System.out.println("No matching application found for email: " + messageId);
+            }
+        }
+    }
+
+
 }

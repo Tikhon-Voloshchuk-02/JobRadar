@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobradar.application.dto.gmail.GmailMessageDetailResponse;
 import com.jobradar.application.dto.gmail.GmailMessageListResponse;
 import com.jobradar.application.gmail.*;
+import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,9 +22,10 @@ public class GmailService {
 
     private final GmailConnectionRepository gmailConnectionRepository;
     private final GmailOAuthStateRepository gmailOAuthStateRepository;
-    private final UserRepository userRepository;
     private final GmailTokenService gmailTokenService;
-    private final ProcessedEmailRepository processedEmailRepository;
+    private final GmailEmailProcessingService gmailEmailProcessingService;
+    private final UserRepository userRepository;
+
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -33,16 +35,16 @@ public class GmailService {
     private String googleClientId;
 
     public GmailService(GmailConnectionRepository gmailConnectionRepository,
-                         GmailOAuthStateRepository gmailOAuthStateRepository,
-                         UserRepository userRepository,
-                         GmailTokenService gmailTokenService,
-                         ProcessedEmailRepository processedEmailRepository) {
+                        GmailOAuthStateRepository gmailOAuthStateRepository,
+                        GmailTokenService gmailTokenService,
+                        GmailEmailProcessingService gmailEmailProcessingService,
+                        UserRepository userRepository) {
 
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailOAuthStateRepository = gmailOAuthStateRepository;
-        this.userRepository = userRepository;
         this.gmailTokenService = gmailTokenService;
-        this.processedEmailRepository = processedEmailRepository;
+        this.gmailEmailProcessingService=gmailEmailProcessingService;
+        this.userRepository=userRepository;
 
         this.restClient = RestClient.create();
     }
@@ -54,7 +56,7 @@ public class GmailService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public GmailConnectionStatusResponse getStatus(Authentication auth){
+    public GmailConnectionStatusResponse getStatus(Authentication auth) {
         User user = getCurrentUser(auth);
 
         return gmailConnectionRepository.findByUser(user)
@@ -85,13 +87,13 @@ public class GmailService {
 
     /**
      * Mock Gmail connection for development/testing.
-
+     * <p>
      * - gets the current user
      * - searches for an existing GmailConnection
      * - either creates a new
      * - marks Gmail as connected
      * - saves the connection date
-     *
+     * <p>
      * Used for:
      * - backend flow testing
      * - UserPage checks
@@ -121,7 +123,7 @@ public class GmailService {
                 saved.getConnectedAt()
         );
     }
-
+/*
     //Marks Gmail message as processed
     public void markMessageAsProcessed(User user,
                                        String gmailMessageId,
@@ -130,7 +132,9 @@ public class GmailService {
                                        String subject,
                                        String snippet) {
 
-        if (isMessageAlreadyProcessed(user, gmailMessageId)) { return; }
+        if (isMessageAlreadyProcessed(user, gmailMessageId)) {
+            return;
+        }
 
         ProcessedEmail processedEmail = new ProcessedEmail();
 
@@ -148,26 +152,23 @@ public class GmailService {
 
         processedEmailRepository.save(processedEmail);
     }
-
-    public boolean isMessageAlreadyProcessed(User user, String gmailMessageId) {
-        return processedEmailRepository.existsByUserAndGmailMessageId(user, gmailMessageId);
-    }
+*/
 
 
     /**
      * Creates a temporary OAuth state for the current authenticated user.
-     *
+     * <p>
      * The state is used to:
      * - protect against CSRF attacks during OAuth flow
      * - bind the Google OAuth callback to a specific user
      * - validate that the callback belongs to the original request
-     *
+     * <p>
      * Flow:
      * - generate random UUID state
      * - store state in database
      * - bind state to current user
      * - mark state as unused
-     *
+     * <p>
      * Returns: generated OAuth state string
      */
     public String createOAuthStateForCurrentUser(Authentication authentication) {
@@ -188,19 +189,19 @@ public class GmailService {
 
     /**
      * Builds Google OAuth URL for Gmail connection.
-     *
+     * <p>
      * The URL:
      * - requests Gmail readonly access
      * - requests offline access (refresh token)
      * - includes OAuth state for security validation
      * - redirects back to backend callback endpoint
-     *
+     * <p>
      * Scopes:
      * - openid
      * - email
      * - profile
      * - gmail.readonly
-     *
+     * <p>
      * Returns:
      * - complete Google OAuth authorization URL
      */
@@ -221,13 +222,13 @@ public class GmailService {
 
     /**
      * Retrieves recent Gmail messages for the given user.
-     *
+     * <p>
      * Flow:
      * - obtains a valid access token
      * - refreshes token automatically if expired
      * - calls Gmail API messages.list endpoint
      * - returns message ids and thread ids
-     *
+     * <p>
      * Used for:
      * - Gmail integration testing
      * - future email processing pipeline
@@ -245,14 +246,13 @@ public class GmailService {
 
     /**
      * Retrieves full Gmail message details by message id
-     *
+     * <p>
      * Flow:
      * - obtains a valid access token
      * - calls Gmail API messages.get endpoint
      * - returns message metadata, headers, snippet and payload
-     *
      */
-    public GmailMessageDetailResponse getMessage(User user, String messageId){
+    public GmailMessageDetailResponse getMessage(User user, String messageId) {
         String accessToken = gmailTokenService.getValidAccessToken(user);
 
         return restClient.get()
@@ -279,6 +279,7 @@ public class GmailService {
         }
     }
 
+    // !!!!! IMPORTANT
     private void processConnection(GmailConnection connection) throws Exception {
 
         System.out.println(
@@ -289,22 +290,16 @@ public class GmailService {
         String accessToken =
                 gmailTokenService.getValidAccessToken(connection.getUser());
 
-        System.out.println(
-                "Access token received for connection id=" + connection.getId()
-        );
-
         String response = restClient.get()
                 .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=5&q=is:unread")
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
                 .body(String.class);
 
-        System.out.println(response);
-
         JsonNode root = objectMapper.readTree(response);
 
         if (!root.has("messages") || root.get("messages").isEmpty()) {
-            System.out.println("No Gmail messages found");
+            System.out.println("No unread Gmail messages found");
             return;
         }
 
@@ -313,42 +308,11 @@ public class GmailService {
                 .get("id")
                 .asText();
 
-        if (isMessageAlreadyProcessed(connection.getUser(), messageId)) {
-            System.out.println("Email already processed: " + messageId);
-            return;
-        }
-
-        String messageResponse = restClient.get()
-                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messageId)
-                .header("Authorization", "Bearer " + accessToken)
-                .retrieve()
-                .body(String.class);
-
-        JsonNode messageRoot = objectMapper.readTree(messageResponse);
-
-        String snippet = messageRoot.path("snippet").asText("");
-        String subject = extractHeader(messageRoot, "Subject");
-        String from = extractHeader(messageRoot, "From");
-
-        System.out.println("Message details received for id=" + messageId);
-        System.out.println("From: " + from);
-        System.out.println("Subject: " + subject);
-        System.out.println("Snippet: " + snippet);
-
-        boolean jobRelated = isJobRelatedEmail(from, subject, snippet);
-
-        markMessageAsProcessed(connection.getUser(),  messageId,  jobRelated,
-                                from, subject,  snippet
-                              );
-
-        if (!jobRelated) {
-            System.out.println("Email is NOT job-related");
-
-            markAsRead(accessToken, messageId);
-            return;
-        }
-
-        System.out.println("Email IS job-related");
+        gmailEmailProcessingService.processSingleEmail(
+                connection.getUser(),
+                messageId,
+                accessToken
+        );
 
         markAsRead(accessToken, messageId);
     }
@@ -368,49 +332,5 @@ public class GmailService {
 
         System.out.println("Marked Gmail message as read: " + messageId);
     }
-
-    private String extractHeader (JsonNode messageRoot, String headerName) {
-        JsonNode headers = messageRoot
-                .path("payload")
-                .path("headers");
-
-        if (!headers.isArray()) {
-            return "";
-        }
-
-        for (JsonNode header : headers) {
-            String name = header.path("name").asText("");
-
-            if (headerName.equalsIgnoreCase(name)) {
-                return header.path("value").asText("");
-            }
-        }
-
-        return "";
-    }
-
-    private boolean isJobRelatedEmail(String from, String subject, String snippet) {
-
-        String content = (
-                from + " " +
-                        subject + " " +
-                        snippet
-        ).toLowerCase();
-
-        return content.contains("bewerbung")
-                || content.contains("application")
-                || content.contains("interview")
-                || content.contains("rejection")
-                || content.contains("absage")
-                || content.contains("job")
-                || content.contains("karriere")
-                || content.contains("career")
-                || content.contains("stepstone")
-                || content.contains("linkedin")
-                || content.contains("indeed")
-                || content.contains("praktikum")
-                || content.contains("werkstudent");
-    }
-
 
 }
