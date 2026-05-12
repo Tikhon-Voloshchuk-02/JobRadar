@@ -30,6 +30,13 @@ public class GmailConnection {
 
     private LocalDateTime expiresAt;
 
+//SCANNING
+    private LocalDateTime lastScannedAt;
+    private LocalDateTime lastSuccessfulScanAt;
+    private String lastScanError;
+    private Boolean autoMarkAsRead = true;
+
+
     public Long getId(){return id;}
     public User getUser() {return user;}
     public String getGoogleEmail() {return googleEmail; }
@@ -55,4 +62,23 @@ public class GmailConnection {
 
     public LocalDateTime getExpiresAt() { return expiresAt; }
     public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
+
+
+    public LocalDateTime getLastScannedAt() { return lastScannedAt; }
+    public void setLastScannedAt(LocalDateTime lastScannedAt) { this.lastScannedAt = lastScannedAt; }
+
+    public LocalDateTime getLastSuccessfulScanAt() { return lastSuccessfulScanAt; }
+    public void setLastSuccessfulScanAt(LocalDateTime lastSuccessfulScanAt) { this.lastSuccessfulScanAt = lastSuccessfulScanAt; }
+
+    public String getLastScanError() { return lastScanError; }
+    public void setLastScanError(String lastScanError) { this.lastScanError = lastScanError; }
+
+    public Boolean getAutoMarkAsRead() {
+        return autoMarkAsRead;
+    }
+
+    public void setAutoMarkAsRead(Boolean autoMarkAsRead) {
+        this.autoMarkAsRead = autoMarkAsRead;
+    }
+
 }

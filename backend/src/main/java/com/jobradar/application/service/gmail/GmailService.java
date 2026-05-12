@@ -1,5 +1,7 @@
 package com.jobradar.application.service.gmail;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobradar.application.dto.gmail.GmailMessageDetailResponse;
 import com.jobradar.application.dto.gmail.GmailMessageListResponse;
 import com.jobradar.application.gmail.*;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,6 +26,7 @@ public class GmailService {
     private final ProcessedEmailRepository processedEmailRepository;
 
     private final RestClient restClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     @Value("${GOOGLE_CLIENT_ID}")
@@ -208,7 +212,7 @@ public class GmailService {
                 + "&redirect_uri=http://localhost:8080/api/gmail/oauth/callback"
                 + "&response_type=code"
                 + "&scope="
-                + "openid%20email%20profile%20https://www.googleapis.com/auth/gmail.readonly"
+                + "openid%20email%20profile%20https://www.googleapis.com/auth/gmail.modify"
                 + "&access_type=offline"
                 + "&prompt=consent"
                 + "&state=" + state;
@@ -257,5 +261,83 @@ public class GmailService {
                 .body(GmailMessageDetailResponse.class);
     }
 
+
+    public void scanAllActiveConnections() {
+        List<GmailConnection> connections =
+                gmailConnectionRepository.findByConnectedTrue();
+
+        System.out.println("Gmail auto scan tick. Connected accounts: " + connections.size());
+
+        for (GmailConnection connection : connections) {
+            try {
+                processConnection(connection);
+            } catch (Exception e) {
+                System.out.println("Failed to process Gmail connection id=" + connection.getId());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void processConnection(GmailConnection connection) throws Exception {
+
+        System.out.println(
+                "Processing Gmail connection id=" + connection.getId()
+                        + ", email=" + connection.getGoogleEmail()
+        );
+
+        String accessToken =
+                gmailTokenService.getValidAccessToken(connection.getUser());
+
+        System.out.println(
+                "Access token received for connection id=" + connection.getId()
+        );
+
+        String response = restClient.get()
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=5&q=is:unread")
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(String.class);
+
+        System.out.println(response);
+
+        JsonNode root = objectMapper.readTree(response);
+
+        if (!root.has("messages") || root.get("messages").isEmpty()) {
+            System.out.println("No Gmail messages found");
+            return;
+        }
+
+        String messageId = root.get("messages")
+                .get(0)
+                .get("id")
+                .asText();
+
+        String messageResponse = restClient.get()
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messageId)
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(String.class);
+
+        System.out.println("Message details received for id=" + messageId);
+        //System.out.println(messageResponse);
+
+        markAsRead(accessToken, messageId);
+    }
+
+    private void markAsRead(String accessToken, String messageId) {
+        restClient.post()
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/" + messageId + "/modify")
+                .header("Authorization", "Bearer " + accessToken)
+                .header("Content-Type", "application/json")
+                .body("""
+                    {
+                      "removeLabelIds": ["UNREAD"]
+                    }
+                    """)
+                .retrieve()
+                .body(String.class);
+
+        System.out.println("Marked Gmail message as read: " + messageId);
+    }
 
 }
