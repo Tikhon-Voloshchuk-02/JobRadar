@@ -1,10 +1,8 @@
 package com.jobradar.application.controller;
 
-import com.jobradar.application.dto.gmail.GmailEmailAnalysisResponse;
-import com.jobradar.application.dto.gmail.GmailMessageDetailResponse;
-import com.jobradar.application.dto.gmail.GmailMessageDto;
-import com.jobradar.application.dto.gmail.GmailMessageListResponse;
+import com.jobradar.application.dto.gmail.*;
 import com.jobradar.application.dto.google.GoogleTokenResponse;
+import com.jobradar.application.gmail.GmailConnection;
 import com.jobradar.application.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
@@ -121,5 +119,14 @@ public class GmailController {
     @PostMapping("/mock-connect")
     public GmailConnectionStatusResponse mockConnect(Authentication auth) {
         return gmailService.mockConnect(auth);
+    }
+
+    @PatchMapping("/auto-update")
+    public ResponseEntity<?> setAutoUpdate(Authentication auth, @RequestBody AutoUpdateRequest request){
+
+        GmailConnection connection = gmailService.setAutoUpdate(auth, request.isEnabled());
+        return ResponseEntity.ok(
+                Map.of("autoUpdateEnabled", connection.isAutoUpdateEnabled())
+        );
     }
 }

@@ -333,4 +333,14 @@ public class GmailService {
         System.out.println("Marked Gmail message as read: " + messageId);
     }
 
+    public GmailConnection setAutoUpdate(Authentication auth, boolean enabled){
+        User user = getCurrentUser(auth);
+
+        GmailConnection connection = gmailConnectionRepository.findByUserIdAndConnectedTrue(user.getId())
+                                                              .orElseThrow(() -> new RuntimeException("Gmail isn't connected!"));
+
+        connection.setAutoUpdateEnabled(enabled);
+        return gmailConnectionRepository.save(connection);
+    }
+
 }

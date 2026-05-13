@@ -36,6 +36,10 @@ public class GmailConnection {
     private String lastScanError;
     private Boolean autoMarkAsRead = true;
 
+//Auto-Update
+    @Column(nullable = false)
+    private boolean autoUpdateEnabled=false;
+
 
     public Long getId(){return id;}
     public User getUser() {return user;}
@@ -73,12 +77,9 @@ public class GmailConnection {
     public String getLastScanError() { return lastScanError; }
     public void setLastScanError(String lastScanError) { this.lastScanError = lastScanError; }
 
-    public Boolean getAutoMarkAsRead() {
-        return autoMarkAsRead;
-    }
+    public Boolean getAutoMarkAsRead() { return autoMarkAsRead; }
+    public void setAutoMarkAsRead(Boolean autoMarkAsRead) { this.autoMarkAsRead = autoMarkAsRead; }
 
-    public void setAutoMarkAsRead(Boolean autoMarkAsRead) {
-        this.autoMarkAsRead = autoMarkAsRead;
-    }
-
+    public boolean isAutoUpdateEnabled() { return autoUpdateEnabled; }
+    public void setAutoUpdateEnabled(boolean autoUpdateEnabled) { this.autoUpdateEnabled = autoUpdateEnabled; }
 }
