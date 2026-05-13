@@ -11,11 +11,47 @@ import static com.google.common.base.Strings.nullToEmpty;
 @Service
 public class EmailAnalysisService {
 
-    public EmailAnalysisResult analyze(GmailMessageDto email){
+    public EmailAnalysisResult analyze(GmailMessageDto email) {
+
         String text = buildText(email).toLowerCase();
 
+        // Ignore recommendation/spam emails from job boards
         if (containsAny(text,
-                "unfortunately", "leider", "not move forward", "nicht weiter", "absage")) {
+                "stepstone",
+                "indeed",
+                "linkedin jobs",
+                "recommended for you",
+                "our recommendation",
+                "popular job",
+                "hot job",
+                "top match",
+                "great candidate",
+                "great fit",
+                "your skills are needed",
+                "start your application",
+                "apply early",
+                "jobs that match your search",
+                "new jobs that match",
+                "this job looks like a great fit",
+                "this popular role",
+                "don't miss your chance",
+                "is this the one you're looking for")) {
+
+            return new EmailAnalysisResult(
+                    false,
+                    null,
+                    ConfidenceLevel.LOW,
+                    "Ignored job board recommendation email"
+            );
+        }
+
+        // Rejection emails
+        if (containsAny(text,
+                "unfortunately",
+                "leider",
+                "not move forward",
+                "nicht weiter",
+                "absage")) {
 
             return new EmailAnalysisResult(
                     true,
@@ -25,8 +61,13 @@ public class EmailAnalysisService {
             );
         }
 
+        // Interview emails
         if (containsAny(text,
-                "interview", "gespräch", "vorstellungsgespräch", "termin", "meeting")) {
+                "interview",
+                "gespräch",
+                "vorstellungsgespräch",
+                "termin",
+                "meeting")) {
 
             return new EmailAnalysisResult(
                     true,
@@ -36,8 +77,16 @@ public class EmailAnalysisService {
             );
         }
 
+        // Real offer emails
         if (containsAny(text,
-                "offer", "angebot", "vertrag", "contract")) {
+                "job offer",
+                "offer of employment",
+                "employment offer",
+                "we are pleased to offer",
+                "we would like to offer you",
+                "contract offer",
+                "arbeitsvertrag",
+                "vertragsangebot")) {
 
             return new EmailAnalysisResult(
                     true,
@@ -47,8 +96,13 @@ public class EmailAnalysisService {
             );
         }
 
+        // Coding challenge / assignment
         if (containsAny(text,
-                "assessment", "coding challenge", "testaufgabe", "aufgabe", "case study")) {
+                "assessment",
+                "coding challenge",
+                "testaufgabe",
+                "aufgabe",
+                "case study")) {
 
             return new EmailAnalysisResult(
                     true,
@@ -58,8 +112,13 @@ public class EmailAnalysisService {
             );
         }
 
+        // Application received / processing
         if (containsAny(text,
-                "application", "bewerbung", "thank you for applying", "eingegangen", "received")) {
+                "application",
+                "bewerbung",
+                "thank you for applying",
+                "eingegangen",
+                "received")) {
 
             return new EmailAnalysisResult(
                     true,
@@ -69,17 +128,12 @@ public class EmailAnalysisService {
             );
         }
 
+        // Generic job-related email
         if (containsAny(text,
                 "werkstudent",
                 "praktikum",
                 "praktikant",
-                "stepstone",
-                "candidate",
-                "candidates",
-                "job",
-                "career",
-                "position",
-                "stelle")) {
+                "bewerbung")) {
 
             return new EmailAnalysisResult(
                     true,
@@ -89,16 +143,12 @@ public class EmailAnalysisService {
             );
         }
 
-
-
         return new EmailAnalysisResult(
                 false,
                 null,
                 ConfidenceLevel.LOW,
                 "Email does not look job-related"
         );
-
-
     }
 
 
