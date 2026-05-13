@@ -180,6 +180,10 @@
     "dashboard": "Панель",
     "ai_suggestions": "AI-предложения",
     "profile": "Профиль"
+  },
+
+  "confirm": {
+    "delete_application": "Удалить эту заявку?"
   }
 
 }

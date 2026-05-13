@@ -180,6 +180,10 @@
     "dashboard": "Dashboard",
     "ai_suggestions": "KI-Vorschläge",
     "profile": "Profil"
+  },
+
+  "confirm": {
+    "delete_application": "Diese Bewerbung löschen?"
   }
 
 }

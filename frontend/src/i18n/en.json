@@ -180,6 +180,10 @@
     "dashboard": "Dashboard",
     "ai_suggestions": "AI Suggestions",
     "profile": "Profile"
+  },
+
+  "confirm": {
+    "delete_application": "Delete this application?"
   }
 
 }

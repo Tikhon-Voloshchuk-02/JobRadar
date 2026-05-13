@@ -160,7 +160,10 @@ export function useDashboard() {
   }
 
   async function handleDelete(id) {
-    const confirmed = window.confirm("Delete this application?");
+    const confirmed = window.confirm(
+      t("confirm.delete_application")
+    );
+
     if (!confirmed) return;
 
     try {
@@ -170,8 +173,9 @@ export function useDashboard() {
       await loadApplications();
       await loadSummary();
       await loadRecentActivity();
+
     } catch (err) {
-      setError(err.message || "Failed to delete application");
+      setError(err.message || t("errors.delete_failed"));
     }
   }
 
