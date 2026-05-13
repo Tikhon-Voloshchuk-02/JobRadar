@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +35,9 @@ public class GmailService {
 
     @Value("${GOOGLE_CLIENT_ID}")
     private String googleClientId;
+
+    @Value("${GOOGLE_REDIRECT_URI}")
+    private String googleRedirectUri;
 
     public GmailService(GmailConnectionRepository gmailConnectionRepository,
                         GmailOAuthStateRepository gmailOAuthStateRepository,
@@ -211,7 +216,7 @@ public class GmailService {
 
         return "https://accounts.google.com/o/oauth2/v2/auth"
                 + "?client_id=" + googleClientId
-                + "&redirect_uri=http://localhost:8080/api/gmail/oauth/callback"
+                + "&redirect_uri=" + URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8)
                 + "&response_type=code"
                 + "&scope="
                 + "openid%20email%20profile%20https://www.googleapis.com/auth/gmail.modify"

@@ -27,6 +27,7 @@ public class GmailController {
     @Value("${app.frontend-url}")
     private String frontendUrl;
 
+
     private final GmailService gmailService;
     private final GmailConnectionService gmailConnectionService;
     private final GoogleOAuthService googleOAuthService;
