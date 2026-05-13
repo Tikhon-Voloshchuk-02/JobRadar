@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -117,20 +118,30 @@ public class AiSuggestionService {
      * @return AiSuggestionResponse with updated status
      */
     @Transactional
-    public AiSuggestionResponse acceptSuggestion(Long suggestionId, User user){
+    public AiSuggestionResponse acceptSuggestion(Long suggestionId, User user) {
 
         AiSuggestion suggestion = aiSuggestionRepository.findById(suggestionId)
                 .orElseThrow(() -> new RuntimeException("Suggestion not found"));
 
-    // Verification: suggestion belongs to the user
+        AiSuggestion saved = acceptSuggestionInternal(suggestion, user);
+
+        return toResponse(saved);
+    }
+
+    @Transactional
+    public AiSuggestion acceptSuggestionInternal(AiSuggestion suggestion, User user) {
+
         if (!suggestion.getApplication().getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Access denied");
         }
-    // Verification: suggestion has not been processed yet
+
         if (suggestion.getSuggestionStatus() != SuggestionStatus.PENDING) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Suggestion is already processed");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Suggestion is already processed"
+            );
         }
-    // Get the related application
+
         Application application = suggestion.getApplication();
 
         ApplicationStatus oldStatus = application.getStatus();
@@ -153,9 +164,7 @@ public class AiSuggestionService {
 
         suggestion.setSuggestionStatus(SuggestionStatus.ACCEPTED);
 
-        AiSuggestion saved = aiSuggestionRepository.save(suggestion);
-        return toResponse(saved);
-
+        return aiSuggestionRepository.save(suggestion);
     }
 
     public AiSuggestionResponse toResponse(AiSuggestion suggestion) {

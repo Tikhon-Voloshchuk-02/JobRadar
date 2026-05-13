@@ -59,6 +59,7 @@ public class StatusHistory {
     public void setNewStatus(ApplicationStatus newStatus) { this.newStatus = newStatus; }
 
     public LocalDateTime getChangedAt() { return changedAt; }
+    public void setChangedAt(LocalDateTime changedAt) {this.changedAt=changedAt; }
 
     public Application getApplication() { return application; }
 

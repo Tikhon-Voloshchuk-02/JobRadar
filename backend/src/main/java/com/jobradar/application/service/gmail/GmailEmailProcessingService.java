@@ -10,10 +10,12 @@ import com.jobradar.application.gmail.ProcessedEmail;
 import com.jobradar.application.gmail.ProcessedEmailRepository;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ai.AiSuggestion;
+import com.jobradar.application.model.ai.ConfidenceLevel;
 import com.jobradar.application.model.ai.SuggestionStatus;
 import com.jobradar.application.repository.AiSuggestionRepository;
 import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.UserRepository;
+import com.jobradar.application.service.AiSuggestionService;
 import com.jobradar.application.service.EmailAnalysisService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,7 @@ public class GmailEmailProcessingService {
     private final RestClient restClient;
 
     private final AiSuggestionRepository aiSuggestionRepository;
+    private final AiSuggestionService aiSuggestionService;
     private final ApplicationRepository applicationRepository;
 
 
@@ -51,6 +54,7 @@ public class GmailEmailProcessingService {
                                        UserRepository userRepository,
                                        ProcessedEmailRepository processedEmailRepository,
                                        AiSuggestionRepository aiSuggestionRepository,
+                                       AiSuggestionService aiSuggestionService,
                                        ApplicationRepository applicationRepository) {
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailTokenService = gmailTokenService;
@@ -59,6 +63,7 @@ public class GmailEmailProcessingService {
         this.processedEmailRepository = processedEmailRepository;
         this.restClient = RestClient.create();
 
+        this.aiSuggestionService=aiSuggestionService;
         this.aiSuggestionRepository=aiSuggestionRepository;
         this.applicationRepository=applicationRepository;
     }
@@ -259,6 +264,10 @@ public class GmailEmailProcessingService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        GmailConnection connection = gmailConnectionRepository
+                .findByUserIdAndConnectedTrue(user.getId())
+                .orElseThrow(() -> new RuntimeException("Gmail is not connected"));
+
         List<GmailMessageDto> emails = fetchRecentEmails(auth);
 
         return emails.stream()
@@ -267,7 +276,7 @@ public class GmailEmailProcessingService {
 
                     if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
                         findMatchingApplication(user, gmailEmail)
-                                .ifPresent(application -> createAiSuggestion(application, gmailEmail, analysis));
+                                .ifPresent(application -> createAiSuggestion(connection ,application, gmailEmail, analysis));
                     }
 
                     return new GmailEmailAnalysisResponse(gmailEmail, analysis);
@@ -303,7 +312,10 @@ public class GmailEmailProcessingService {
                 .findFirst();
     }
 
-    private void createAiSuggestion( Application application, GmailMessageDto email,  EmailAnalysisResult analysis) {
+    private void createAiSuggestion( GmailConnection gmailConnection,
+                                     Application application,
+                                     GmailMessageDto email,
+                                     EmailAnalysisResult analysis) {
 
         AiSuggestion suggestion = new AiSuggestion();
 
@@ -332,7 +344,17 @@ public class GmailEmailProcessingService {
 
         suggestion.setSuggestionStatus(SuggestionStatus.PENDING);
 
-        aiSuggestionRepository.save(suggestion);
+        AiSuggestion saved = aiSuggestionRepository.save(suggestion);
+
+        if (gmailConnection.isAutoUpdateEnabled()
+                && saved.getConfidence() == ConfidenceLevel.HIGH
+                && saved.getSuggestedStatus() != null) {
+
+            aiSuggestionService.acceptSuggestionInternal(
+                    saved,
+                    application.getUser()
+            );
+        }
     }
 
     /**
@@ -446,6 +468,10 @@ public class GmailEmailProcessingService {
 
         processedEmailRepository.save(processedEmail);
 
+        GmailConnection connection = gmailConnectionRepository
+                .findByUserIdAndConnectedTrue(user.getId())
+                .orElseThrow(() -> new RuntimeException("Gmail is not connected"));
+
         EmailAnalysisResult analysis = emailAnalysisService.analyze(dto);
 
         System.out.println("Email analysis result: " + analysis);
@@ -454,7 +480,7 @@ public class GmailEmailProcessingService {
             Optional<Application> matchingApplication = findMatchingApplication(user, dto);
 
             if (matchingApplication.isPresent()) {
-                createAiSuggestion(matchingApplication.get(), dto, analysis);
+                createAiSuggestion(connection, matchingApplication.get(), dto, analysis);
                 System.out.println("AI suggestion created for email: " + messageId);
             } else {
                 System.out.println("No matching application found for email: " + messageId);
