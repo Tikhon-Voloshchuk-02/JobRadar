@@ -14,7 +14,7 @@ function Sidebar({ open, setOpen }) {
         const token = localStorage.getItem("token");
 
         const response = await fetch(
-          "http://localhost:8080/api/ai-suggestions/pending/count",
+           "/api/ai-suggestions/pending/count",
           {
             headers: {
               Authorization: `Bearer ${token}`,
