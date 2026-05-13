@@ -78,7 +78,7 @@ export default function DashboardPage() {
             <LanguageSwitcher />
 
             <button onClick={() => navigate("/user")}>
-              Profile
+              {t("nav.profile")}
             </button>
 
             <button onClick={toggleForm}>

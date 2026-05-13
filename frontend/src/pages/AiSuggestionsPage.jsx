@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Sidebar from "../components/Sidebar";
 import {
   getPendingAiSuggestions,
   acceptAiSuggestion,
   rejectAiSuggestion,
-  acceptAllAiSuggestions
+  acceptAllAiSuggestions,
 } from "../api/aiSuggestions";
 
 import "./AiSuggestionsPage.css";
 
 export default function AiSuggestionsPage() {
+  const { t } = useTranslation();
+
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,7 +25,7 @@ export default function AiSuggestionsPage() {
       const data = await getPendingAiSuggestions();
       setSuggestions(data);
     } catch (err) {
-      setError(err.message || "Failed to load AI suggestions");
+      setError(err.message || t("ai_suggestions.could_not_load"));
     } finally {
       setLoading(false);
     }
@@ -37,7 +40,7 @@ export default function AiSuggestionsPage() {
       await acceptAiSuggestion(id);
       setSuggestions((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
-      setError(err.message || "Failed to accept suggestion");
+      setError(err.message || t("ai_suggestions.could_not_accept"));
     }
   }
 
@@ -47,7 +50,7 @@ export default function AiSuggestionsPage() {
       await acceptAllAiSuggestions();
       setSuggestions([]);
     } catch (err) {
-      setError(err.message || "Failed to accept all suggestions");
+      setError(err.message || t("ai_suggestions.could_not_accept_all"));
     }
   }
 
@@ -56,7 +59,7 @@ export default function AiSuggestionsPage() {
       await rejectAiSuggestion(id);
       setSuggestions((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
-      setError(err.message || "Failed to reject suggestion");
+      setError(err.message || t("ai_suggestions.could_not_reject"));
     }
   }
 
@@ -75,8 +78,8 @@ export default function AiSuggestionsPage() {
       <main className="ai-suggestions-page main-content">
         <header className="ai-suggestions-header">
           <div>
-            <h1>AI Suggestions</h1>
-            <p>Review suggested status updates before applying them.</p>
+            <h1>{t("ai_suggestions.title")}</h1>
+            <p>{t("ai_suggestions.subtitle")}</p>
           </div>
 
           <div className="header-actions">
@@ -85,24 +88,27 @@ export default function AiSuggestionsPage() {
                 className="accept-all-button"
                 onClick={handleAcceptAll}
               >
-                Accept All
+                {t("ai_suggestions.accept_all")}
               </button>
             )}
 
             <button className="refresh-button" onClick={loadSuggestions}>
-              Refresh
+              {t("ai_suggestions.refresh")}
             </button>
           </div>
         </header>
 
-        {loading && <p className="loading-text">Loading suggestions...</p>}
+        {loading && (
+          <p className="loading-text">{t("ai_suggestions.loading")}</p>
+        )}
+
         {error && <p className="error-text">{error}</p>}
 
         {!loading && !error && suggestions.length === 0 && (
           <div className="empty-state">
             <div className="empty-state-icon">◎</div>
-            <h2>No pending suggestions</h2>
-            <p>New AI suggestions will appear here after email analysis.</p>
+            <h2>{t("ai_suggestions.empty")}</h2>
+            <p>{t("ai_suggestions.empty_hint")}</p>
           </div>
         )}
 
@@ -145,14 +151,14 @@ export default function AiSuggestionsPage() {
                   className="accept-button"
                   onClick={() => handleAccept(suggestion.id)}
                 >
-                  Accept
+                  {t("ai_suggestions.accept")}
                 </button>
 
                 <button
                   className="reject-button"
                   onClick={() => handleReject(suggestion.id)}
                 >
-                  Reject
+                  {t("ai_suggestions.reject")}
                 </button>
               </div>
             </article>

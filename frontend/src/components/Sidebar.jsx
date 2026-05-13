@@ -1,49 +1,48 @@
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import "./Sidebar.css";
 
 function Sidebar({ open, setOpen }) {
 
+  const { t } = useTranslation();
   const [pendingCount, setPendingCount] = useState(0);
 
-    useEffect(() => {
-      const fetchPendingCount = async () => {
-        try {
-          const token = localStorage.getItem("token");
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
-          const response = await fetch(
-            "http://localhost:8080/api/ai-suggestions/pending/count",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          if (!response.ok) {
-            return;
+        const response = await fetch(
+          "http://localhost:8080/api/ai-suggestions/pending/count",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
+        );
 
-          const data = await response.json();
-          setPendingCount(data.count);
-
-        } catch (error) {
-          console.error("Failed to fetch AI suggestions count", error);
+        if (!response.ok) {
+          return;
         }
-      };
 
-      fetchPendingCount();
-    }, []);
+        const data = await response.json();
+        setPendingCount(data.count);
 
+      } catch (error) {
+        console.error("Failed to fetch AI suggestions count", error);
+      }
+    };
+
+    fetchPendingCount();
+  }, []);
 
   return (
     <aside className={`sidebar ${open ? "open" : "closed"}`}>
 
-
       <button className="sidebar-toggle" onClick={() => setOpen(!open)}>
         {open ? "←" : "→"}
       </button>
-
 
       {open && (
         <>
@@ -54,11 +53,11 @@ function Sidebar({ open, setOpen }) {
 
           <nav className="sidebar-nav">
             <NavLink to="/dashboard" className="sidebar-link">
-              Dashboard
+              {t("nav.dashboard")}
             </NavLink>
 
             <NavLink to="/ai-suggestions" className="sidebar-link">
-              <span>AI Suggestions</span>
+              <span>{t("nav.ai_suggestions")}</span>
 
               {pendingCount > 0 && (
                 <span className="sidebar-badge">
@@ -68,7 +67,7 @@ function Sidebar({ open, setOpen }) {
             </NavLink>
 
             <NavLink to="/user" className="sidebar-link">
-              Profile
+              {t("nav.profile")}
             </NavLink>
           </nav>
         </>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "./UserPage.css";
@@ -12,6 +13,8 @@ import {
 } from "../api/api";
 
 export default function UserPage() {
+
+  const { t } = useTranslation();
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
 
@@ -33,7 +36,7 @@ export default function UserPage() {
         setUser(data);
         setNameInput(data.name || "");
       })
-      .catch(() => setError("Could not load user profile"));
+      .catch(() => setError(t("user_page.could_not_load_profile")));
   }, []);
 
   function handleLogout() {
@@ -50,10 +53,10 @@ export default function UserPage() {
       setUser(updatedUser);
       setIsEditingName(false);
 
-      toast.success("Profile updated");
+      toast.success(t("user_page.profile_updated"));
     } catch (err) {
       console.error(err);
-      toast.error("Could not update profile");
+      toast.success(t("user_page.profile_updated"));
     } finally {
       setSaving(false);
     }
@@ -65,7 +68,7 @@ export default function UserPage() {
       window.location.href = data.url;
     } catch (err) {
       console.error(err);
-      toast.error("Could not connect Gmail");
+      toast.error(t("user_page.could_not_connect_gmail"));
     }
   }
 
@@ -76,10 +79,10 @@ export default function UserPage() {
       const updatedUser = await getCurrentUser();
       setUser(updatedUser);
 
-      toast.success("Gmail disconnected");
+      toast.success(t("user_page.gmail_disconnected"));
     } catch (err) {
       console.error(err);
-      toast.error("Could not disconnect Gmail");
+      toast.error(t("user_page.could_not_disconnect_gmail"));
     }
   }
 
@@ -102,12 +105,12 @@ export default function UserPage() {
 
       toast.success(
         response.autoUpdateEnabled
-          ? "Auto-Update enabled"
-          : "Auto-Update disabled"
+          ? t("user_page.auto_update_enabled")
+          : t("user_page.auto_update_disabled")
       );
     } catch (err) {
       console.error(err);
-      toast.error("Could not update Auto-Update setting");
+      toast.error(t("user_page.could_not_update_auto_update"));
     } finally {
       setUpdatingAutoUpdate(false);
     }
@@ -131,10 +134,10 @@ export default function UserPage() {
         autoUpdateEnabled: response.autoUpdateEnabled,
       });
 
-      toast.success("Auto-Update enabled");
+      toast.success(t("user_page.auto_update_enabled"));
     } catch (err) {
       console.error(err);
-      toast.error("Could not enable Auto-Update");
+      toast.error(t("user_page.could_not_enable_auto_update"));
     } finally {
       setUpdatingAutoUpdate(false);
     }
@@ -176,14 +179,14 @@ export default function UserPage() {
           </div>
 
           <div>
-            <h1>Profile</h1>
-            <p className="user-subtitle">Account overview and integrations</p>
+            <h1>{t("user_page.title")}</h1>
+            <p className="user-subtitle">{t("user_page.subtitle")}</p>
           </div>
         </div>
 
         <div className="profile-grid">
           <div>
-            <span>Name</span>
+            <span>{t("user_page.name")}</span>
 
             {isEditingName ? (
               <div className="name-edit">
@@ -194,7 +197,7 @@ export default function UserPage() {
                 />
 
                 <button onClick={handleSaveName} disabled={saving || !nameInput.trim()}>
-                  {saving ? "Saving..." : "Save"}
+                  {saving ? t("user_page.saving") : t("user_page.save")}
                 </button>
 
                 <button
@@ -205,7 +208,7 @@ export default function UserPage() {
                   }}
                   disabled={saving}
                 >
-                  Cancel
+                  {t("cancel")}
                 </button>
               </div>
             ) : (
@@ -216,36 +219,48 @@ export default function UserPage() {
                   className="small-button"
                   onClick={() => setIsEditingName(true)}
                 >
-                  Edit
+                  {t("edit")}
                 </button>
               </div>
             )}
           </div>
 
           <div>
-            <span>Email</span>
+            <span>{t("user_page.email")}</span>
             <strong className="profile-value">{user.email}</strong>
           </div>
 
           <div>
-            <span>Email verification</span>
-            <strong>{user.emailVerified ? "Verified" : "Not verified"}</strong>
+            <span>{t("user_page.email_verification")}</span>
+            <strong>
+              {user.emailVerified
+                ? t("user_page.verified")
+                : t("user_page.not_verified")}
+            </strong>
           </div>
 
           <div>
-            <span>Gmail</span>
-            <strong>{user.gmailConnected ? "Connected" : "Not connected"}</strong>
+            <span>{t("user_page.gmail")}</span>
+            <strong>
+              {user.gmailConnected
+                ? t("user_page.connected")
+                : t("user_page.not_connected")}
+            </strong>
           </div>
 
           {user.gmailConnected && (
             <div>
-              <span>Auto-Update</span>
-              <strong>{user.autoUpdateEnabled ? "Enabled" : "Disabled"}</strong>
+              <span>{t("user_page.auto_update")}</span>
+              <strong>
+                {user.autoUpdateEnabled
+                  ? t("user_page.enabled")
+                  : t("user_page.disabled")}
+              </strong>
             </div>
           )}
 
           <div>
-            <span>Created</span>
+            <span>{t("user_page.created")}</span>
             <strong>
               {user.createdAt
                 ? new Date(user.createdAt).toLocaleDateString(undefined, {
@@ -260,8 +275,7 @@ export default function UserPage() {
 
         {user.gmailConnected && (
           <div className="auto-update-warning">
-            Auto-Update automatically accepts high-confidence AI suggestions and updates
-            application statuses. Use carefully.
+            {t("user_page.auto_update_warning")}
           </div>
         )}
 
@@ -274,28 +288,28 @@ export default function UserPage() {
                 disabled={updatingAutoUpdate}
               >
                 {updatingAutoUpdate
-                  ? "Updating..."
+                  ? t("user_page.updating")
                   : user.autoUpdateEnabled
-                    ? "Disable Auto-Update"
-                    : "Enable Auto-Update"}
+                    ? t("user_page.disable_auto_update")
+                    : t("user_page.enable_auto_update")}
               </button>
 
               <button className="secondary-button" onClick={handleDisconnectGmail}>
-                Disconnect Gmail
+                {t("user_page.disconnect_gmail")}
               </button>
             </>
           ) : (
             <button className="secondary-button" onClick={handleConnectGmail}>
-              Connect Gmail
+              {t("user_page.connect_gmail")}
             </button>
           )}
 
           <button className="danger-button" onClick={handleLogout}>
-            Logout
+            {t("logout")}
           </button>
 
           <button onClick={() => navigate("/dashboard")}>
-            Back to Dashboard
+            {t("user_page.back_to_dashboard")}
           </button>
         </div>
       </div>
@@ -303,17 +317,11 @@ export default function UserPage() {
       {showAutoUpdateWarning && (
         <div className="modal-overlay">
           <div className="warning-modal">
-            <h2>Enable Auto-Update?</h2>
+            <h2>{t("user_page.auto_update_modal_title")}</h2>
 
-            <p>
-              Auto-Update can automatically accept high-confidence AI suggestions
-              and change application statuses without manual confirmation.
-            </p>
+            <p>{t("user_page.auto_update_modal_text_1")}</p>
 
-            <p>
-              Incorrect email analysis may result in wrong status updates. Enable
-              this feature only if you accept this risk.
-            </p>
+            <p>{t("user_page.auto_update_modal_text_2")}</p>
 
             <label className="checkbox-row">
               <input
@@ -321,7 +329,7 @@ export default function UserPage() {
                 checked={dontShowAgain}
                 onChange={(e) => setDontShowAgain(e.target.checked)}
               />
-              Don&apos;t show again
+              {t("user_page.dont_show_again")}
             </label>
 
             <div className="modal-actions">
@@ -330,7 +338,7 @@ export default function UserPage() {
                 onClick={() => setShowAutoUpdateWarning(false)}
                 disabled={updatingAutoUpdate}
               >
-                Cancel
+                {t("cancel")}
               </button>
 
               <button
@@ -338,7 +346,9 @@ export default function UserPage() {
                 onClick={confirmEnableAutoUpdate}
                 disabled={updatingAutoUpdate}
               >
-                {updatingAutoUpdate ? "Enabling..." : "Enable Anyway"}
+                {updatingAutoUpdate
+                  ? t("user_page.enabling")
+                  : t("user_page.enable_anyway")}
               </button>
             </div>
           </div>
