@@ -8,6 +8,7 @@ import {
   updateCurrentUser,
   connectGmail,
   disconnectGmail,
+  setGmailAutoUpdate
 } from "../api/api";
 
 export default function UserPage() {
@@ -19,6 +20,12 @@ export default function UserPage() {
   const [saving, setSaving] = useState(false);
 
   const navigate = useNavigate();
+  const [updatingAutoUpdate, setUpdatingAutoUpdate] = useState(false);
+  const [showAutoUpdateWarning, setShowAutoUpdateWarning] = useState(false);
+
+  const [dontShowAgain, setDontShowAgain] = useState(
+    localStorage.getItem("hideAutoUpdateWarning") === "true"
+  );
 
   useEffect(() => {
     getCurrentUser()
@@ -76,6 +83,65 @@ export default function UserPage() {
     }
   }
 
+  async function handleToggleAutoUpdate() {
+
+    if (!user.autoUpdateEnabled && !dontShowAgain) {
+      setShowAutoUpdateWarning(true);
+      return;
+    }
+
+    try {
+      setUpdatingAutoUpdate(true);
+
+      const response = await setGmailAutoUpdate(!user.autoUpdateEnabled);
+
+      setUser({
+        ...user,
+        autoUpdateEnabled: response.autoUpdateEnabled,
+      });
+
+      toast.success(
+        response.autoUpdateEnabled
+          ? "Auto-Update enabled"
+          : "Auto-Update disabled"
+      );
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not update Auto-Update setting");
+    } finally {
+      setUpdatingAutoUpdate(false);
+    }
+  }
+
+  async function confirmEnableAutoUpdate() {
+
+    if (dontShowAgain) {
+      localStorage.setItem("hideAutoUpdateWarning", "true");
+    }
+
+    setShowAutoUpdateWarning(false);
+
+    try {
+      setUpdatingAutoUpdate(true);
+
+      const response = await setGmailAutoUpdate(true);
+
+      setUser({
+        ...user,
+        autoUpdateEnabled: response.autoUpdateEnabled,
+      });
+
+      toast.success("Auto-Update enabled");
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not enable Auto-Update");
+    } finally {
+      setUpdatingAutoUpdate(false);
+    }
+  }
+
+
+
   if (error) {
     return (
       <div className="user-page">
@@ -92,10 +158,11 @@ export default function UserPage() {
     );
   }
 
+
+
   return (
     <div className="user-page">
       <div className="user-card">
-
         <div className="user-header">
           <div className="avatar">
             {user.name
@@ -162,17 +229,20 @@ export default function UserPage() {
 
           <div>
             <span>Email verification</span>
-            <strong>
-              {user.emailVerified ? "Verified" : "Not verified"}
-            </strong>
+            <strong>{user.emailVerified ? "Verified" : "Not verified"}</strong>
           </div>
 
           <div>
             <span>Gmail</span>
-            <strong>
-              {user.gmailConnected ? "Connected" : "Not connected"}
-            </strong>
+            <strong>{user.gmailConnected ? "Connected" : "Not connected"}</strong>
           </div>
+
+          {user.gmailConnected && (
+            <div>
+              <span>Auto-Update</span>
+              <strong>{user.autoUpdateEnabled ? "Enabled" : "Disabled"}</strong>
+            </div>
+          )}
 
           <div>
             <span>Created</span>
@@ -188,11 +258,32 @@ export default function UserPage() {
           </div>
         </div>
 
+        {user.gmailConnected && (
+          <div className="auto-update-warning">
+            Auto-Update automatically accepts high-confidence AI suggestions and updates
+            application statuses. Use carefully.
+          </div>
+        )}
+
         <div className="user-actions">
           {user.gmailConnected ? (
-            <button className="secondary-button" onClick={handleDisconnectGmail}>
-              Disconnect Gmail
-            </button>
+            <>
+              <button
+                className={user.autoUpdateEnabled ? "danger-button" : "secondary-button"}
+                onClick={handleToggleAutoUpdate}
+                disabled={updatingAutoUpdate}
+              >
+                {updatingAutoUpdate
+                  ? "Updating..."
+                  : user.autoUpdateEnabled
+                    ? "Disable Auto-Update"
+                    : "Enable Auto-Update"}
+              </button>
+
+              <button className="secondary-button" onClick={handleDisconnectGmail}>
+                Disconnect Gmail
+              </button>
+            </>
           ) : (
             <button className="secondary-button" onClick={handleConnectGmail}>
               Connect Gmail
@@ -208,6 +299,51 @@ export default function UserPage() {
           </button>
         </div>
       </div>
+
+      {showAutoUpdateWarning && (
+        <div className="modal-overlay">
+          <div className="warning-modal">
+            <h2>Enable Auto-Update?</h2>
+
+            <p>
+              Auto-Update can automatically accept high-confidence AI suggestions
+              and change application statuses without manual confirmation.
+            </p>
+
+            <p>
+              Incorrect email analysis may result in wrong status updates. Enable
+              this feature only if you accept this risk.
+            </p>
+
+            <label className="checkbox-row">
+              <input
+                type="checkbox"
+                checked={dontShowAgain}
+                onChange={(e) => setDontShowAgain(e.target.checked)}
+              />
+              Don&apos;t show again
+            </label>
+
+            <div className="modal-actions">
+              <button
+                className="secondary-button"
+                onClick={() => setShowAutoUpdateWarning(false)}
+                disabled={updatingAutoUpdate}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="danger-button"
+                onClick={confirmEnableAutoUpdate}
+                disabled={updatingAutoUpdate}
+              >
+                {updatingAutoUpdate ? "Enabling..." : "Enable Anyway"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

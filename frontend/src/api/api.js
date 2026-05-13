@@ -169,3 +169,22 @@ export async function disconnectGmail() {
   return response.json();
 }
 
+export async function setGmailAutoUpdate(enabled) {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_BASE_URL}/api/gmail/auto-update`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ enabled }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not update auto-update setting");
+  }
+
+  return response.json();
+}
+
