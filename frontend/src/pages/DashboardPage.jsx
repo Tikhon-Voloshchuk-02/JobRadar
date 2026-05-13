@@ -56,7 +56,7 @@ export default function DashboardPage() {
     selectedApplication,
     historyEntries,
     closeHistory,
-  } = useDashboard();
+  } = useDashboard(t);
 
   function handleLogout() {
     logout();

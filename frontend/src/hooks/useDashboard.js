@@ -8,7 +8,7 @@ import {
   updateApplicationStatus,
   getApplicationHistory,
   getDashboardSummary,
-  getRecentActivity
+  getRecentActivity,
 } from "../api/applications";
 
 const EMPTY_FORM = {
@@ -28,7 +28,7 @@ const EMPTY_SUMMARY = {
   statusDistribution: {},
 };
 
-export function useDashboard() {
+export function useDashboard(t) {
   const [applications, setApplications] = useState([]);
   const [summary, setSummary] = useState(EMPTY_SUMMARY);
 
@@ -46,7 +46,6 @@ export function useDashboard() {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [historyEntries, setHistoryEntries] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
-
 
   const [recentActivity, setRecentActivity] = useState([]);
 
@@ -160,9 +159,7 @@ export function useDashboard() {
   }
 
   async function handleDelete(id) {
-    const confirmed = window.confirm(
-      t("confirm.delete_application")
-    );
+    const confirmed = window.confirm(t("confirm.delete_application"));
 
     if (!confirmed) return;
 
@@ -173,7 +170,6 @@ export function useDashboard() {
       await loadApplications();
       await loadSummary();
       await loadRecentActivity();
-
     } catch (err) {
       setError(err.message || t("errors.delete_failed"));
     }
