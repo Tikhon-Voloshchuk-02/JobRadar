@@ -37,7 +37,7 @@ export default function UserPage() {
         setNameInput(data.name || "");
       })
       .catch(() => setError(t("user_page.could_not_load_profile")));
-  }, []);
+  }, [t]);
 
   function handleLogout() {
     localStorage.removeItem("token");

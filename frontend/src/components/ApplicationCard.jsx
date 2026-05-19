@@ -4,10 +4,6 @@ import "./ApplicationCard.css";
 
 import DocumentSection from "./DocumentSection";
 
-function getStatusClass(status) {
-  return `status-select status-${status.toLowerCase()}`;
-}
-
 export default function ApplicationCard({
   application,
   onEdit,

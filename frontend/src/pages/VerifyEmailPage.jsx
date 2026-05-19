@@ -5,15 +5,13 @@ import "./VerifyEmailPage.css";
 function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const token = searchParams.get("token");
 
-  const [status, setStatus] = useState("loading");
+  const [status, setStatus] = useState(token ? "loading" : "error");
   // loading | success | error
 
   useEffect(() => {
-    const token = searchParams.get("token");
-
     if (!token) {
-      setStatus("error");
       return;
     }
 
@@ -40,7 +38,7 @@ function VerifyEmailPage() {
     }
 
     verify();
-  }, [searchParams, navigate]);
+  }, [token, navigate]);
 
   return (
     <div className="verify-page">

@@ -17,6 +17,8 @@ import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.UserRepository;
 import com.jobradar.application.service.AiSuggestionService;
 import com.jobradar.application.service.EmailAnalysisService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -33,6 +35,8 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class GmailEmailProcessingService {
+
+    private static final Logger log = LoggerFactory.getLogger(GmailEmailProcessingService.class);
 
     private final GmailConnectionRepository gmailConnectionRepository;
     private final GmailTokenService gmailTokenService;
@@ -424,7 +428,7 @@ public class GmailEmailProcessingService {
     public void processSingleEmail(User user, String messageId, String accessToken) {
 
         if (processedEmailRepository.existsByUserAndGmailMessageId(user, messageId)) {
-            System.out.println("Email already processed: " + messageId);
+            log.debug("Email already processed: {}", messageId);
             return;
         }
 
@@ -474,16 +478,16 @@ public class GmailEmailProcessingService {
 
         EmailAnalysisResult analysis = emailAnalysisService.analyze(dto);
 
-        System.out.println("Email analysis result: " + analysis);
+        log.debug("Email analysis result: {}", analysis);
 
         if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
             Optional<Application> matchingApplication = findMatchingApplication(user, dto);
 
             if (matchingApplication.isPresent()) {
                 createAiSuggestion(connection, matchingApplication.get(), dto, analysis);
-                System.out.println("AI suggestion created for email: " + messageId);
+                log.info("AI suggestion created for email: {}", messageId);
             } else {
-                System.out.println("No matching application found for email: " + messageId);
+                log.debug("No matching application found for email: {}", messageId);
             }
         }
     }

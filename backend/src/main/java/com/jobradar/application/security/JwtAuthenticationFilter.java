@@ -6,6 +6,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +20,8 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
@@ -36,28 +40,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        //System.out.println("PATH = " + request.getServletPath());
-        //System.out.println("AUTH HEADER = " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            //System.out.println("NO BEARER TOKEN");
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
             String jwt = authHeader.substring(7);
-            //System.out.println("JWT = " + jwt);
 
             String userEmail = jwtService.extractUsername(jwt);
-            //System.out.println("JWT SUBJECT = " + userEmail);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-                //System.out.println("LOADED USER = " + userDetails.getUsername());
 
                 boolean valid = jwtService.isTokenValid(jwt, userEmail);
-                //System.out.println("TOKEN VALID = " + valid);
 
                 if (valid) {
                     UsernamePasswordAuthenticationToken authToken =
@@ -72,11 +69,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     );
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    //System.out.println("AUTHENTICATION SET");
                 }
             }
         } catch (Exception e) {
-            System.out.println("JWT FILTER ERROR = " + e.getMessage());
+            log.debug("JWT authentication failed: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

@@ -6,7 +6,9 @@ async function handleError(response, defaultMessage) {
   try {
     const errorData = await response.json();
     errorMessage = errorData.error || errorData.message || errorMessage;
-  } catch {}
+  } catch {
+    // Keep the default message when the response body is not JSON.
+  }
 
   throw new Error(errorMessage);
 }

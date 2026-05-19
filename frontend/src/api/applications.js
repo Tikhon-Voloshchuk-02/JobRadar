@@ -4,7 +4,6 @@ const API_BASE = "/api/applications";
 
 function getAuthHeaders() {
   const token = getToken();
-  console.log("TOKEN:", token);
 
   return {
     "Content-Type": "application/json",

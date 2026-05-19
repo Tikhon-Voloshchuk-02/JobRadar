@@ -18,7 +18,7 @@ export default function AiSuggestionsPage() {
   const [error, setError] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  async function loadSuggestions() {
+  async function refreshSuggestions() {
     try {
       setLoading(true);
       setError("");
@@ -32,8 +32,31 @@ export default function AiSuggestionsPage() {
   }
 
   useEffect(() => {
-    loadSuggestions();
-  }, []);
+    let active = true;
+
+    async function fetchSuggestions() {
+      try {
+        const data = await getPendingAiSuggestions();
+        if (active) {
+          setSuggestions(data);
+        }
+      } catch (err) {
+        if (active) {
+          setError(err.message || t("ai_suggestions.could_not_load"));
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchSuggestions();
+
+    return () => {
+      active = false;
+    };
+  }, [t]);
 
   async function handleAccept(id) {
     try {
@@ -92,7 +115,7 @@ export default function AiSuggestionsPage() {
               </button>
             )}
 
-            <button className="refresh-button" onClick={loadSuggestions}>
+            <button className="refresh-button" onClick={refreshSuggestions}>
               {t("ai_suggestions.refresh")}
             </button>
           </div>

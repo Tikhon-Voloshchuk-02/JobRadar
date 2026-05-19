@@ -8,6 +8,8 @@ import com.jobradar.application.gmail.*;
 import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ import java.util.UUID;
 
 @Service
 public class GmailService {
+
+    private static final Logger log = LoggerFactory.getLogger(GmailService.class);
 
     private final GmailConnectionRepository gmailConnectionRepository;
     private final GmailOAuthStateRepository gmailOAuthStateRepository;
@@ -272,14 +276,13 @@ public class GmailService {
         List<GmailConnection> connections =
                 gmailConnectionRepository.findByConnectedTrue();
 
-        System.out.println("Gmail auto scan tick. Connected accounts: " + connections.size());
+        log.info("Gmail auto scan tick. Connected accounts: {}", connections.size());
 
         for (GmailConnection connection : connections) {
             try {
                 processConnection(connection);
             } catch (Exception e) {
-                System.out.println("Failed to process Gmail connection id=" + connection.getId());
-                e.printStackTrace();
+                log.warn("Failed to process Gmail connection id={}", connection.getId(), e);
             }
         }
     }
@@ -287,9 +290,9 @@ public class GmailService {
     // !!!!! IMPORTANT
     private void processConnection(GmailConnection connection) throws Exception {
 
-        System.out.println(
-                "Processing Gmail connection id=" + connection.getId()
-                        + ", email=" + connection.getGoogleEmail()
+        log.info("Processing Gmail connection id={}, email={}",
+                connection.getId(),
+                connection.getGoogleEmail()
         );
 
         String accessToken =
@@ -304,7 +307,7 @@ public class GmailService {
         JsonNode root = objectMapper.readTree(response);
 
         if (!root.has("messages") || root.get("messages").isEmpty()) {
-            System.out.println("No unread Gmail messages found");
+            log.debug("No unread Gmail messages found");
             return;
         }
 
@@ -335,7 +338,7 @@ public class GmailService {
                 .retrieve()
                 .body(String.class);
 
-        System.out.println("Marked Gmail message as read: " + messageId);
+        log.info("Marked Gmail message as read: {}", messageId);
     }
 
     public GmailConnection setAutoUpdate(Authentication auth, boolean enabled){

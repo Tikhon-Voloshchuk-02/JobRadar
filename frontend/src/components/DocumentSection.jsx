@@ -22,9 +22,9 @@ function DocumentSection({ applicationId, editable = false }) {
   const [file, setFile] = useState(null);
   const [type, setType] = useState("CV");
 
-  async function loadDocuments() {
+  async function loadDocumentsForApplication(id) {
     try {
-      const data = await getDocuments(applicationId);
+      const data = await getDocuments(id);
       setDocuments(data);
     } catch (e) {
       console.error(e);
@@ -32,7 +32,24 @@ function DocumentSection({ applicationId, editable = false }) {
   }
 
   useEffect(() => {
-    loadDocuments();
+    let active = true;
+
+    async function fetchDocuments() {
+      try {
+        const data = await getDocuments(applicationId);
+        if (active) {
+          setDocuments(data);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    fetchDocuments();
+
+    return () => {
+      active = false;
+    };
   }, [applicationId]);
 
   async function handleUpload() {
@@ -41,7 +58,7 @@ function DocumentSection({ applicationId, editable = false }) {
     try {
       await uploadDocument(applicationId, file, type);
       setFile(null);
-      await loadDocuments();
+      await loadDocumentsForApplication(applicationId);
     } catch (e) {
       console.error(e);
     }
@@ -51,10 +68,10 @@ function DocumentSection({ applicationId, editable = false }) {
     try {
       setDocuments((prev) => prev.filter((doc) => doc.id !== id)); // оптимистично
       await deleteDocument(id);
-      await loadDocuments();
+      await loadDocumentsForApplication(applicationId);
     } catch (e) {
       console.error(e);
-      await loadDocuments();
+      await loadDocumentsForApplication(applicationId);
     }
   }
 
