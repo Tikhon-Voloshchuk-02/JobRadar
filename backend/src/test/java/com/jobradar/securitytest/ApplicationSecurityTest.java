@@ -2,7 +2,7 @@ package com.jobradar.securitytest;
 
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ApplicationStatus;
-import com.jobradar.application.service.ApplicationService;
+import com.jobradar.application.service.application.ApplicationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

@@ -3,7 +3,7 @@ package com.jobradar.application.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ApplicationStatus;
-import com.jobradar.application.service.ApplicationService;
+import com.jobradar.application.service.application.ApplicationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,8 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;

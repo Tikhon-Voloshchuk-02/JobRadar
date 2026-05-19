@@ -1,9 +1,8 @@
 package com.jobradar.application.controller;
 
-import com.jobradar.application.dto.DocumentResponse;
-import com.jobradar.application.model.Document;
+import com.jobradar.application.dto.document.DocumentResponse;
 import com.jobradar.application.model.DocumentType;
-import com.jobradar.application.service.DocumentService;
+import com.jobradar.application.service.application.DocumentService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

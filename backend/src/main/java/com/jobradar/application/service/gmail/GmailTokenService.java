@@ -1,8 +1,8 @@
 package com.jobradar.application.service.gmail;
 
 import com.jobradar.application.dto.google.GoogleRefreshTokenResponse;
-import com.jobradar.application.gmail.GmailConnection;
-import com.jobradar.application.gmail.GmailConnectionRepository;
+import com.jobradar.application.model.gmail.GmailConnection;
+import com.jobradar.application.repository.gmail.GmailConnectionRepository;
 import com.jobradar.application.model.user.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

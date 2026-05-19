@@ -2,12 +2,15 @@ package com.jobradar.application.service.gmail;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jobradar.application.dto.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDetailResponse;
 import com.jobradar.application.dto.gmail.GmailMessageListResponse;
-import com.jobradar.application.gmail.*;
-import com.jobradar.application.model.ApplicationStatus;
+import com.jobradar.application.model.gmail.GmailConnection;
+import com.jobradar.application.model.gmail.GmailOAuthState;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
+import com.jobradar.application.repository.gmail.GmailConnectionRepository;
+import com.jobradar.application.repository.gmail.GmailOAuthStateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

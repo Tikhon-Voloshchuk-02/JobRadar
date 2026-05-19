@@ -1,10 +1,9 @@
 package com.jobradar.application.controller;
-import com.jobradar.application.dto.StatusChangeRequest;
+import com.jobradar.application.dto.application.StatusChangeRequest;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.StatusHistory;
-import com.jobradar.application.repository.ApplicationRepository;
-import com.jobradar.application.service.ApplicationService;
+import com.jobradar.application.service.application.ApplicationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

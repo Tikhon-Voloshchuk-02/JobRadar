@@ -3,15 +3,15 @@ package com.jobradar.securitytest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jobradar.application.controller.AuthController;
-import com.jobradar.application.dto.AuthResponse;
-import com.jobradar.application.dto.LoginRequest;
-import com.jobradar.application.dto.RegisterRequest;
+import com.jobradar.application.dto.auth.AuthResponse;
+import com.jobradar.application.dto.auth.LoginRequest;
+import com.jobradar.application.dto.auth.RegisterRequest;
 import com.jobradar.application.exception.EmailAlreadyExistsException;
 import com.jobradar.application.model.user.Role;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.security.JwtAuthenticationFilter;
 import com.jobradar.application.security.JwtService;
-import com.jobradar.application.service.AuthService;
+import com.jobradar.application.service.auth.AuthService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

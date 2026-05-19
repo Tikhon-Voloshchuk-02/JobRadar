@@ -1,10 +1,10 @@
 package com.jobradar.application.service.gmail;
 
 import com.jobradar.application.dto.google.GoogleTokenResponse;
-import com.jobradar.application.gmail.GmailConnection;
-import com.jobradar.application.gmail.GmailConnectionRepository;
-import com.jobradar.application.gmail.GmailOAuthState;
-import com.jobradar.application.gmail.GmailOAuthStateRepository;
+import com.jobradar.application.model.gmail.GmailConnection;
+import com.jobradar.application.repository.gmail.GmailConnectionRepository;
+import com.jobradar.application.model.gmail.GmailOAuthState;
+import com.jobradar.application.repository.gmail.GmailOAuthStateRepository;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
 import org.springframework.stereotype.Service;

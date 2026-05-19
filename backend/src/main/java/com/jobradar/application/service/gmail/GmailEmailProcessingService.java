@@ -3,11 +3,11 @@ package com.jobradar.application.service.gmail;
 import com.jobradar.application.dto.gmail.EmailAnalysisResult;
 import com.jobradar.application.dto.gmail.GmailEmailAnalysisResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
-import com.jobradar.application.gmail.GmailConnection;
-import com.jobradar.application.gmail.GmailConnectionRepository;
+import com.jobradar.application.model.gmail.GmailConnection;
+import com.jobradar.application.repository.gmail.GmailConnectionRepository;
 
-import com.jobradar.application.gmail.ProcessedEmail;
-import com.jobradar.application.gmail.ProcessedEmailRepository;
+import com.jobradar.application.model.gmail.ProcessedEmail;
+import com.jobradar.application.repository.gmail.ProcessedEmailRepository;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.ai.AiSuggestion;
 import com.jobradar.application.model.ai.ConfidenceLevel;
@@ -15,8 +15,8 @@ import com.jobradar.application.model.ai.SuggestionStatus;
 import com.jobradar.application.repository.AiSuggestionRepository;
 import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.UserRepository;
-import com.jobradar.application.service.AiSuggestionService;
-import com.jobradar.application.service.EmailAnalysisService;
+import com.jobradar.application.service.ai.AiSuggestionService;
+import com.jobradar.application.service.ai.EmailAnalysisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -30,8 +30,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class GmailEmailProcessingService {

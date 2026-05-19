@@ -1,12 +1,10 @@
 package com.jobradar.application.controller;
 
-import com.jobradar.application.dto.AiSuggestionResponse;
-import com.jobradar.application.dto.FakeEmailAnalysisRequest;
+import com.jobradar.application.dto.ai.AiSuggestionResponse;
 
 import com.jobradar.application.model.user.User;
-import com.jobradar.application.repository.AiSuggestionRepository;
 import com.jobradar.application.repository.UserRepository;
-import com.jobradar.application.service.AiSuggestionService;
+import com.jobradar.application.service.ai.AiSuggestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -62,16 +60,6 @@ public class AiSuggestionController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return aiSuggestionService.rejectSuggestion(id, user);
-    }
-
-
-    @PostMapping("/fake-analyze")
-    public AiSuggestionResponse analyzeFakeEmail(@RequestBody FakeEmailAnalysisRequest request,
-                                                 Authentication authentication) {
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return aiSuggestionService.analyzeFakeEmail(request, user);
     }
 
     @PostMapping("/accept-all")

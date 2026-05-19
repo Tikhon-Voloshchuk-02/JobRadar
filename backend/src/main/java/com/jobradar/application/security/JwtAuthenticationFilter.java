@@ -1,6 +1,6 @@
 package com.jobradar.application.security;
 
-import com.jobradar.application.controller.CustomUserDetailsService;
+import com.jobradar.application.service.auth.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

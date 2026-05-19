@@ -1,9 +1,12 @@
 package com.jobradar.application.controller;
 
-import com.jobradar.application.dto.*;
+import com.jobradar.application.dto.auth.AuthResponse;
+import com.jobradar.application.dto.auth.LoginRequest;
+import com.jobradar.application.dto.auth.RegisterRequest;
+import com.jobradar.application.dto.auth.ResendVerificationRequest;
 import com.jobradar.application.dto.google.GoogleAuthRequest;
 import com.jobradar.application.model.user.User;
-import com.jobradar.application.service.AuthService;
+import com.jobradar.application.service.auth.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

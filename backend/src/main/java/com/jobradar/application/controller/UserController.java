@@ -2,9 +2,9 @@ package com.jobradar.application.controller;
 
 
 
-import com.jobradar.application.dto.UpdateUserProfileRequest;
-import com.jobradar.application.dto.UserProfileResponse;
-import com.jobradar.application.gmail.GmailConnectionRepository;
+import com.jobradar.application.dto.user.UpdateUserProfileRequest;
+import com.jobradar.application.dto.user.UserProfileResponse;
+import com.jobradar.application.repository.gmail.GmailConnectionRepository;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
 

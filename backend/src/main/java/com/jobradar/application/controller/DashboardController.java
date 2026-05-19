@@ -1,10 +1,10 @@
 package com.jobradar.application.controller;
 
-import com.jobradar.application.dto.DashboardSummaryResponse;
-import com.jobradar.application.dto.RecentActivityResponse;
+import com.jobradar.application.dto.dashboard.DashboardSummaryResponse;
+import com.jobradar.application.dto.dashboard.RecentActivityResponse;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
-import com.jobradar.application.service.DashboardService;
+import com.jobradar.application.service.application.DashboardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
