@@ -3,6 +3,7 @@ package com.jobradar.application.service.gmail;
 import com.jobradar.application.dto.gmail.EmailAnalysisResult;
 import com.jobradar.application.dto.gmail.GmailEmailAnalysisResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
+import com.jobradar.application.gmail.GmailMessageParser;
 import com.jobradar.application.model.gmail.GmailConnection;
 import com.jobradar.application.repository.gmail.GmailConnectionRepository;
 
@@ -48,16 +49,22 @@ public class GmailEmailProcessingService {
     private final AiSuggestionService aiSuggestionService;
     private final ApplicationRepository applicationRepository;
 
+    private final GmailMessageParser gmailMessageParser;
+
 
 
     public GmailEmailProcessingService(GmailConnectionRepository gmailConnectionRepository,
                                        GmailTokenService gmailTokenService,
                                        EmailAnalysisService emailAnalysisService,
+
                                        UserRepository userRepository,
                                        ProcessedEmailRepository processedEmailRepository,
+
                                        AiSuggestionRepository aiSuggestionRepository,
                                        AiSuggestionService aiSuggestionService,
-                                       ApplicationRepository applicationRepository) {
+                                       ApplicationRepository applicationRepository,
+
+                                       GmailMessageParser gmailMessageParser) {
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailTokenService = gmailTokenService;
         this.userRepository = userRepository;
@@ -68,6 +75,8 @@ public class GmailEmailProcessingService {
         this.aiSuggestionService=aiSuggestionService;
         this.aiSuggestionRepository=aiSuggestionRepository;
         this.applicationRepository=applicationRepository;
+
+        this.gmailMessageParser = gmailMessageParser;
     }
 
 
@@ -127,12 +136,13 @@ public class GmailEmailProcessingService {
                     .retrieve()
                     .body(Map.class);
 
-            String subject = extractHeader(fullMessage, "Subject");
-            String from = extractHeader(fullMessage, "From");
+            String subject = gmailMessageParser.extractHeader(fullMessage, "Subject");
+            String from = gmailMessageParser.extractHeader(fullMessage, "From");
             String snippet = (String) fullMessage.get("snippet");
+            String bodyText = gmailMessageParser.extractBodyText(fullMessage);
 
             String internalDateRaw = (String) fullMessage.get("internalDate");
-            String bodyText = extractBodyText(fullMessage);
+
 
             Instant receivedAt = Instant.ofEpochMilli(
                     Long.parseLong(internalDateRaw)
@@ -436,10 +446,11 @@ public class GmailEmailProcessingService {
                 .retrieve()
                 .body(Map.class);
 
-        String subject = extractHeader(fullMessage, "Subject");
-        String from = extractHeader(fullMessage, "From");
+        String subject = gmailMessageParser.extractHeader(fullMessage, "Subject");
+        String from = gmailMessageParser.extractHeader(fullMessage, "From");
+        String bodyText = gmailMessageParser.extractBodyText(fullMessage);
         String snippet = (String) fullMessage.get("snippet");
-        String bodyText = extractBodyText(fullMessage);
+
 
         String internalDateRaw = (String) fullMessage.get("internalDate");
         Instant receivedAt = Instant.ofEpochMilli(Long.parseLong(internalDateRaw));
