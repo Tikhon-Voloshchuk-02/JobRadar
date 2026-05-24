@@ -13,10 +13,11 @@ import com.jobradar.application.model.ai.AiSuggestion;
 import com.jobradar.application.model.ai.ConfidenceLevel;
 import com.jobradar.application.model.ai.SuggestionStatus;
 import com.jobradar.application.repository.AiSuggestionRepository;
-import com.jobradar.application.repository.ApplicationRepository;
 import com.jobradar.application.repository.UserRepository;
 import com.jobradar.application.service.ai.AiSuggestionService;
 import com.jobradar.application.service.ai.EmailAnalysisService;
+import com.jobradar.application.service.gmail.gmail_email_processing_service.ApplicationMatcher;
+import com.jobradar.application.service.gmail.gmail_email_processing_service.GmailMessageParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -25,7 +26,6 @@ import org.springframework.web.client.RestClient;
 
 import com.jobradar.application.model.user.User;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

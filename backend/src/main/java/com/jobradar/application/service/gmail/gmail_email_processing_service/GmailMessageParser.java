@@ -1,4 +1,4 @@
-package com.jobradar.application.service.gmail;
+package com.jobradar.application.service.gmail.gmail_email_processing_service;
 
 import org.springframework.stereotype.Service;
 

@@ -6,7 +6,7 @@ import com.jobradar.application.model.gmail.GmailConnection;
 import com.jobradar.application.dto.gmail.GmailConnectionStatusResponse;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
-import com.jobradar.application.service.gmail.GmailConnectionService;
+import com.jobradar.application.service.gmail.gmail_email_processing_service.GmailConnectionService;
 import com.jobradar.application.service.gmail.GmailEmailProcessingService;
 import com.jobradar.application.service.gmail.GmailService;
 import com.jobradar.application.service.auth.GoogleOAuthService;
@@ -115,11 +115,6 @@ public class GmailController {
         return ResponseEntity.ok(Map.of(
                 "message", "Gmail disconnected successfully"
         ));
-    }
-
-    @PostMapping("/mock-connect")
-    public GmailConnectionStatusResponse mockConnect(Authentication auth) {
-        return gmailService.mockConnect(auth);
     }
 
     @PatchMapping("/auto-update")
