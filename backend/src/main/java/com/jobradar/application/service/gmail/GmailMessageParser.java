@@ -1,4 +1,4 @@
-package com.jobradar.application.gmail;
+package com.jobradar.application.service.gmail;
 
 import org.springframework.stereotype.Service;
 

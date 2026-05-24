@@ -3,7 +3,6 @@ package com.jobradar.application.service.gmail;
 import com.jobradar.application.dto.gmail.EmailAnalysisResult;
 import com.jobradar.application.dto.gmail.GmailEmailAnalysisResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
-import com.jobradar.application.gmail.GmailMessageParser;
 import com.jobradar.application.model.gmail.GmailConnection;
 import com.jobradar.application.repository.gmail.GmailConnectionRepository;
 
@@ -50,6 +49,7 @@ public class GmailEmailProcessingService {
     private final ApplicationRepository applicationRepository;
 
     private final GmailMessageParser gmailMessageParser;
+    private final JobEmailDetector jobEmailDetector;
 
 
 
@@ -64,7 +64,8 @@ public class GmailEmailProcessingService {
                                        AiSuggestionService aiSuggestionService,
                                        ApplicationRepository applicationRepository,
 
-                                       GmailMessageParser gmailMessageParser) {
+                                       GmailMessageParser gmailMessageParser,
+                                       JobEmailDetector jobEmailDetector) {
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailTokenService = gmailTokenService;
         this.userRepository = userRepository;
@@ -77,6 +78,7 @@ public class GmailEmailProcessingService {
         this.applicationRepository=applicationRepository;
 
         this.gmailMessageParser = gmailMessageParser;
+        this.jobEmailDetector=jobEmailDetector;
     }
 
 
@@ -157,7 +159,7 @@ public class GmailEmailProcessingService {
                     receivedAt
             );
 
-            boolean jobRelated = isJobRelated(dto);
+            boolean jobRelated = jobEmailDetector.isJobRelated(dto);
 
             ProcessedEmail processedEmail = new ProcessedEmail();
             processedEmail.setUser(user);
@@ -180,67 +182,10 @@ public class GmailEmailProcessingService {
         return result;
     }
 
-    /**
-     * Extracts readable email body text from a full Gmail API message response.
-     *
-     * Workflow:
-     * 1. Access the root Gmail payload object
-     * 2. Traverse nested MIME parts recursively
-     * 3. Extract text/plain sections
-     * 4. Decode Base64Url encoded content
-     *
-     * @param fullMessage full Gmail API message response
-     * @return extracted plain text body or empty string if unavailable
-     */
-    private String extractBodyText(Map fullMessage) {
-        Map payload = (Map) fullMessage.get("payload");
-
-        if (payload == null) {
-            return "";
-        }
-
-        return extractBodyFromPayload(payload);
-    }
-
-    /**
-     * Extracts a specific header value from a Gmail API message payload.
-     *
-     * Example headers:
-     * - Subject
-     * - From
-     * - To
-     * - Date
-     *
-     * @param fullMessage full Gmail API message response
-     * @param headerName target header name
-     * @return  - header value or null if not found
-     */
-    private String extractHeader(Map fullMessage, String headerName) {
-        Map payload = (Map) fullMessage.get("payload");
-
-        if (payload == null) {
-            return null;
-        }
-
-        List<Map<String, String>> headers =
-                (List<Map<String, String>>) payload.get("headers");
-
-        if (headers == null) {
-            return null;
-        }
-
-        return headers.stream()
-                .filter(header ->
-                        headerName.equalsIgnoreCase(header.get("name")))
-                .map(header -> header.get("value"))
-                .findFirst()
-                .orElse(null);
-    }
-
     private String safe(String value) {
         return value == null ? "" : value;
     }
-
+/*
     private boolean isJobRelated(GmailMessageDto email) {
         String text = String.join(" ",
                 safe(email.subject()),
@@ -269,7 +214,7 @@ public class GmailEmailProcessingService {
                 || text.contains("absage")
                 || text.contains("zusage");
     }
-
+*/
     public List<GmailEmailAnalysisResponse> analyzeRecentEmails(Authentication auth) {
         String email = auth.getName();
 
@@ -369,70 +314,6 @@ public class GmailEmailProcessingService {
         }
     }
 
-    /**
-     * Recursively traverses Gmail MIME payload structure
-     * and extracts all text/plain content.
-     *
-     * Gmail messages may contain:
-     * - multipart/alternative
-     * - multipart/mixed
-     * - nested MIME sections
-     * - attachments
-     * - HTML + plain text versions
-     *
-     * This method walks through nested parts and collects
-     * readable plain text sections for AI analysis.
-     *
-     * @param payload Gmail MIME payload or sub-part
-     * @return concatenated plain text body content
-     */
-    private String extractBodyFromPayload(Map payload) {
-        String mimeType = (String) payload.get("mimeType");
-
-        if ("text/plain".equalsIgnoreCase(mimeType)) {
-            return decodeBody(payload);
-        }
-
-        List<Map<String, Object>> parts =
-                (List<Map<String, Object>>) payload.get("parts");
-
-        if (parts == null) {
-            return "";
-        }
-
-        StringBuilder result = new StringBuilder();
-
-        for (Map<String, Object> part : parts) {
-            result.append(extractBodyFromPayload(part)).append(" ");
-        }
-
-        return result.toString().trim();
-    }
-
-    /**
-     * Decodes Gmail message body content.
-     *
-     * Gmail API returns email body data as Base64Url-encoded text,
-     * not regular Base64. This method decodes it into UTF-8 plain text.
-     *
-     * @param payload Gmail MIME payload containing body.data
-     * @return decoded text content or empty string if body data is missing
-     */
-    private String decodeBody(Map payload) {
-        Map body = (Map) payload.get("body");
-
-        if (body == null || body.get("data") == null) {
-            return "";
-        }
-
-        String data = (String) body.get("data");
-
-        byte[] decodedBytes = Base64.getUrlDecoder().decode(data);
-
-        return new String(decodedBytes, StandardCharsets.UTF_8);
-    }
-
-
     public void processSingleEmail(User user, String messageId, String accessToken) {
 
         if (processedEmailRepository.existsByUserAndGmailMessageId(user, messageId)) {
@@ -464,7 +345,7 @@ public class GmailEmailProcessingService {
                 receivedAt
         );
 
-        boolean jobRelated = isJobRelated(dto);
+        boolean jobRelated = jobEmailDetector.isJobRelated(dto);
 
         ProcessedEmail processedEmail = new ProcessedEmail();
         processedEmail.setUser(user);
@@ -500,6 +381,5 @@ public class GmailEmailProcessingService {
             }
         }
     }
-
 
 }
