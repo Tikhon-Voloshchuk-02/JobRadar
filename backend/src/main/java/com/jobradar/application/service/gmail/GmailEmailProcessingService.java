@@ -46,10 +46,10 @@ public class GmailEmailProcessingService {
 
     private final AiSuggestionRepository aiSuggestionRepository;
     private final AiSuggestionService aiSuggestionService;
-    private final ApplicationRepository applicationRepository;
 
     private final GmailMessageParser gmailMessageParser;
     private final JobEmailDetector jobEmailDetector;
+    private final ApplicationMatcher applicationMatcher;
 
 
 
@@ -62,10 +62,11 @@ public class GmailEmailProcessingService {
 
                                        AiSuggestionRepository aiSuggestionRepository,
                                        AiSuggestionService aiSuggestionService,
-                                       ApplicationRepository applicationRepository,
 
                                        GmailMessageParser gmailMessageParser,
-                                       JobEmailDetector jobEmailDetector) {
+                                       JobEmailDetector jobEmailDetector,
+                                       ApplicationMatcher applicationMatcher) {
+
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailTokenService = gmailTokenService;
         this.userRepository = userRepository;
@@ -75,10 +76,10 @@ public class GmailEmailProcessingService {
 
         this.aiSuggestionService=aiSuggestionService;
         this.aiSuggestionRepository=aiSuggestionRepository;
-        this.applicationRepository=applicationRepository;
 
         this.gmailMessageParser = gmailMessageParser;
         this.jobEmailDetector=jobEmailDetector;
+        this.applicationMatcher=applicationMatcher;
     }
 
 
@@ -182,39 +183,6 @@ public class GmailEmailProcessingService {
         return result;
     }
 
-    private String safe(String value) {
-        return value == null ? "" : value;
-    }
-/*
-    private boolean isJobRelated(GmailMessageDto email) {
-        String text = String.join(" ",
-                safe(email.subject()),
-                safe(email.from()),
-                safe(email.snippet()),
-                safe(email.bodyText())
-        ).toLowerCase();
-
-        return text.contains("job")
-                || text.contains("career")
-                || text.contains("application")
-                || text.contains("applied")
-                || text.contains("interview")
-                || text.contains("recruit")
-                || text.contains("hr")
-                || text.contains("offer")
-                || text.contains("unfortunately")
-                || text.contains("thank you for applying")
-                || text.contains("bewerbung")
-                || text.contains("karriere")
-                || text.contains("stelle")
-                || text.contains("position")
-                || text.contains("praktikum")
-                || text.contains("werkstudent")
-                || text.contains("vorstellungsgespräch")
-                || text.contains("absage")
-                || text.contains("zusage");
-    }
-*/
     public List<GmailEmailAnalysisResponse> analyzeRecentEmails(Authentication auth) {
         String email = auth.getName();
 
@@ -232,41 +200,13 @@ public class GmailEmailProcessingService {
                     EmailAnalysisResult analysis = emailAnalysisService.analyze(gmailEmail);
 
                     if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
-                        findMatchingApplication(user, gmailEmail)
+                        applicationMatcher.findMatchingApplication(user, gmailEmail)
                                 .ifPresent(application -> createAiSuggestion(connection ,application, gmailEmail, analysis));
                     }
 
                     return new GmailEmailAnalysisResponse(gmailEmail, analysis);
                 })
                 .toList();
-    }
-
-    private Optional<Application> findMatchingApplication(User user, GmailMessageDto email){
-
-        String text = String.join(" ",
-                safe(email.subject()),
-                safe(email.from()),
-                safe(email.snippet()),
-                safe(email.bodyText())
-        ).toLowerCase();
-
-        return applicationRepository.findByUser(user).stream()
-                .filter(application -> {
-
-                    String company = safe(application.getCompany()).toLowerCase();
-                    String position = safe(application.getPosition()).toLowerCase();
-
-                    String[] companyWords = company.split("\\s+");
-
-                    boolean companyMatch = Arrays.stream(companyWords)
-                            .anyMatch(word ->
-                                    word.length() > 3 && text.contains(word)
-                            );
-
-                    return companyMatch
-                            || text.contains(position);
-                })
-                .findFirst();
     }
 
     private void createAiSuggestion( GmailConnection gmailConnection,
@@ -371,7 +311,7 @@ public class GmailEmailProcessingService {
         log.debug("Email analysis result: {}", analysis);
 
         if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
-            Optional<Application> matchingApplication = findMatchingApplication(user, dto);
+            Optional<Application> matchingApplication = applicationMatcher.findMatchingApplication(user, dto);
 
             if (matchingApplication.isPresent()) {
                 createAiSuggestion(connection, matchingApplication.get(), dto, analysis);
