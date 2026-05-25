@@ -58,3 +58,14 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+
+  docker:
+    name: Docker Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker containers
+        run: docker compose build
