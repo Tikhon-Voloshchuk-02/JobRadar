@@ -23,6 +23,8 @@ public class RuleBasedAiProvider implements AiProvider {
         return value == null ? "" : value;
     }
 
+
+
     private boolean containsAny(String text, String... keywords) {
         for (String keyword : keywords) {
             if (text.contains(keyword)) {
@@ -30,6 +32,11 @@ public class RuleBasedAiProvider implements AiProvider {
             }
         }
         return false;
+    }
+
+    @Override
+    public AiProviderType getType(){
+        return AiProviderType.RULE_BASED;
     }
 
     @Override

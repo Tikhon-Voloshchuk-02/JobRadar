@@ -5,26 +5,29 @@ import com.jobradar.application.dto.gmail.GmailMessageDto;
 
 import com.jobradar.application.service.ai.provider.AiProperties;
 import com.jobradar.application.service.ai.provider.AiProvider;
+import com.jobradar.application.service.ai.provider.AiProviderManager;
 import com.jobradar.application.service.ai.provider.AiProviderType;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailAnalysisService {
 
-    private final AiProvider aiProvider;
     private final AiProperties aiProperties;
+    private final AiProviderManager aiProviderManager;
 
-    public EmailAnalysisService(AiProvider aiProvider, AiProperties aiProperties){
-        this.aiProvider=aiProvider;
+    public EmailAnalysisService(
+                                AiProperties aiProperties,
+                                AiProviderManager aiProviderManager){
         this.aiProperties=aiProperties;
+        this.aiProviderManager=aiProviderManager;
     }
 
     public EmailAnalysisResult analyze(GmailMessageDto email){
-        if(aiProperties.getProvider() == AiProviderType.RULE_BASED){
-            return aiProvider.analyze(email);
-        }
+        AiProvider provider = aiProviderManager.getProvider(aiProperties.getProvider());
 
-        return aiProvider.analyze(email);
+        return provider.analyze(email);
     }
+
+
 
 }

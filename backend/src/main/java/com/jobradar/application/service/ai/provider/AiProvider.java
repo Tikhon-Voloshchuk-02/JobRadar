@@ -5,4 +5,6 @@ import com.jobradar.application.dto.gmail.GmailMessageDto;
 
 public interface AiProvider {
     EmailAnalysisResult analyze(GmailMessageDto email);
+
+    AiProviderType getType();
 }
