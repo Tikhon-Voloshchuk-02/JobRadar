@@ -6,7 +6,6 @@ import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.service.ai.provider.AiProperties;
 import com.jobradar.application.service.ai.provider.AiProvider;
 import com.jobradar.application.service.ai.provider.AiProviderManager;
-import com.jobradar.application.service.ai.provider.AiProviderType;
 import org.springframework.stereotype.Service;
 
 @Service

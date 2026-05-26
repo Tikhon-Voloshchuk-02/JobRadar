@@ -50,4 +50,7 @@ app:
   upload-dir: uploads/
   frontend-url: ${APP_FRONTEND_URL:http://localhost:5173}
   ai:
-    provider: RULE_BASED
+    provider: ${AI_PROVIDER:RULE_BASED}
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      model: ${OPENAI_MODEL:gpt-4o-mini}
