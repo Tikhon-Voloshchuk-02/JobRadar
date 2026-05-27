@@ -27,6 +27,4 @@ public class EmailAnalysisService {
         return provider.analyze(email);
     }
 
-
-
 }
