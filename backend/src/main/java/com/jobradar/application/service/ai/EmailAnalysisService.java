@@ -6,6 +6,7 @@ import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.service.ai.provider.AiProperties;
 import com.jobradar.application.service.ai.provider.AiProvider;
 import com.jobradar.application.service.ai.provider.AiProviderManager;
+import com.jobradar.application.service.ai.provider.AiProviderType;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,9 +23,25 @@ public class EmailAnalysisService {
     }
 
     public EmailAnalysisResult analyze(GmailMessageDto email){
-        AiProvider provider = aiProviderManager.getProvider(aiProperties.getProvider());
 
-        return provider.analyze(email);
+        AiProviderType providerType = aiProperties.getProvider();
+
+        AiProvider provider = aiProviderManager.getProvider(providerType);
+
+        EmailAnalysisResult result = provider.analyze(email);
+
+        if(providerType == AiProviderType.OPENAI
+                && !result.jobRelated()
+                && result.reason() != null
+                && result.reason().contains("OpenAI analysis failed")) {
+
+            AiProvider fallbackProvider =
+                    aiProviderManager.getProvider(AiProviderType.RULE_BASED);
+
+            return fallbackProvider.analyze(email);
+        }
+
+        return result;
     }
 
 }
