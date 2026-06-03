@@ -1,8 +1,10 @@
 package com.jobradar.application.service.ai.provider;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@Component
+
+@ConfigurationProperties(prefix = "app.ai")
 public class AiProperties {
     private AiProviderType provider = AiProviderType.RULE_BASED;
 
