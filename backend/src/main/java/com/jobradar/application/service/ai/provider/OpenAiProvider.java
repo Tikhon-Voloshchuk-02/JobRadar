@@ -36,6 +36,10 @@ public class OpenAiProvider implements AiProvider {
 
     @Override
     public EmailAnalysisResult analyze(GmailMessageDto email){
+
+        //time-LOG
+        System.out.println("=== OPENAI PROVIDER CALLED ===");
+
         try{
             OpenAiChatRequest request = new OpenAiChatRequest(
                     properties.getModel(),

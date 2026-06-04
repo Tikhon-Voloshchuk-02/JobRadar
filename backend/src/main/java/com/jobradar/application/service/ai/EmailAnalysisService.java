@@ -39,9 +39,12 @@ public class EmailAnalysisService {
                     aiProviderManager.getProvider(AiProviderType.RULE_BASED);
 
             return fallbackProvider.analyze(email);
+
         }
 
         return result;
+
+
     }
 
 }

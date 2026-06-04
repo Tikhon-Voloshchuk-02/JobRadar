@@ -41,6 +41,10 @@ public class RuleBasedAiProvider implements AiProvider {
 
     @Override
     public EmailAnalysisResult analyze(GmailMessageDto email){
+
+        //Time-LOG
+        System.out.println("=== RULE BASED PROVIDER CALLED ===");
+
         String text = buildText(email).toLowerCase();
 
         if (containsAny(text,
