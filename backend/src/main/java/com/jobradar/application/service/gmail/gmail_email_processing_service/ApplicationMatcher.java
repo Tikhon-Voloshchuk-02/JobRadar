@@ -7,6 +7,7 @@ import com.jobradar.application.repository.ApplicationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,7 +18,7 @@ public class ApplicationMatcher {
         this.applicationRepository = applicationRepository;
     }
 
-    private String safe(String value){
+    private String safe(String value) {
         return value == null ? "" : value;
     }
 
@@ -29,20 +30,45 @@ public class ApplicationMatcher {
                 safe(email.bodyText())
         ).toLowerCase();
 
-        return applicationRepository.findByUser(user).stream()
-                .filter(application -> {
-                    String company = safe(application.getCompany()).toLowerCase();
-                    String position = safe(application.getPosition()).toLowerCase();
+        List<Application> applications = applicationRepository.findByUser(user);
 
-                    String[] companyWords = company.split("\\s+");
-
-                    boolean companyMatch = Arrays.stream(companyWords)
-                            .anyMatch(word ->
-                                    word.length() > 3 && text.contains(word)
-                            );
-
-                    return companyMatch || text.contains(position);
-                })
+        Optional<Application> companyMatch = applications.stream()
+                .filter(application -> matchesCompany(application, text))
                 .findFirst();
+
+        if(companyMatch.isPresent()){ return companyMatch; }
+
+        List<Application> positionMatches = applications.stream()
+                .filter(application -> {
+                    String postion = safe(application.getPosition()).toLowerCase();
+                    return !postion.isBlank() && text.contains(postion);
+                })
+                .toList();
+
+        if (positionMatches.size() == 1) {
+            return Optional.of(positionMatches.get(0));
+        }
+
+        return Optional.empty();
+    }
+
+
+    private boolean matchesCompany(Application application, String text){
+        String company = safe(application.getCompany()).toLowerCase();
+
+        if (company.isBlank()) {
+            return false;
+        }
+
+        if (text.contains(company)) {
+            return true;
+        }
+
+        String[] companyWords = company.split("\\s+");
+
+        return Arrays.stream(companyWords)
+                .anyMatch(word ->
+                        word.length() > 3 && text.contains(word)
+                );
     }
 }
