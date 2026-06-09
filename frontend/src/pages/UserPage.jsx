@@ -56,7 +56,7 @@ export default function UserPage() {
       toast.success(t("user_page.profile_updated"));
     } catch (err) {
       console.error(err);
-      toast.success(t("user_page.profile_updated"));
+      toast.error(t("user_page.could_not_update_profile"));
     } finally {
       setSaving(false);
     }
@@ -88,32 +88,37 @@ export default function UserPage() {
 
   async function handleToggleAutoUpdate() {
 
-    if (!user.autoUpdateEnabled && !dontShowAgain) {
-      setShowAutoUpdateWarning(true);
-      return;
-    }
+    if (!user.autoUpdateEnabled) {
+        const hideWarning = localStorage.getItem("hideAutoUpdateWarning") === "true";
+
+        if (!hideWarning) {
+          setShowAutoUpdateWarning(true);
+          return;
+        }
+      }
 
     try {
-      setUpdatingAutoUpdate(true);
+        setUpdatingAutoUpdate(true);
 
-      const response = await setGmailAutoUpdate(!user.autoUpdateEnabled);
+        const nextValue = !user.autoUpdateEnabled;
+        const response = await setGmailAutoUpdate(nextValue);
 
-      setUser({
-        ...user,
-        autoUpdateEnabled: response.autoUpdateEnabled,
-      });
+        setUser({
+          ...user,
+          autoUpdateEnabled: response.autoUpdateEnabled,
+        });
 
-      toast.success(
-        response.autoUpdateEnabled
-          ? t("user_page.auto_update_enabled")
-          : t("user_page.auto_update_disabled")
-      );
-    } catch (err) {
-      console.error(err);
-      toast.error(t("user_page.could_not_update_auto_update"));
-    } finally {
-      setUpdatingAutoUpdate(false);
-    }
+        toast.success(
+          nextValue
+            ? t("user_page.auto_update_enabled")
+            : t("user_page.auto_update_disabled")
+        );
+      } catch (err) {
+        console.error(err);
+        toast.error(t("user_page.could_not_update_auto_update"));
+      } finally {
+        setUpdatingAutoUpdate(false);
+      }
   }
 
   async function confirmEnableAutoUpdate() {
