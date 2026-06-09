@@ -71,22 +71,23 @@ public class GmailInboxScanner {
             return;
         }
 
-        String messageId = root.get("messages")
-                .get(0)
-                .get("id")
-                .asText();
+        log.info("Unread Gmail messages found: {}", root.get("messages").size());
 
+        for (JsonNode messageNode : root.get("messages")) {
 
-        boolean jobRelated = gmailEmailProcessingService.processSingleEmail(
-                connection.getUser(),
-                messageId,
-                accessToken
-        );
+            String messageId = messageNode.get("id").asText();
 
-        if (jobRelated) {
-            markAsRead(accessToken, messageId);
-        } else {
-            log.info("Gmail message is not job-related. Keeping unread: {}", messageId);
+            boolean jobRelated = gmailEmailProcessingService.processSingleEmail(
+                    connection.getUser(),
+                    messageId,
+                    accessToken
+            );
+
+            if (jobRelated) {
+                markAsRead(accessToken, messageId);
+            } else {
+                log.info("Gmail message is not job-related. Keeping unread: {}", messageId);
+            }
         }
     }
 
