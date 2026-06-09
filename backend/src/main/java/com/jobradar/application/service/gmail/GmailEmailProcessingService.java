@@ -254,11 +254,11 @@ public class GmailEmailProcessingService {
         }
     }
 
-    public void processSingleEmail(User user, String messageId, String accessToken) {
+    public boolean processSingleEmail(User user, String messageId, String accessToken) {
 
         if (processedEmailRepository.existsByUserAndGmailMessageId(user, messageId)) {
             log.debug("Email already processed: {}", messageId);
-            return;
+            return false;
         }
 
         Map fullMessage = restClient.get()
@@ -286,6 +286,26 @@ public class GmailEmailProcessingService {
         );
 
         boolean jobRelated = jobEmailDetector.isJobRelated(dto);
+
+        if(!jobRelated) {
+            ProcessedEmail processedEmail = new ProcessedEmail();
+            processedEmail.setUser(user);
+            processedEmail.setGmailMessageId(messageId);
+            processedEmail.setSender(from);
+            processedEmail.setSubject(subject);
+            processedEmail.setSnippet(snippet);
+            processedEmail.setReceivedAt(
+                    LocalDateTime.ofInstant(receivedAt, ZoneId.systemDefault())
+            );
+            processedEmail.setJobRelated(false);
+            processedEmail.setProcessed(true);
+            processedEmail.setProcessedAt(LocalDateTime.now());
+
+            processedEmailRepository.save(processedEmail);
+
+            log.info("Email is not job-related. Keeping unread: {}", messageId);
+            return false;
+        }
 
         ProcessedEmail processedEmail = new ProcessedEmail();
         processedEmail.setUser(user);
@@ -320,6 +340,8 @@ public class GmailEmailProcessingService {
                 log.debug("No matching application found for email: {}", messageId);
             }
         }
+
+        return analysis.jobRelated();
     }
 
 }
