@@ -50,5 +50,3 @@ React -> Spring Boot -> PostgreSQL
 - Refactored project structure
 - Roadmap
 - Better LLM analysis
-
-Job matching
