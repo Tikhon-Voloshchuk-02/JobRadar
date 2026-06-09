@@ -76,13 +76,18 @@ public class GmailInboxScanner {
                 .get("id")
                 .asText();
 
-        gmailEmailProcessingService.processSingleEmail(
+
+        boolean jobRelated = gmailEmailProcessingService.processSingleEmail(
                 connection.getUser(),
                 messageId,
                 accessToken
         );
 
-        markAsRead(accessToken, messageId);
+        if (jobRelated) {
+            markAsRead(accessToken, messageId);
+        } else {
+            log.info("Gmail message is not job-related. Keeping unread: {}", messageId);
+        }
     }
 
     private void markAsRead(String accessToken, String messageId) {
