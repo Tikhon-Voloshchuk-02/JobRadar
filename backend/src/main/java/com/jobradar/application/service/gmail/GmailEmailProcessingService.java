@@ -3,6 +3,7 @@ package com.jobradar.application.service.gmail;
 import com.jobradar.application.dto.gmail.EmailAnalysisResult;
 import com.jobradar.application.dto.gmail.GmailEmailAnalysisResponse;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
+import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.gmail.GmailConnection;
 import com.jobradar.application.repository.gmail.GmailConnectionRepository;
 
@@ -16,6 +17,7 @@ import com.jobradar.application.repository.AiSuggestionRepository;
 import com.jobradar.application.repository.UserRepository;
 import com.jobradar.application.service.ai.AiSuggestionService;
 import com.jobradar.application.service.ai.EmailAnalysisService;
+import com.jobradar.application.service.ai.StatusTransitionValidator;
 import com.jobradar.application.service.gmail.gmail_email_processing_service.ApplicationMatcher;
 import com.jobradar.application.service.gmail.gmail_email_processing_service.GmailMessageParser;
 import org.slf4j.Logger;
@@ -51,6 +53,8 @@ public class GmailEmailProcessingService {
     private final JobEmailDetector jobEmailDetector;
     private final ApplicationMatcher applicationMatcher;
 
+    private final StatusTransitionValidator statusTransitionValidator;
+
 
 
     public GmailEmailProcessingService(GmailConnectionRepository gmailConnectionRepository,
@@ -65,7 +69,8 @@ public class GmailEmailProcessingService {
 
                                        GmailMessageParser gmailMessageParser,
                                        JobEmailDetector jobEmailDetector,
-                                       ApplicationMatcher applicationMatcher) {
+                                       ApplicationMatcher applicationMatcher,
+                                       StatusTransitionValidator statusTransitionValidator) {
 
         this.gmailConnectionRepository = gmailConnectionRepository;
         this.gmailTokenService = gmailTokenService;
@@ -80,6 +85,8 @@ public class GmailEmailProcessingService {
         this.gmailMessageParser = gmailMessageParser;
         this.jobEmailDetector=jobEmailDetector;
         this.applicationMatcher=applicationMatcher;
+
+        this.statusTransitionValidator=statusTransitionValidator;
     }
 
 
@@ -214,6 +221,21 @@ public class GmailEmailProcessingService {
                                      GmailMessageDto email,
                                      EmailAnalysisResult analysis) {
 
+        //StatusTransitionValidator
+        if(!statusTransitionValidator.isValid(
+                application.getStatus(),
+                analysis.suggestedStatus()
+        )){
+            log.warn(
+                    "Invalid AI status transition ignored: applicationId={}, currentStatus={}, suggestedStatus={}, emailSubject={}",
+                    application.getId(),
+                    application.getStatus(),
+                    analysis.suggestedStatus(),
+                    email.subject()
+            );
+            return;
+        }
+
         AiSuggestion suggestion = new AiSuggestion();
 
         suggestion.setApplication(application);
@@ -321,6 +343,7 @@ public class GmailEmailProcessingService {
         processedEmail.setProcessedAt(LocalDateTime.now());
 
         processedEmailRepository.save(processedEmail);
+
 
         GmailConnection connection = gmailConnectionRepository
                 .findByUserIdAndConnectedTrue(user.getId())
