@@ -48,9 +48,6 @@ public class RuleBasedAiProvider implements AiProvider {
         String text = buildText(email).toLowerCase();
 
         if (containsAny(text,
-                "stepstone",
-                "indeed",
-                "linkedin jobs",
                 "recommended for you",
                 "our recommendation",
                 "popular job",
@@ -63,20 +60,62 @@ public class RuleBasedAiProvider implements AiProvider {
                 "apply early",
                 "jobs that match your search",
                 "new jobs that match",
+                "new jobs for you",
+                "similar jobs",
+                "jobs you may be interested in",
                 "this job looks like a great fit",
                 "this popular role",
                 "don't miss your chance",
                 "is this the one you're looking for")) {
-            return new EmailAnalysisResult(false, null,
-                    ConfidenceLevel.LOW, "Ignored job board recommendation email");
+
+            return new EmailAnalysisResult(
+                    false,
+                    null,
+                    ConfidenceLevel.LOW,
+                    "Ignored job board recommendation email"
+            );
+        }
+
+        if (containsAny(text,
+                "bewerbung gesendet",
+                "bewerbung über indeed",
+                "bewerbung über stepstone",
+                "ihre bewerbung wurde gesendet",
+                "ihre bewerbung wurde versendet",
+                "vielen dank für ihre bewerbung",
+                "danke für ihre bewerbung",
+                "wir haben ihre bewerbung erhalten",
+                "wir haben ihre bewerbungsunterlagen erhalten",
+                "ihre bewerbung ist bei uns eingegangen",
+                "bewerbung eingegangen",
+                "eingang ihrer bewerbung",
+                "thank you for your application",
+                "thank you for applying",
+                "we received your application",
+                "your application has been received",
+                "application received")) {
+
+            return new EmailAnalysisResult(
+                    true,
+                    ApplicationStatus.WAITING,
+                    ConfidenceLevel.HIGH,
+                    "Email confirms that the application was submitted or received"
+            );
         }
 
         if (containsAny(text,
                 "unfortunately",
-                "leider",
                 "not move forward",
                 "nicht weiter",
-                "absage")) {
+                "absage",
+                "leider müssen wir ihnen mitteilen",
+                "leider können wir ihnen keine",
+                "leider haben wir uns",
+                "wir haben uns für einen anderen kandidaten entschieden",
+                "wir haben uns für andere bewerber entschieden",
+                "we have decided to move forward with other candidates",
+                "we will not be moving forward",
+                "we regret to inform you")) {
 
             return new EmailAnalysisResult(
                     true,
