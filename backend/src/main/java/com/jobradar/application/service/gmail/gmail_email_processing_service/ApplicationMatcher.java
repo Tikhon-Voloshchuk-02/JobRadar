@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ApplicationMatcher {
-    private ApplicationRepository applicationRepository;
+
+    private final ApplicationRepository applicationRepository;
 
     public ApplicationMatcher(ApplicationRepository applicationRepository) {
         this.applicationRepository = applicationRepository;
@@ -22,7 +24,7 @@ public class ApplicationMatcher {
         return value == null ? "" : value;
     }
 
-    public Optional<Application> findMatchingApplication(User user, GmailMessageDto email){
+    public Optional<Application> findMatchingApplication(User user, GmailMessageDto email) {
         String text = String.join(" ",
                 safe(email.subject()),
                 safe(email.from()),
@@ -32,43 +34,76 @@ public class ApplicationMatcher {
 
         List<Application> applications = applicationRepository.findByUser(user);
 
-        Optional<Application> companyMatch = applications.stream()
-                .filter(application -> matchesCompany(application, text))
-                .findFirst();
-
-        if(companyMatch.isPresent()){ return companyMatch; }
-
-        List<Application> positionMatches = applications.stream()
-                .filter(application -> {
-                    String postion = safe(application.getPosition()).toLowerCase();
-                    return !postion.isBlank() && text.contains(postion);
-                })
+        List<MatchCandidate> candidates = applications.stream()
+                .map(application -> new MatchCandidate(
+                        application,
+                        calculateScore(application, text)
+                ))
+                .filter(candidate -> candidate.score() >= 5)
+                .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .toList();
 
-        if (positionMatches.size() == 1) {
-            return Optional.of(positionMatches.get(0));
+        if (candidates.isEmpty()) {
+            return Optional.empty();
         }
 
-        return Optional.empty();
+        if (candidates.size() > 1
+                && candidates.get(0).score() == candidates.get(1).score()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(candidates.get(0).application());
     }
 
+    private int calculateScore(Application application, String text) {
+        int score = 0;
 
-    private boolean matchesCompany(Application application, String text){
         String company = safe(application.getCompany()).toLowerCase();
+        String position = safe(application.getPosition()).toLowerCase();
 
+        if (!company.isBlank() && text.contains(company)) {
+            score += 10;
+        }
+
+        if (!position.isBlank() && text.contains(position)) {
+            score += 6;
+        }
+
+        score += companyWordScore(company, text);
+
+        return score;
+    }
+
+    private int companyWordScore(String company, String text) {
         if (company.isBlank()) {
-            return false;
+            return 0;
         }
 
-        if (text.contains(company)) {
-            return true;
-        }
+        return Arrays.stream(company.split("\\s+"))
+                .filter(word -> word.length() > 4)
+                .filter(word -> !isGenericCompanyWord(word))
+                .filter(text::contains)
+                .mapToInt(word -> 2)
+                .sum();
+    }
 
-        String[] companyWords = company.split("\\s+");
+    private boolean isGenericCompanyWord(String word) {
+        return Set.of(
+                "gmbh",
+                "mbh",
+                "kg",
+                "ag",
+                "co",
+                "inc",
+                "ltd",
+                "llc",
+                "group",
+                "holding",
+                "company",
+                "unternehmen"
+        ).contains(word);
+    }
 
-        return Arrays.stream(companyWords)
-                .anyMatch(word ->
-                        word.length() > 3 && text.contains(word)
-                );
+    private record MatchCandidate(Application application, int score) {
     }
 }
