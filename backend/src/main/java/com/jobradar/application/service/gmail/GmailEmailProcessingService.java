@@ -221,6 +221,16 @@ public class GmailEmailProcessingService {
                                      GmailMessageDto email,
                                      EmailAnalysisResult analysis) {
 
+        log.info(
+                "AI status transition check: applicationId={}, company={}, currentStatus={}, suggestedStatus={}, confidence={}, subject={}",
+                application.getId(),
+                application.getCompany(),
+                application.getStatus(),
+                analysis.suggestedStatus(),
+                analysis.confidence(),
+                email.subject()
+        );
+
         //StatusTransitionValidator
         if(!statusTransitionValidator.isValid(
                 application.getStatus(),
@@ -264,10 +274,26 @@ public class GmailEmailProcessingService {
         suggestion.setSuggestionStatus(SuggestionStatus.PENDING);
 
         AiSuggestion saved = aiSuggestionRepository.save(suggestion);
+        log.info(
+                "AI suggestion saved: suggestionId={}, applicationId={}, company={}, currentStatus={}, suggestedStatus={}, confidence={}",
+                saved.getId(),
+                application.getId(),
+                application.getCompany(),
+                saved.getCurrentStatus(),
+                saved.getSuggestedStatus(),
+                saved.getConfidence()
+        );
 
         if (gmailConnection.isAutoUpdateEnabled()
                 && saved.getConfidence() == ConfidenceLevel.HIGH
                 && saved.getSuggestedStatus() != null) {
+
+            log.info(
+                    "Auto-update enabled: accepting AI suggestion automatically, suggestionId={}, applicationId={}, suggestedStatus={}",
+                    saved.getId(),
+                    application.getId(),
+                    saved.getSuggestedStatus()
+            );
 
             aiSuggestionService.acceptSuggestionInternal(
                     saved,
@@ -306,8 +332,22 @@ public class GmailEmailProcessingService {
                 bodyText,
                 receivedAt
         );
+        log.info(
+                "Gmail email fetched: messageId={}, subject={}, sender={}",
+                messageId,
+                subject,
+                from
+        );
 
         boolean jobRelated = jobEmailDetector.isJobRelated(dto);
+
+        log.info(
+                "Job email detector result: messageId={}, jobRelated={}, subject={}, sender={}",
+                messageId,
+                jobRelated,
+                subject,
+                from
+        );
 
         if(!jobRelated) {
             ProcessedEmail processedEmail = new ProcessedEmail();
@@ -325,7 +365,12 @@ public class GmailEmailProcessingService {
 
             processedEmailRepository.save(processedEmail);
 
-            log.info("Email is not job-related. Keeping unread: {}", messageId);
+            log.info(
+                    "Email ignored as not job-related: messageId={}, subject={}, sender={}",
+                    messageId,
+                    subject,
+                    from
+            );
             return false;
         }
 
@@ -351,17 +396,45 @@ public class GmailEmailProcessingService {
 
         EmailAnalysisResult analysis = emailAnalysisService.analyze(dto);
 
-        log.debug("Email analysis result: {}", analysis);
+        log.info(
+                "Email analysis completed: messageId={}, jobRelated={}, suggestedStatus={}, confidence={}, reason={}",
+                messageId,
+                analysis.jobRelated(),
+                analysis.suggestedStatus(),
+                analysis.confidence(),
+                analysis.reason()
+        );
 
         if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
             Optional<Application> matchingApplication = applicationMatcher.findMatchingApplication(user, dto);
 
             if (matchingApplication.isPresent()) {
                 createAiSuggestion(connection, matchingApplication.get(), dto, analysis);
-                log.info("AI suggestion created for email: {}", messageId);
+                log.info(
+                        "AI suggestion creation requested: messageId={}, matchedApplicationId={}, company={}, suggestedStatus={}",
+                        messageId,
+                        matchingApplication.get().getId(),
+                        matchingApplication.get().getCompany(),
+                        analysis.suggestedStatus()
+                );
+
             } else {
-                log.debug("No matching application found for email: {}", messageId);
+                log.info(
+                        "No matching application found after analysis: messageId={}, subject={}, sender={}, suggestedStatus={}",
+                        messageId,
+                        subject,
+                        from,
+                        analysis.suggestedStatus()
+                );
             }
+        } else {
+            log.info(
+                    "No suggestion created from email analysis: messageId={}, jobRelated={}, suggestedStatus={}, reason={}",
+                    messageId,
+                    analysis.jobRelated(),
+                    analysis.suggestedStatus(),
+                    analysis.reason()
+            );
         }
 
         return analysis.jobRelated();
