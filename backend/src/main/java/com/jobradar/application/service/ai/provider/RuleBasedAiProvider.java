@@ -76,10 +76,11 @@ public class RuleBasedAiProvider implements AiProvider {
             );
         }
 
+        //REJECTED
         if (containsAny(text,
                 "unfortunately",
                 "not move forward",
-                "nicht weiter",
+
                 "absage",
                 "leider müssen wir ihnen mitteilen",
                 "leider können wir ihnen keine",
@@ -103,6 +104,101 @@ public class RuleBasedAiProvider implements AiProvider {
             );
         }
 
+        //OFFER
+        if (containsAny(text,
+                "job offer",
+                "offer of employment",
+                "employment offer",
+                "we are pleased to offer",
+                "we would like to offer you",
+                "contract offer",
+                "arbeitsvertrag",
+                "vertragsangebot",
+                "zusage",
+                "wir freuen uns ihnen mitzuteilen",
+                "wir freuen uns dir mitzuteilen",
+                "wir möchten ihnen ein angebot machen",
+                "wir möchten dir ein angebot machen",
+                "angebot für die stelle",
+                "vertragsunterlagen",
+                "arbeitsvertrag erhalten",
+                "willkommen im team",
+                "welcome to the team",
+                "we are happy to offer",
+                "we are excited to offer",
+                "we would like to extend an offer",
+                "offer letter",
+                "employment contract")) {
+
+            return new EmailAnalysisResult(
+                    true,
+                    ApplicationStatus.OFFER,
+                    ConfidenceLevel.HIGH,
+                    "Email contains offer-related keywords"
+            );
+        }
+
+        //INTERVIEW
+        if (containsAny(text,
+                "interview",
+                "gespräch",
+                "vorstellungsgespräch",
+                "termin",
+                "meeting",
+                "einladung zum gespräch",
+                "einladung zum vorstellungsgespräch",
+                "wir möchten sie kennenlernen",
+                "wir möchten dich kennenlernen",
+                "kennenlerngespräch",
+                "telefoninterview",
+                "phone interview",
+                "video interview",
+                "zoom",
+                "teams meeting",
+                "microsoft teams",
+                "calendly",
+                "termin vereinbaren",
+                "termin abstimmen",
+                "interview invitation",
+                "invitation to interview",
+                "schedule an interview",
+                "let's schedule",
+                "we would like to meet you")) {
+
+            return new EmailAnalysisResult(
+                    true,
+                    ApplicationStatus.INTERVIEW,
+                    ConfidenceLevel.HIGH,
+                    "Email contains interview-related keywords"
+            );
+        }
+
+        //WAITING
+        if (containsAny(text,
+                "wir prüfen ihre bewerbung",
+                "wir prüfen ihre unterlagen",
+                "wir prüfen ihre bewerbungsunterlagen",
+                "ihre bewerbung wird geprüft",
+                "ihre unterlagen werden geprüft",
+                "ihre bewerbung befindet sich im auswahlprozess",
+                "ihre bewerbung befindet sich im auswahlverfahren",
+                "wir melden uns",
+                "wir melden uns zeitnah",
+                "wir werden uns bei ihnen melden",
+                "we are reviewing your application",
+                "your application is under review",
+                "we will get back to you",
+                "we will contact you")) {
+
+            return new EmailAnalysisResult(
+                    true,
+                    ApplicationStatus.WAITING,
+                    ConfidenceLevel.HIGH,
+                    "Email indicates that the application is being reviewed"
+            );
+        }
+
+        //APPLIED
         if (containsAny(text,
                 "bewerbung gesendet",
                 "bewerbung über indeed",
@@ -120,50 +216,24 @@ public class RuleBasedAiProvider implements AiProvider {
                 "thank you for applying",
                 "we received your application",
                 "your application has been received",
-                "application received")) {
+                "application received",
+                "ist raus",
+                "deine bewerbung ist raus",
+                "bewerbung ist raus",
+                "eingangsbestätigung",
+                "deine bewerbung auf die stelle",
+                "bewerbung auf die stelle")) {
 
             return new EmailAnalysisResult(
                     true,
-                    ApplicationStatus.WAITING,
+                    ApplicationStatus.APPLIED,
                     ConfidenceLevel.HIGH,
                     "Email confirms that the application was submitted or received"
             );
         }
 
 
-        if (containsAny(text,
-                "interview",
-                "gespräch",
-                "vorstellungsgespräch",
-                "termin",
-                "meeting")) {
-
-            return new EmailAnalysisResult(
-                    true,
-                    ApplicationStatus.INTERVIEW,
-                    ConfidenceLevel.HIGH,
-                    "Email contains interview-related keywords"
-            );
-        }
-
-        if (containsAny(text,
-                "job offer",
-                "offer of employment",
-                "employment offer",
-                "we are pleased to offer",
-                "we would like to offer you",
-                "contract offer",
-                "arbeitsvertrag",
-                "vertragsangebot")) {
-
-            return new EmailAnalysisResult(
-                    true,
-                    ApplicationStatus.OFFER,
-                    ConfidenceLevel.HIGH,
-                    "Email contains offer-related keywords"
-            );
-        }
-
+        //assessment
         if (containsAny(text,
                 "assessment",
                 "coding challenge",
@@ -188,7 +258,7 @@ public class RuleBasedAiProvider implements AiProvider {
 
             return new EmailAnalysisResult(
                     true,
-                    ApplicationStatus.WAITING,
+                    ApplicationStatus.APPLIED,
                     ConfidenceLevel.MEDIUM,
                     "Email appears to be related to a job application"
             );
@@ -202,7 +272,7 @@ public class RuleBasedAiProvider implements AiProvider {
 
             return new EmailAnalysisResult(
                     true,
-                    ApplicationStatus.WAITING,
+                    ApplicationStatus.APPLIED,
                     ConfidenceLevel.MEDIUM,
                     "Email appears related to job search"
             );
