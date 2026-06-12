@@ -5,12 +5,14 @@
   justify-content: center;
   align-items: center;
   padding: 24px;
-  background: #0d1117;
+  background:
+    radial-gradient(circle at top, rgba(88, 166, 255, 0.06), transparent 42%),
+    #0d1117;
 }
 
 .register-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 580px;
   padding: 32px;
   border-radius: 12px;
   border: 1px solid #30363d;
@@ -20,15 +22,44 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+
+  animation: fadeUp 0.3s ease;
+}
+
+.register-header {
+  text-align: center;
+}
+
+.register-logo {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 12px;
+  background: #21262d;
+  border: 1px solid #30363d;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+  font-size: 18px;
+  color: #58a6ff;
 }
 
 .register-card h1 {
   margin: 0;
-  text-align: center;
   color: #f0f6fc;
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.register-header p {
+  margin-top: 10px;
+  color: #8b949e;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .register-form {
@@ -37,49 +68,141 @@
   gap: 12px;
 }
 
-.register-form input {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 8px;
+.register-row {
+  display: flex;
+  gap: 12px;
+}
+
+.register-row .input-group {
+  flex: 1;
+}
+
+.input-group {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  min-height: 64px;
+  padding: 10px 14px;
+
   border: 1px solid #30363d;
+  border-radius: 5px;
   background: #0d1117;
-  color: #f0f6fc;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.register-form input::placeholder {
-  color: #8b949e;
-}
-
-.register-form input:focus {
+.input-group:focus-within {
   border-color: #58a6ff;
   box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.18);
 }
 
-.register-form button {
+.input-icon {
+  color: #8b949e;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.field-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.field-content label {
+  color: #8b949e;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.field-content input {
   width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  color: #f0f6fc;
+  font-size: 15px;
+  outline: none;
+}
+
+.password-toggle {
+  width: auto;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: #8b949e;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.password-toggle:hover {
+  color: #f0f6fc;
+  background: transparent;
+}
+
+.valid-icon {
+  width: 24px;
+  height: 24px;
+  padding: 5px;
+  border-radius: 50%;
+  background: #238636;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(63, 185, 80, 0.3);
+}
+
+.password-match {
+  margin: 0;
+  color: #3fb950;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.password-mismatch {
+  margin: 0;
+  color: #ff7b72;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.register-submit {
+  width: 100%;
+  margin-top: 4px;
   padding: 12px;
   border: 1px solid rgba(46, 160, 67, 0.4);
-  border-radius: 8px;
-  background: #238636;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #2ea043, #238636);
   color: #ffffff;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
 }
 
-.register-form button:hover {
-  background: #2ea043;
+.register-submit:hover {
+  transform: translateY(-1px);
 }
 
-.register-form button:active {
+.register-submit:active {
   transform: translateY(1px);
 }
 
-.register-form button:disabled {
+.register-submit:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
@@ -88,7 +211,7 @@
   margin: 0;
   padding: 10px 12px;
   border: 1px solid rgba(248, 81, 73, 0.35);
-  border-radius: 8px;
+  border-radius: 5px;
   background: rgba(248, 81, 73, 0.08);
   color: #ff7b72;
   text-align: center;
@@ -99,7 +222,7 @@
   margin: 0;
   padding: 10px 12px;
   border: 1px solid rgba(46, 160, 67, 0.35);
-  border-radius: 8px;
+  border-radius: 5px;
   background: rgba(46, 160, 67, 0.08);
   color: #3fb950;
   text-align: center;
@@ -122,35 +245,86 @@
   text-decoration: underline;
 }
 
-.password-field {
-  position: relative;
-  width: 100%;
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f0f6fc;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
-.password-field input {
-  padding-right: 48px;
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.password-toggle {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+@media (max-width: 700px) {
+  .register-row {
+    flex-direction: column;
+  }
 
-  background: transparent;
-  border: none;
+  .register-card {
+    padding: 24px;
+  }
+
+  .register-card h1 {
+    font-size: 28px;
+  }
+}
+
+
+.password-strength {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
   color: #8b949e;
+  font-size: 12px;
+}
 
-  cursor: pointer;
-
+.strength-indicator {
   display: flex;
   align-items: center;
-  justify-content: center;
-
-  padding: 0;
-  width: auto !important;
+  gap: 8px;
 }
 
-.password-toggle:hover {
-  color: #f0f6fc;
+.strength-text {
+  text-transform: capitalize;
+  font-size: 12px;
+}
+
+.strength-text.weak {
+  color: #ff7b72;
+}
+
+.strength-text.medium {
+  color: #d29922;
+}
+
+.strength-text.strong {
+  color: #3fb950;
+}
+
+.strength-bars {
+  display: flex;
+  gap: 4px;
+}
+
+.strength-bars span {
+  width: 24px;
+  height: 5px;
+  border-radius: 2px;
+  background: #30363d;
+}
+
+.strength-bars span.active {
+  background: #3fb950;
 }
