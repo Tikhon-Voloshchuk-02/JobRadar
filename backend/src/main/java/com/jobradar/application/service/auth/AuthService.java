@@ -48,6 +48,13 @@ public class AuthService {
 
     @Transactional
     public User register(RegisterRequest request){
+        //confirm Password
+        if (request.getPassword() == null ||
+            request.getConfirmPassword() == null ||
+            !request.getPassword().equals(request.getConfirmPassword())) {
+
+            throw new IllegalArgumentException("Pass don't match");
+        }
 
         if(userRepository.existsByEmail(request.getEmail())){
             throw new EmailAlreadyExistsException(request.getEmail());
