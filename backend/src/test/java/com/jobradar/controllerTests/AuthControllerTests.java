@@ -18,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -82,13 +81,6 @@ public class AuthControllerTests {
             String email = invocation.getArgument(0);
             return mockUserDatabase.stream().filter(u -> u.getEmail().equals(email)).findFirst();
         });
-
-        Mockito.when(userRepository.findByEmail(anyString())).thenAnswer(invocation -> {
-            String email = invocation.getArgument(0);
-            return mockUserDatabase.stream().filter(u -> u.getEmail().equals(email)).findFirst();
-        });
-
-        Mockito.when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
     /**
