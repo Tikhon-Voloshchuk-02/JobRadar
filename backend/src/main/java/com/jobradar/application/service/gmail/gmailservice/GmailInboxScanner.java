@@ -77,19 +77,26 @@ public class GmailInboxScanner {
 
             String messageId = messageNode.get("id").asText();
 
-            boolean jobRelated = gmailEmailProcessingService.processSingleEmail(
-                    connection.getUser(),
-                    messageId,
-                    accessToken
-            );
+            GmailEmailProcessingService.GmailProcessingResult result =
+                    gmailEmailProcessingService.processSingleEmail(
+                            connection.getUser(),
+                            messageId,
+                            accessToken
+                    );
 
-            if (jobRelated) {
+            if (result.suggestionCreated()) {
                 markAsRead(accessToken, messageId);
+            } else if (result.jobRelated()) {
+                log.info(
+                        "Job-related Gmail message processed but no suggestion created. Keeping unread: {}",
+                        messageId
+                );
             } else {
                 log.info("Gmail message is not job-related. Keeping unread: {}", messageId);
             }
         }
     }
+
 
     private void markAsRead(String accessToken, String messageId) {
         restClient.post()

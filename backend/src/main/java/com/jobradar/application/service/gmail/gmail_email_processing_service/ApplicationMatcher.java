@@ -16,7 +16,6 @@ import java.util.Set;
 @Service
 public class ApplicationMatcher {
 
-
     private static final Logger log = LoggerFactory.getLogger(ApplicationMatcher.class);
     private final ApplicationRepository applicationRepository;
 
@@ -28,13 +27,64 @@ public class ApplicationMatcher {
         return value == null ? "" : value;
     }
 
+    private String normalize(String value) {
+        return safe(value)
+                .toLowerCase()
+                .replace("ä", "ae")
+                .replace("ö", "oe")
+                .replace("ü", "ue")
+                .replace("ß", "ss")
+                .replaceAll("[^a-z0-9\\s]", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+    }
+
+
+
+    private int positionWordScore(String position, String text) {
+        if (position.isBlank()) {
+            return 0;
+        }
+
+        return Arrays.stream(position.split("\\s+"))
+                .filter(word -> word.length() > 3)
+                .filter(word -> !isGenericPositionWord(word))
+                .filter(text::contains)
+                .mapToInt(word -> 2)
+                .sum();
+    }
+
+    private int calculateScore(Application application, String text) {
+        int score = 0;
+
+        String company = normalize(application.getCompany());
+        String position = normalize(application.getPosition());
+
+        boolean companyMatched = companyWordScore(company, text) >= 6;
+        boolean positionMatched = positionWordScore(position, text) >= 4;
+
+        if (companyMatched) {
+            score += 10;
+        }
+
+        if (positionMatched) {
+            score += 8;
+        }
+
+        if (companyMatched && positionMatched) {
+            score += 10;
+        }
+
+        return score;
+    }
+
     public Optional<Application> findMatchingApplication(User user, GmailMessageDto email) {
-        String text = String.join(" ",
+        String text = normalize(String.join(" ",
                 safe(email.subject()),
                 safe(email.from()),
                 safe(email.snippet()),
                 safe(email.bodyText())
-        ).toLowerCase();
+        ));
 
         List<Application> applications = applicationRepository.findByUser(user);
 
@@ -43,9 +93,10 @@ public class ApplicationMatcher {
                         application,
                         calculateScore(application, text)
                 ))
-                .filter(candidate -> candidate.score() >= 5)
+                .filter(candidate -> candidate.score() >= 6)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .toList();
+
 
         candidates.forEach(candidate ->
                 log.info(
@@ -61,6 +112,16 @@ public class ApplicationMatcher {
                     "No matching application found: subject={}, sender={}",
                     email.subject(),
                     email.from()
+            );
+            return Optional.empty();
+        }
+
+        if (candidates.size() > 1 && candidates.get(0).score() < 18) {
+            log.warn(
+                    "Weak application match with multiple candidates: bestScore={}, company1={}, company2={}",
+                    candidates.get(0).score(),
+                    candidates.get(0).application().getCompany(),
+                    candidates.get(1).application().getCompany()
             );
             return Optional.empty();
         }
@@ -88,35 +149,16 @@ public class ApplicationMatcher {
         return Optional.of(matchedApplication);
     }
 
-    private int calculateScore(Application application, String text) {
-        int score = 0;
-
-        String company = safe(application.getCompany()).toLowerCase();
-        String position = safe(application.getPosition()).toLowerCase();
-
-        if (!company.isBlank() && text.contains(company)) {
-            score += 10;
-        }
-
-        if (!position.isBlank() && text.contains(position)) {
-            score += 6;
-        }
-
-        score += companyWordScore(company, text);
-
-        return score;
-    }
-
     private int companyWordScore(String company, String text) {
         if (company.isBlank()) {
             return 0;
         }
 
         return Arrays.stream(company.split("\\s+"))
-                .filter(word -> word.length() > 4)
+                .filter(word -> word.length() > 3)
                 .filter(word -> !isGenericCompanyWord(word))
                 .filter(text::contains)
-                .mapToInt(word -> 2)
+                .mapToInt(word -> 3)
                 .sum();
     }
 
@@ -134,6 +176,25 @@ public class ApplicationMatcher {
                 "holding",
                 "company",
                 "unternehmen"
+        ).contains(word);
+    }
+
+    private boolean isGenericPositionWord(String word) {
+        return Set.of(
+                "m",
+                "w",
+                "d",
+                "mwd",
+                "vollzeit",
+                "teilzeit",
+                "werkstudent",
+                "praktikum",
+                "ausbildung",
+                "quereinsteiger",
+                "mitarbeiter",
+                "student",
+                "junior",
+                "senior"
         ).contains(word);
     }
 

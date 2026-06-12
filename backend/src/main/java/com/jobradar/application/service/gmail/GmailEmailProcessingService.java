@@ -216,7 +216,7 @@ public class GmailEmailProcessingService {
                 .toList();
     }
 
-    private void createAiSuggestion( GmailConnection gmailConnection,
+    private boolean createAiSuggestion( GmailConnection gmailConnection,
                                      Application application,
                                      GmailMessageDto email,
                                      EmailAnalysisResult analysis) {
@@ -243,7 +243,7 @@ public class GmailEmailProcessingService {
                     analysis.suggestedStatus(),
                     email.subject()
             );
-            return;
+            return false;
         }
 
         AiSuggestion suggestion = new AiSuggestion();
@@ -300,13 +300,14 @@ public class GmailEmailProcessingService {
                     application.getUser()
             );
         }
+        return true;
     }
 
-    public boolean processSingleEmail(User user, String messageId, String accessToken) {
+    public GmailProcessingResult  processSingleEmail(User user, String messageId, String accessToken) {
 
         if (processedEmailRepository.existsByUserAndGmailMessageId(user, messageId)) {
             log.debug("Email already processed: {}", messageId);
-            return false;
+            return new GmailProcessingResult(false, false);
         }
 
         Map fullMessage = restClient.get()
@@ -349,7 +350,7 @@ public class GmailEmailProcessingService {
                 from
         );
 
-        if(!jobRelated) {
+        if (!jobRelated) {
             ProcessedEmail processedEmail = new ProcessedEmail();
             processedEmail.setUser(user);
             processedEmail.setGmailMessageId(messageId);
@@ -371,7 +372,7 @@ public class GmailEmailProcessingService {
                     subject,
                     from
             );
-            return false;
+            return new GmailProcessingResult(false, false);
         }
 
         ProcessedEmail processedEmail = new ProcessedEmail();
@@ -409,7 +410,9 @@ public class GmailEmailProcessingService {
             Optional<Application> matchingApplication = applicationMatcher.findMatchingApplication(user, dto);
 
             if (matchingApplication.isPresent()) {
-                createAiSuggestion(connection, matchingApplication.get(), dto, analysis);
+                boolean suggestionCreated =
+                        createAiSuggestion(connection, matchingApplication.get(), dto, analysis);
+
                 log.info(
                         "AI suggestion creation requested: messageId={}, matchedApplicationId={}, company={}, suggestedStatus={}",
                         messageId,
@@ -417,6 +420,8 @@ public class GmailEmailProcessingService {
                         matchingApplication.get().getCompany(),
                         analysis.suggestedStatus()
                 );
+
+                return new GmailProcessingResult(true, suggestionCreated);
 
             } else {
                 log.info(
@@ -426,6 +431,8 @@ public class GmailEmailProcessingService {
                         from,
                         analysis.suggestedStatus()
                 );
+
+                return new GmailProcessingResult(true, false);
             }
         } else {
             log.info(
@@ -435,9 +442,15 @@ public class GmailEmailProcessingService {
                     analysis.suggestedStatus(),
                     analysis.reason()
             );
-        }
 
-        return analysis.jobRelated();
+            return new GmailProcessingResult(analysis.jobRelated(), false);
+        }
+    }
+
+    public record GmailProcessingResult(
+            boolean jobRelated,
+            boolean suggestionCreated
+    ) {
     }
 
 }
