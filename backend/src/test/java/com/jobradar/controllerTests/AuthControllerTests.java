@@ -7,6 +7,7 @@ import com.jobradar.application.model.user.Role;
 import com.jobradar.application.model.user.User;
 import com.jobradar.application.repository.UserRepository;
 import com.jobradar.application.security.JwtService;
+import com.jobradar.application.service.EmailService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,9 @@ public class AuthControllerTests {
     private MockMvc mockMvc;
 
     @MockitoBean
+    private EmailService emailService;
+
+    @MockitoBean
     private UserRepository userRepository;
 
     @MockitoBean
@@ -71,8 +75,7 @@ public class AuthControllerTests {
 
         Mockito.when(userRepository.findByEmailVerificationToken(anyString())).thenAnswer(invocation -> {
             String emailVerificationToken = invocation.getArgument(0);
-            return mockUserDatabase.stream().filter(u -> u.getEmailVerificationToken()
-                    .equals(emailVerificationToken)).findFirst();
+            return mockUserDatabase.stream().filter(u -> u.getEmailVerificationToken().equals(emailVerificationToken)).findFirst();
         });
 
         Mockito.when(userRepository.findByEmail(anyString())).thenAnswer(invocation -> {
@@ -109,32 +112,19 @@ public class AuthControllerTests {
     @Test
     void testFullAuthenticationFlow() throws Exception {
         // Register a new user
-        RegisterRequest registerRequest = new RegisterRequest("testuser","testuser", "test@example.com", "password123");
+        RegisterRequest registerRequest = new RegisterRequest("testuser", "testuser", "test@example.com", "password123");
 
-        String registerResponse = mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerRequest)))
-                .andExpect(status().is2xxSuccessful())
-                .andReturn().getResponse().getContentAsString();
+        String registerResponse = mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(registerRequest))).andExpect(status().is2xxSuccessful()).andReturn().getResponse().getContentAsString();
 
         // Verify the email verification token
         String emailVerificationToken = objectMapper.readTree(registerResponse).get("emailVerificationToken").asText();
 
-        mockMvc.perform(get("/api/auth/verify-email")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("token", emailVerificationToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists());
+        mockMvc.perform(get("/api/auth/verify-email").contentType(MediaType.APPLICATION_JSON).param("token", emailVerificationToken)).andExpect(status().isOk()).andExpect(jsonPath("$.message").exists());
 
         // Login with the registered user
         LoginRequest loginDto = new LoginRequest("test@example.com", "password123");
 
-        String loginResponseJson = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists())
-                .andReturn().getResponse().getContentAsString();
+        String loginResponseJson = mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(loginDto))).andExpect(status().isOk()).andExpect(jsonPath("$.token").exists()).andReturn().getResponse().getContentAsString();
 
         String token = objectMapper.readTree(loginResponseJson).get("token").asText();
         Assertions.assertTrue(jwtService.isTokenValid(token, "test@example.com"));
@@ -150,15 +140,11 @@ public class AuthControllerTests {
      */
     @Test
     void testSignupAlreadyExists() throws Exception {
-        User existingUser = new User("existing","existing", "test@example.com", "password", Role.USER);
+        User existingUser = new User("existing", "existing", "test@example.com", "password", Role.USER);
         mockUserDatabase.add(existingUser);
 
-        RegisterRequest registerDto = new RegisterRequest("existing","existing", "test@example.com", "password");
+        RegisterRequest registerDto = new RegisterRequest("existing", "existing", "test@example.com", "password");
 
-        mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerDto)))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.error").value("User with Email: test@example.com already exists"));
+        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(registerDto))).andExpect(status().is4xxClientError()).andExpect(jsonPath("$.error").value("User with Email: test@example.com already exists"));
     }
 }
