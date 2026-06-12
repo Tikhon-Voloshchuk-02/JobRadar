@@ -59,7 +59,7 @@ public class GmailInboxScanner {
                 gmailTokenService.getValidAccessToken(connection.getUser());
 
         String response = restClient.get()
-                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=5&q=is:unread")
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=20&q=is:unread newer_than:7d")
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
                 .body(String.class);

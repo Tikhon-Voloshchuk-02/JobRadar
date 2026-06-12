@@ -60,7 +60,9 @@ public class ApplicationMatcher {
         String company = normalize(application.getCompany());
         String position = normalize(application.getPosition());
 
-        boolean companyMatched = companyWordScore(company, text) >= 6;
+        boolean companyMatched =
+                (!company.isBlank() && text.contains(company))
+                        || companyWordScore(company, text) >= 6;
         boolean positionMatched = positionWordScore(position, text) >= 4;
 
         if (companyMatched) {
