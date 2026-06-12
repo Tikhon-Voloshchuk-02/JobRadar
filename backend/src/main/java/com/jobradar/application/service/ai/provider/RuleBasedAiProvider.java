@@ -77,6 +77,33 @@ public class RuleBasedAiProvider implements AiProvider {
         }
 
         if (containsAny(text,
+                "unfortunately",
+                "not move forward",
+                "nicht weiter",
+                "absage",
+                "leider müssen wir ihnen mitteilen",
+                "leider können wir ihnen keine",
+                "leider haben wir uns",
+                "wir haben uns für einen anderen kandidaten entschieden",
+                "wir haben uns für andere bewerber entschieden",
+                "we have decided to move forward with other candidates",
+                "we will not be moving forward",
+                "we regret to inform you",
+                "sagen wir ihnen ab",
+                "sagen wir ihnen auf diesem weg ab",
+                "daher sagen wir ihnen",
+                "nicht berücksichtigen",
+                "nicht in die engere auswahl")) {
+
+            return new EmailAnalysisResult(
+                    true,
+                    ApplicationStatus.REJECTED,
+                    ConfidenceLevel.HIGH,
+                    "Email contains rejection-related keywords"
+            );
+        }
+
+        if (containsAny(text,
                 "bewerbung gesendet",
                 "bewerbung über indeed",
                 "bewerbung über stepstone",
@@ -103,27 +130,6 @@ public class RuleBasedAiProvider implements AiProvider {
             );
         }
 
-        if (containsAny(text,
-                "unfortunately",
-                "not move forward",
-                "nicht weiter",
-                "absage",
-                "leider müssen wir ihnen mitteilen",
-                "leider können wir ihnen keine",
-                "leider haben wir uns",
-                "wir haben uns für einen anderen kandidaten entschieden",
-                "wir haben uns für andere bewerber entschieden",
-                "we have decided to move forward with other candidates",
-                "we will not be moving forward",
-                "we regret to inform you")) {
-
-            return new EmailAnalysisResult(
-                    true,
-                    ApplicationStatus.REJECTED,
-                    ConfidenceLevel.HIGH,
-                    "Email contains rejection-related keywords"
-            );
-        }
 
         if (containsAny(text,
                 "interview",
