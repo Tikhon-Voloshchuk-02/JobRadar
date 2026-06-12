@@ -13,17 +13,30 @@ function RegisterPage() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     setError("");
     setSuccess("");
+
+    if (password !== confirmPassword){
+        setError("Passwords don't match");
+        return;
+    }
+
     setLoading(true);
 
     try {
@@ -32,6 +45,7 @@ function RegisterPage() {
         lastname,
         email,
         password,
+        confirmPassword,
       });
 
       setSuccess(t("auth.check_email"));
@@ -41,6 +55,7 @@ function RegisterPage() {
       setLastname("");
       setEmail("");
       setPassword("");
+      setConfirmPassword("");
 
       //  2 second redirect
       setTimeout(() => {
@@ -85,12 +100,34 @@ function RegisterPage() {
           />
 
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder={t("auth.password")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "Hide" : "Show"}
+          </button>
+
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            placeholder="Confirm password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          >
+            {showConfirmPassword ? "Hide" : "Show"}
+          </button>
 
           <button type="submit" disabled={loading}>
             {loading ? t("loading") : t("auth.create_account")}
