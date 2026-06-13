@@ -287,7 +287,7 @@ public class RuleBasedAiProvider implements AiProvider {
         );
     }
 
-    public AnalysisDecision analysisDecision(GmailMessageDto email) {
+    public AnalysisDecision analyzeDecision(GmailMessageDto email) {
         EmailAnalysisResult result = analyze(email);
 
         if (!result.jobRelated()) {
