@@ -298,7 +298,6 @@ public class RuleBasedAiProvider implements AiProvider {
             return AnalysisDecision.ruleBasedResult(
                     result,
                     "Rule-based provider produced HIGH confidence result: " + result.reason()
-
             );
         }
 
