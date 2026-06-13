@@ -60,6 +60,10 @@ public class ApplicationMatcher {
         String company = normalize(application.getCompany());
         String position = normalize(application.getPosition());
 
+        if (!position.isBlank() && text.contains(position)) {
+            score += 20;
+        }
+
         boolean companyMatched =
                 (!company.isBlank() && text.contains(company))
                         || companyWordScore(company, text) >= 6;

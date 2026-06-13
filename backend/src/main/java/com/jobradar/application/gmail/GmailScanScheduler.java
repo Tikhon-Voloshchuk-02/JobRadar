@@ -15,7 +15,7 @@ public class GmailScanScheduler {
         this.gmailService = gmailService;
     }
 
-    @Scheduled(fixedDelay = 120000)
+    @Scheduled(fixedDelay = 60000)
     public void scanEmails(){
         if(!running.compareAndSet(false, true)){
             return;
