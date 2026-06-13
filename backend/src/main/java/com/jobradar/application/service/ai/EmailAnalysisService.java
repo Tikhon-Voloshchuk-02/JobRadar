@@ -120,7 +120,9 @@ public class EmailAnalysisService {
                     false,
                     null,
                     ConfidenceLevel.LOW,
-                    decision.getReason()
+                    decision.getReason(),
+                    null,
+                    null
             );
         }
 
@@ -154,7 +156,9 @@ public class EmailAnalysisService {
                     false,
                     null,
                     ConfidenceLevel.LOW,
-                    "OpenAI analysis failed after rule-based escalation: " + openAiResult.reason()
+                    "OpenAI analysis failed after rule-based escalation: " + openAiResult.reason(),
+                    null,
+                    null
             );
         }
         return openAiResult;

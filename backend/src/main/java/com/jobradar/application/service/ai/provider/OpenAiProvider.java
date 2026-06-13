@@ -63,7 +63,9 @@ public class OpenAiProvider implements AiProvider {
                         false,
                         null,
                         ConfidenceLevel.LOW,
-                        "OpenAI returned empty response"
+                        "OpenAI returned empty response",
+                        null,
+                        null
                 );
             }
 
@@ -79,8 +81,9 @@ public class OpenAiProvider implements AiProvider {
 
         } catch (Exception e){
             return new EmailAnalysisResult(
-                    false, null,
-                    ConfidenceLevel.LOW, "OpenAI analysis failed: " +e.getMessage()
+                    false,  null,  ConfidenceLevel.LOW,
+                    "OpenAI analysis failed: " + e.getMessage(),
+                    null,  null
             );
         }
 
@@ -97,7 +100,11 @@ public class OpenAiProvider implements AiProvider {
             status = ApplicationStatus.valueOf(json.suggestedStatus);
         }
 
-        ConfidenceLevel confidence = ConfidenceLevel.valueOf(json.confidence);
+        ConfidenceLevel confidence = ConfidenceLevel.LOW;
+
+        if (json.confidence != null && !json.confidence.isBlank()) {
+            confidence = ConfidenceLevel.valueOf(json.confidence);
+        }
 
         System.out.println("=== OPENAI DETECTED COMPANY ===");
         System.out.println(json.detectedCompany);
@@ -106,7 +113,9 @@ public class OpenAiProvider implements AiProvider {
                 json.jobRelated,
                 status,
                 confidence,
-                json.reason
+                json.reason,
+                json.detectedCompany,
+                json.detectedPosition
         );
 
     }
@@ -121,6 +130,7 @@ public class OpenAiProvider implements AiProvider {
         public String confidence;
         public String reason;
         public String detectedCompany;
+        public String detectedPosition;
     }
 
     private String systemPrompt() {
@@ -136,6 +146,7 @@ public class OpenAiProvider implements AiProvider {
                    "suggestedStatus": "REJECTED",
                    "confidence": "HIGH",
                    "detectedCompany": "Company name if found, otherwise null",
+                   "detectedPosition": "Position/job title if found, otherwise null",
                    "reason": "Short explanation"
                  }
 
@@ -144,6 +155,7 @@ public class OpenAiProvider implements AiProvider {
                 - suggestedStatus: one of REJECTED, INTERVIEW, OFFER, WAITING, APPLIED or null
                 - confidence: LOW, MEDIUM, HIGH
                 - detectedCompany: extracted company name or null
+                - detectedPosition: extracted job title or null
                 - reason: short explanation
                 """;
     }
