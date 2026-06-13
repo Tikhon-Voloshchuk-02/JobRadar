@@ -72,7 +72,11 @@ public class OpenAiProvider implements AiProvider {
                     .getMessage()
                     .getContent();
 
+            System.out.println("=== OPENAI RAW RESPONSE ===");
+            System.out.println(content);
+
             return parseResult(content);
+
         } catch (Exception e){
             return new EmailAnalysisResult(
                     false, null,
@@ -85,12 +89,18 @@ public class OpenAiProvider implements AiProvider {
     private EmailAnalysisResult parseResult(String content) throws Exception{
         OpenAiAnalysisJson  json = objectMapper.readValue(content, OpenAiAnalysisJson.class);
 
+        System.out.println("=== OPENAI PARSED COMPANY ===");
+        System.out.println(json.detectedCompany);
+
         ApplicationStatus status = null;
         if (json.suggestedStatus != null && !json.suggestedStatus.isBlank()) {
             status = ApplicationStatus.valueOf(json.suggestedStatus);
         }
 
         ConfidenceLevel confidence = ConfidenceLevel.valueOf(json.confidence);
+
+        System.out.println("=== OPENAI DETECTED COMPANY ===");
+        System.out.println(json.detectedCompany);
 
         return new EmailAnalysisResult(
                 json.jobRelated,
@@ -110,6 +120,7 @@ public class OpenAiProvider implements AiProvider {
         public String suggestedStatus;
         public String confidence;
         public String reason;
+        public String detectedCompany;
     }
 
     private String systemPrompt() {
@@ -121,16 +132,18 @@ public class OpenAiProvider implements AiProvider {
 
                 JSON format:
                 {
-                  "jobRelated": true,
-                  "suggestedStatus": "REJECTED",
-                  "confidence": "HIGH",
-                  "reason": "Short explanation"
-                }
+                   "jobRelated": true,
+                   "suggestedStatus": "REJECTED",
+                   "confidence": "HIGH",
+                   "detectedCompany": "Company name if found, otherwise null",
+                   "reason": "Short explanation"
+                 }
 
                 Rules:
                 - jobRelated: true or false
                 - suggestedStatus: one of REJECTED, INTERVIEW, OFFER, WAITING, APPLIED or null
                 - confidence: LOW, MEDIUM, HIGH
+                - detectedCompany: extracted company name or null
                 - reason: short explanation
                 """;
     }

@@ -7,4 +7,6 @@ public interface AiProvider {
     EmailAnalysisResult analyze(GmailMessageDto email);
 
     AiProviderType getType();
+
+
 }

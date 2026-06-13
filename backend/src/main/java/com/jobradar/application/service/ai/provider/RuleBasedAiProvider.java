@@ -4,6 +4,8 @@ import com.jobradar.application.dto.gmail.EmailAnalysisResult;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.model.ApplicationStatus;
 import com.jobradar.application.model.ai.ConfidenceLevel;
+import com.jobradar.application.service.ai.decision.AnalysisDecision;
+import com.jobradar.application.service.ai.decision.AnalysisDecisionType;
 import org.springframework.stereotype.Service;
 
 
@@ -24,7 +26,6 @@ public class RuleBasedAiProvider implements AiProvider {
     }
 
 
-
     private boolean containsAny(String text, String... keywords) {
         for (String keyword : keywords) {
             if (text.contains(keyword)) {
@@ -35,12 +36,12 @@ public class RuleBasedAiProvider implements AiProvider {
     }
 
     @Override
-    public AiProviderType getType(){
+    public AiProviderType getType() {
         return AiProviderType.RULE_BASED;
     }
 
     @Override
-    public EmailAnalysisResult analyze(GmailMessageDto email){
+    public EmailAnalysisResult analyze(GmailMessageDto email) {
 
         //Time-LOG
         System.out.println("=== RULE BASED PROVIDER CALLED ===");
@@ -285,4 +286,42 @@ public class RuleBasedAiProvider implements AiProvider {
                 "Email does not look job-related"
         );
     }
+
+    public AnalysisDecision analyzeDecision(GmailMessageDto email) {
+        EmailAnalysisResult result = analyze(email);
+
+        if (!result.jobRelated()) {
+            return AnalysisDecision.notJobRelated(result.reason());
+        }
+
+        if (result.suggestedStatus() == ApplicationStatus.REJECTED) {
+            return AnalysisDecision.needsLlm(
+                    "Rejection detection requires OpenAI verification: " + result.reason()
+            );
+        }
+
+        if (result.suggestedStatus() == ApplicationStatus.INTERVIEW) {
+            return AnalysisDecision.needsLlm(
+                    "Interview detection requires OpenAI verification: " + result.reason()
+            );
+        }
+
+        if (result.suggestedStatus() == ApplicationStatus.OFFER) {
+            return AnalysisDecision.needsLlm(
+                    "Offer detection requires OpenAI verification: " + result.reason()
+            );
+        }
+
+        if (result.confidence() == ConfidenceLevel.HIGH) {
+            return AnalysisDecision.ruleBasedResult(
+                    result,
+                    "Rule-based provider produced HIGH confidence result: " + result.reason()
+            );
+        }
+
+        return AnalysisDecision.needsLlm(
+                "Rule-based provider produced non-HIGH confidence result: " + result.reason()
+        );
+    }
+
 }
