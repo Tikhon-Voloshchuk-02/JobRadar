@@ -39,8 +39,6 @@ public class ApplicationMatcher {
                 .trim();
     }
 
-
-
     private int positionWordScore(String position, String text) {
         if (position.isBlank()) {
             return 0;
@@ -54,13 +52,13 @@ public class ApplicationMatcher {
                 .sum();
     }
 
-    private int calculateScore(Application application, String text) {
+    private int calculateScore(Application application, String text, String subject) {
         int score = 0;
 
         String company = normalize(application.getCompany());
         String position = normalize(application.getPosition());
 
-        if (!position.isBlank() && text.contains(position)) {
+        if (!position.isBlank() && containsPhrase(subject, position)) {
             score += 20;
         }
 
@@ -88,6 +86,8 @@ public class ApplicationMatcher {
             score += 6;
         }
 
+
+
         return score;
     }
 
@@ -98,13 +98,14 @@ public class ApplicationMatcher {
                 safe(email.snippet()),
                 safe(email.bodyText())
         ));
+        String subject = normalize(email.subject());
 
         List<Application> applications = applicationRepository.findByUser(user);
 
         List<MatchCandidate> candidates = applications.stream()
                 .map(application -> new MatchCandidate(
                         application,
-                        calculateScore(application, text)
+                        calculateScore(application, text, subject)
                 ))
                 .filter(candidate -> candidate.score() >= 6)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
@@ -216,6 +217,10 @@ public class ApplicationMatcher {
                 || text.contains("stepstone")
                 || text.contains("linkedin")
                 || text.contains("xing");
+    }
+
+    private boolean containsPhrase(String text, String phrase) {
+        return (" " + text + " ").contains(" " + phrase + " ");
     }
 
     private record MatchCandidate(Application application, int score) {
