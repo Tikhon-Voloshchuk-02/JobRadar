@@ -63,7 +63,10 @@ public class ApplicationMatcher {
         boolean companyMatched =
                 (!company.isBlank() && text.contains(company))
                         || companyWordScore(company, text) >= 6;
-        boolean positionMatched = positionWordScore(position, text) >= 4;
+
+        boolean positionMatched = positionWordScore(position, text) >= 2;
+
+        boolean platformEmail = isPlatformEmail(text);
 
         if (companyMatched) {
             score += 10;
@@ -75,6 +78,10 @@ public class ApplicationMatcher {
 
         if (companyMatched && positionMatched) {
             score += 10;
+        }
+
+        if (platformEmail && positionMatched) {
+            score += 6;
         }
 
         return score;
@@ -198,6 +205,13 @@ public class ApplicationMatcher {
                 "junior",
                 "senior"
         ).contains(word);
+    }
+
+    private boolean isPlatformEmail(String text) {
+        return text.contains("indeed")
+                || text.contains("stepstone")
+                || text.contains("linkedin")
+                || text.contains("xing");
     }
 
     private record MatchCandidate(Application application, int score) {
