@@ -99,6 +99,9 @@ public class OpenAiProvider implements AiProvider {
 
         ConfidenceLevel confidence = ConfidenceLevel.valueOf(json.confidence);
 
+        System.out.println("=== OPENAI DETECTED COMPANY ===");
+        System.out.println(json.detectedCompany);
+
         return new EmailAnalysisResult(
                 json.jobRelated,
                 status,

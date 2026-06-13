@@ -294,6 +294,24 @@ public class RuleBasedAiProvider implements AiProvider {
             return AnalysisDecision.notJobRelated(result.reason());
         }
 
+        if (result.suggestedStatus() == ApplicationStatus.REJECTED) {
+            return AnalysisDecision.needsLlm(
+                    "Rejection detection requires OpenAI verification: " + result.reason()
+            );
+        }
+
+        if (result.suggestedStatus() == ApplicationStatus.INTERVIEW) {
+            return AnalysisDecision.needsLlm(
+                    "Interview detection requires OpenAI verification: " + result.reason()
+            );
+        }
+
+        if (result.suggestedStatus() == ApplicationStatus.OFFER) {
+            return AnalysisDecision.needsLlm(
+                    "Offer detection requires OpenAI verification: " + result.reason()
+            );
+        }
+
         if (result.confidence() == ConfidenceLevel.HIGH) {
             return AnalysisDecision.ruleBasedResult(
                     result,
