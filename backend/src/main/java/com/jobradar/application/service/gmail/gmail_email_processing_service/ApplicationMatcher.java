@@ -1,5 +1,6 @@
 package com.jobradar.application.service.gmail.gmail_email_processing_service;
 
+import com.jobradar.application.dto.gmail.EmailAnalysisResult;
 import com.jobradar.application.dto.gmail.GmailMessageDto;
 import com.jobradar.application.model.Application;
 import com.jobradar.application.model.user.User;
@@ -92,12 +93,39 @@ public class ApplicationMatcher {
     }
 
     public Optional<Application> findMatchingApplication(User user, GmailMessageDto email) {
+        return findMatchingApplication(user, email, null);
+    }
+
+    public Optional<Application> findMatchingApplication(
+            User user,
+            GmailMessageDto email,
+            EmailAnalysisResult analysisResult
+    ) {
+        String detectedCompany = analysisResult == null
+                ? ""
+                : safe(analysisResult.detectedCompany());
+
+        String detectedPosition = analysisResult == null
+                ? ""
+                : safe(analysisResult.detectedPosition());
+
+        log.info(
+                "Application matching started: subject={}, sender={}, detectedCompany={}, detectedPosition={}",
+                email.subject(),
+                email.from(),
+                detectedCompany,
+                detectedPosition
+        );
+
         String text = normalize(String.join(" ",
                 safe(email.subject()),
                 safe(email.from()),
                 safe(email.snippet()),
-                safe(email.bodyText())
+                safe(email.bodyText()),
+                detectedCompany,
+                detectedPosition
         ));
+
         String subject = normalize(email.subject());
 
         List<Application> applications = applicationRepository.findByUser(user);

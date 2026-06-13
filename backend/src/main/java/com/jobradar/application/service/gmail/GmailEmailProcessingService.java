@@ -118,8 +118,8 @@ public class GmailEmailProcessingService {
 
         String accessToken = gmailTokenService.getValidAccessToken(user);
 
-        String url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=30&q=Senacor";
-        //String url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10";
+        //String url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=30&q=Senacor";
+        String url = "https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10";
 
         Map response = restClient.get()
                 .uri(url)
@@ -207,8 +207,8 @@ public class GmailEmailProcessingService {
                     EmailAnalysisResult analysis = emailAnalysisService.analyze(gmailEmail);
 
                     if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
-                        applicationMatcher.findMatchingApplication(user, gmailEmail)
-                                .ifPresent(application -> createAiSuggestion(connection ,application, gmailEmail, analysis));
+                        applicationMatcher.findMatchingApplication(user, gmailEmail, analysis)
+                                .ifPresent(application -> createAiSuggestion(connection, application, gmailEmail, analysis));
                     }
 
                     return new GmailEmailAnalysisResponse(gmailEmail, analysis);
@@ -407,7 +407,7 @@ public class GmailEmailProcessingService {
         );
 
         if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
-            Optional<Application> matchingApplication = applicationMatcher.findMatchingApplication(user, dto);
+            Optional<Application> matchingApplication = applicationMatcher.findMatchingApplication(user, dto, analysis);
 
             if (matchingApplication.isPresent()) {
                 boolean suggestionCreated =
