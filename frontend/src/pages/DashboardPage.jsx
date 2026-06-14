@@ -4,7 +4,8 @@ import { useState } from "react";
 import { logout } from "../auth/auth";
 
 import FilterBar from "../components/FilterBar";
-import ApplicationCard from "../components/ApplicationCard";
+
+import ApplicationTable from "../components/ApplicationTable";
 import DashboardSummary from "../components/DashboardSummary";
 import ApplicationForm from "../components/ApplicationForm";
 import HistoryPanel from "../components/HistoryPanel";
@@ -111,35 +112,43 @@ export default function DashboardPage() {
           onClose={closeEditModal}
         />
 
-        <FilterBar
-          searchTerm={searchTerm}
-          selectedStatus={selectedStatus}
-          onSearchChange={setSearchTerm}
-          onStatusChange={setSelectedStatus}
-          onReset={() => {
-            setSearchTerm("");
-            setSelectedStatus("ALL");
-          }}
-        />
+        <div className="applications-section">
+          <div className="applications-section__header">
+            <h2>Applications</h2>
 
-        {loading && <p>{t("loading_applications")}</p>}
-        {error && <p className="error-text">{error}</p>}
+            <div className="view-switcher">
+              <button className="active">Table</button>
+              <button disabled>Kanban</button>
+            </div>
+          </div>
 
-        {!loading && !error && filteredApplications.length === 0 && (
-          <p>{t("no_applications_found")}</p>
-        )}
+          <FilterBar
+            searchTerm={searchTerm}
+            selectedStatus={selectedStatus}
+            onSearchChange={setSearchTerm}
+            onStatusChange={setSelectedStatus}
+            onReset={() => {
+              setSearchTerm("");
+              setSelectedStatus("ALL");
+            }}
+          />
 
-        <div className="applications-grid">
-          {filteredApplications.map((application) => (
-            <ApplicationCard
-              key={application.id}
-              application={application}
+          {loading && <p>{t("loading_applications")}</p>}
+          {error && <p className="error-text">{error}</p>}
+
+          {!loading && !error && filteredApplications.length === 0 && (
+            <p>{t("no_applications_found")}</p>
+          )}
+
+          {!loading && !error && filteredApplications.length > 0 && (
+            <ApplicationTable
+              applications={filteredApplications}
               onEdit={handleEdit}
-              onViewHistory={handleViewHistory}
               onDelete={handleDelete}
+              onViewHistory={handleViewHistory}
               onStatusChange={handleStatusChange}
             />
-          ))}
+          )}
         </div>
 
         {showHistory && (
@@ -149,6 +158,8 @@ export default function DashboardPage() {
             onClose={closeHistory}
           />
         )}
+
+
       </main>
     </div>
   );

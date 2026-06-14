@@ -1,0 +1,30 @@
+.application-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.application-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.application-table th,
+.application-table td {
+  padding: 14px 18px;
+  text-align: left;
+}
+
+.application-table th {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.application-table tr {
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.application-table tbody tr:hover {
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+}

@@ -289,3 +289,124 @@ textarea {
     margin-left: 60px !important;
     width: calc(100vw - 60px) !important;
   }
+
+
+  /* =========================================
+     APPLICATIONS SECTION
+  ========================================= */
+
+  .applications-section {
+    margin-top: 24px;
+
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+
+    padding: 24px;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .applications-section__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+  }
+
+  .applications-section__header h2 {
+    margin: 0;
+
+    color: #f8fafc;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .view-switcher {
+    display: flex;
+    gap: 8px;
+  }
+
+  .view-switcher button {
+    background: transparent;
+    border: 1px solid #334155;
+
+    color: #cbd5e1;
+
+    padding: 8px 14px;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: all 0.15s ease;
+  }
+
+  .view-switcher button:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .view-switcher .active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: white;
+  }
+
+  .view-switcher button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* =========================================
+     APPLICATION TABLE
+  ========================================= */
+
+  .application-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+  }
+
+  .application-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .application-table th {
+    text-align: left;
+
+    padding: 16px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    border-bottom: 1px solid #334155;
+  }
+
+  .application-table td {
+    padding: 16px;
+
+    color: #e5e7eb;
+
+    border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+  }
+
+  .application-table tbody tr {
+    transition: background 0.15s ease;
+  }
+
+  .application-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .application-table tbody tr:last-child td {
+    border-bottom: none;
+  }
