@@ -207,6 +207,16 @@
 .google-login-wrapper {
   display: flex;
   justify-content: center;
+  width: 100%;
+}
+
+.google-login-wrapper > div {
+  width: 100%;
+  max-width: 420px;
+}
+
+.google-login-wrapper iframe {
+  width: 100% !important;
 }
 
 .login-error {

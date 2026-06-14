@@ -155,6 +155,12 @@ function LoginPage() {
             onError={() => {
               setError(t("errors.google_login_failed"));
             }}
+            theme="filled_black"
+            size="large"
+            shape="rectangular"
+            text="continue_with"
+            width="420"
+            locale="en"
           />
         </div>
 
