@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FiEye, FiEyeOff, FiMail, FiLock } from "react-icons/fi";
 
 import { loginRequest, resendVerificationEmail } from "../api/api";
 import { saveToken } from "../auth/auth";
@@ -51,6 +52,37 @@ function LoginPage() {
     }
   }
 
+  async function handleGoogleLogin(credentialResponse) {
+    try {
+      setError("");
+      setLoading(true);
+
+      const response = await fetch("/api/auth/google", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          idToken: credentialResponse.credential,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(t("errors.google_login_failed"));
+      }
+
+      const data = await response.json();
+
+      saveToken(data.token);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || t("errors.google_login_failed"));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleResendVerification() {
     setError("");
     setResendSuccess("");
@@ -58,13 +90,9 @@ function LoginPage() {
     try {
       setLoading(true);
       const data = await resendVerificationEmail(email);
-      setResendSuccess(
-        data.message || t("auth.verification_email_sent")
-      );
+      setResendSuccess(data.message || t("auth.verification_email_sent"));
     } catch (err) {
-      setError(
-        err.message || t("errors.resend_verification_failed")
-      );
+      setError(err.message || t("errors.resend_verification_failed"));
     } finally {
       setLoading(false);
     }
@@ -73,21 +101,30 @@ function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h1>{t("auth.login")}</h1>
+        <div className="login-logo">JR</div>
+
+        <h1>Welcome back to JobRadar</h1>
+        <p className="login-subtitle">
+          Sign in to continue tracking applications, emails and CV matching.
+        </p>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder={t("auth.email")}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <label className="login-field">
+            <FiMail className="login-field-icon" />
+            <span>{t("auth.email")}</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
 
-          <div className="password-input-wrapper">
+          <label className="login-field">
+            <FiLock className="login-field-icon" />
+            <span>{t("auth.password")}</span>
             <input
               type={showPassword ? "text" : "password"}
-              placeholder={t("auth.password")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -95,51 +132,26 @@ function LoginPage() {
 
             <button
               type="button"
-              className="password-toggle-button"
+              className="login-password-toggle"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? "🙈" : "👁️"}
+              {showPassword ? <FiEyeOff /> : <FiEye />}
             </button>
-          </div>
+          </label>
 
-          <button type="submit" disabled={loading}>
+          <button className="login-submit-button" type="submit" disabled={loading}>
             {loading ? t("loading") : t("auth.login")}
           </button>
         </form>
 
-        <div className="google-login-wrapper" style={{ marginTop: "20px" }}>
+        <div className="login-divider">
+          <span>or continue with</span>
+        </div>
+
+        <div className="google-login-wrapper">
           <GoogleLogin
-            onSuccess={async (credentialResponse) => {
-              try {
-                setError("");
-                setLoading(true);
-
-                const response = await fetch("/api/auth/google", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    idToken: credentialResponse.credential,
-                  }),
-                });
-
-                if (!response.ok) {
-                  throw new Error(t("errors.google_login_failed"));
-                }
-
-                const data = await response.json();
-
-                saveToken(data.token);
-                navigate("/dashboard");
-              } catch (err) {
-                console.error(err);
-                setError(err.message || t("errors.google_login_failed"));
-              } finally {
-                setLoading(false);
-              }
-            }}
+            onSuccess={handleGoogleLogin}
             onError={() => {
               setError(t("errors.google_login_failed"));
             }}
@@ -159,9 +171,7 @@ function LoginPage() {
           </button>
         )}
 
-        {resendSuccess && (
-          <p className="login-success">{resendSuccess}</p>
-        )}
+        {resendSuccess && <p className="login-success">{resendSuccess}</p>}
 
         <p className="login-footer">
           {t("auth.no_account")}{" "}
