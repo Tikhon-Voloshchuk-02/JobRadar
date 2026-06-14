@@ -1,63 +1,24 @@
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { logout } from "../auth/auth";
 
-import FilterBar from "../components/FilterBar";
-
-import ApplicationTable from "../components/ApplicationTable";
 import DashboardSummary from "../components/DashboardSummary";
-import ApplicationForm from "../components/ApplicationForm";
-import HistoryPanel from "../components/HistoryPanel";
-import RecentActivity from "../components/RecentActivity";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import EditApplicationModal from "../components/EditApplicationModal";
+import Sidebar from "../components/Sidebar";
 
 import { useDashboard } from "../hooks/useDashboard";
-import { useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
 
 import "./DashboardPage.css";
 
-
 export default function DashboardPage() {
   const { t } = useTranslation();
-
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
-  const {
-    loading,
-    error,
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-    summary,
-    recentActivity,
-
-    searchTerm,
-    selectedStatus,
-    setSearchTerm,
-    setSelectedStatus,
-
-    showForm,
-    showEditModal,
-    formData,
-    editingApplicationId,
-    toggleForm,
-    closeEditModal,
-    handleFormChange,
-    handleSubmitApplication,
-
-    filteredApplications,
-    handleEdit,
-    handleDelete,
-    handleStatusChange,
-    handleViewHistory,
-
-    showHistory,
-    selectedApplication,
-    historyEntries,
-    closeHistory,
-  } = useDashboard(t);
+  const { summary } = useDashboard(t);
 
   function handleLogout() {
     logout();
@@ -78,88 +39,34 @@ export default function DashboardPage() {
           <div className="dashboard-header__actions">
             <LanguageSwitcher />
 
+            <button onClick={() => navigate("/applications")}>
+              Applications
+            </button>
+
             <button onClick={() => navigate("/user")}>
               {t("nav.profile")}
             </button>
 
-            <button onClick={toggleForm}>
-              {showForm ? t("cancel") : t("add_application")}
+            <button onClick={handleLogout}>
+              {t("logout")}
             </button>
-
-            <button onClick={handleLogout}>{t("logout")}</button>
           </div>
         </header>
 
         <DashboardSummary summary={summary} />
-        <RecentActivity activities={recentActivity} />
 
-        {showForm && (
-          <ApplicationForm
-            formData={formData}
-            onChange={handleFormChange}
-            onSubmit={handleSubmitApplication}
-            isEditing={false}
-            applicationId={null}
-          />
-        )}
-
-        <EditApplicationModal
-          open={showEditModal}
-          formData={formData}
-          applicationId={editingApplicationId}
-          onChange={handleFormChange}
-          onSubmit={handleSubmitApplication}
-          onClose={closeEditModal}
-        />
-
-        <div className="applications-section">
-          <div className="applications-section__header">
-            <h2>Applications</h2>
-
-            <div className="view-switcher">
-              <button className="active">Table</button>
-              <button disabled>Kanban</button>
-            </div>
+        <section className="dashboard-overview-panel">
+          <div>
+            <h2>Job search overview</h2>
+            <p>
+              Use Applications to manage your job search in table or kanban view.
+            </p>
           </div>
 
-          <FilterBar
-            searchTerm={searchTerm}
-            selectedStatus={selectedStatus}
-            onSearchChange={setSearchTerm}
-            onStatusChange={setSelectedStatus}
-            onReset={() => {
-              setSearchTerm("");
-              setSelectedStatus("ALL");
-            }}
-          />
-
-          {loading && <p>{t("loading_applications")}</p>}
-          {error && <p className="error-text">{error}</p>}
-
-          {!loading && !error && filteredApplications.length === 0 && (
-            <p>{t("no_applications_found")}</p>
-          )}
-
-          {!loading && !error && filteredApplications.length > 0 && (
-            <ApplicationTable
-              applications={filteredApplications}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onViewHistory={handleViewHistory}
-              onStatusChange={handleStatusChange}
-            />
-          )}
-        </div>
-
-        {showHistory && (
-          <HistoryPanel
-            selectedApplication={selectedApplication}
-            historyEntries={historyEntries}
-            onClose={closeHistory}
-          />
-        )}
-
-
+          <button onClick={() => navigate("/applications")}>
+            View applications
+          </button>
+        </section>
       </main>
     </div>
   );

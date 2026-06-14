@@ -1,0 +1,102 @@
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.application-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 3001;
+
+  width: 380px;
+  height: 100vh;
+
+  background: var(--jr-panel-dark);
+  border-left: 1px solid var(--jr-border);
+
+  padding: 20px;
+  box-sizing: border-box;
+
+  overflow-y: auto;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.drawer-close,
+.drawer-edit-button {
+  padding: 5px 10px;
+
+  background: var(--jr-panel);
+  border: 1px solid var(--jr-border);
+  border-radius: var(--jr-radius-sm);
+
+  color: var(--jr-text-soft);
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.drawer-close:hover,
+.drawer-edit-button:hover {
+  background: #21262d;
+  color: var(--jr-text);
+}
+
+.drawer-title {
+  margin-bottom: 24px;
+}
+
+.drawer-title h2 {
+  margin: 0;
+
+  color: var(--jr-text);
+
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.drawer-title p {
+  margin: 6px 0 0;
+
+  color: var(--jr-text-muted);
+
+  font-size: 14px;
+}
+
+.drawer-section {
+  padding: 16px 0;
+  border-top: 1px solid var(--jr-border);
+}
+
+.drawer-section h3 {
+  margin: 0 0 8px;
+
+  color: var(--jr-text-muted);
+
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.drawer-section p {
+  margin: 0;
+
+  color: var(--jr-text-soft);
+
+  font-size: 14px;
+}
+
+.drawer-notes {
+  white-space: pre-wrap;
+}

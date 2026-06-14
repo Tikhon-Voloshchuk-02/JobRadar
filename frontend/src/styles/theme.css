@@ -1,0 +1,279 @@
+/* =========================================
+   JOBradar Design System
+========================================= */
+
+:root {
+   --jr-bg: #0b0f14;
+   --jr-bg-soft: #111820;
+   --jr-panel: #151b23;
+   --jr-panel-dark: #0d1117;
+   --jr-input: #0d1117;
+
+   --jr-text: #f0f6fc;
+   --jr-text-soft: #c9d1d9;
+   --jr-text-muted: #8b949e;
+
+   --jr-primary: #238636;
+   --jr-primary-hover: #2ea043;
+
+   --jr-accent: #58a6ff;
+   --jr-danger: #f85149;
+   --jr-warning: #d29922;
+   --jr-purple: #a371f7;
+
+   --jr-border: #30363d;
+   --jr-border-strong: #484f58;
+
+   --jr-radius-sm: 4px;
+   --jr-radius-md: 6px;
+   --jr-radius-lg: 8px;
+   --jr-radius-xl: 10px;
+
+   --jr-shadow-soft: none;
+   --jr-shadow-large: none;
+
+   --jr-sidebar-width: 240px;
+   --jr-sidebar-collapsed: 60px;
+ }
+
+/* =========================================
+   GLOBAL
+========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--jr-bg);
+  color: var(--jr-text);
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+}
+
+/* =========================================
+   TYPOGRAPHY
+========================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  color: var(--jr-text);
+}
+
+p {
+  color: var(--jr-text-soft);
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+button {
+  border: 1px solid var(--jr-border);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+
+  border-radius: var(--jr-radius-md);
+
+  background: var(--jr-panel);
+  color: var(--jr-text-soft);
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+button:hover {
+  transform: none;
+  background: #21262d;
+  border-color: var(--jr-border-strong);
+  color: var(--jr-text);
+}
+
+.btn-primary {
+  background: var(--jr-primary);
+  border-color: rgba(46, 160, 67, 0.4);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--jr-primary-hover);
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--jr-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--jr-primary-hover);
+}
+
+.btn-success {
+  background: var(--jr-success);
+  color: white;
+}
+
+.btn-danger {
+  background: var(--jr-danger);
+  color: white;
+}
+
+/* =========================================
+   INPUTS
+========================================= */
+
+input,
+select,
+textarea {
+  width: 100%;
+
+  border-radius: var(--jr-radius-md);
+
+  border: 1px solid var(--jr-border);
+
+  background: var(--jr-input);
+
+  color: var(--jr-text);
+
+  padding: 12px;
+
+  font-size: 14px;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--jr-text-muted);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--jr-primary);
+}
+
+/* =========================================
+   PANELS
+========================================= */
+
+.jr-panel {
+  background: var(--jr-panel);
+
+  border: 1px solid var(--jr-border);
+
+  border-radius: var(--jr-radius-lg);
+
+  box-shadow: var(--jr-shadow-soft);
+}
+
+.jr-panel-dark {
+  background: var(--jr-panel-dark);
+
+  border: 1px solid var(--jr-border);
+
+  border-radius: var(--jr-radius-lg);
+}
+
+/* =========================================
+   CARDS
+========================================= */
+
+.jr-card {
+  background: var(--jr-panel);
+
+  border: 1px solid var(--jr-border);
+
+  border-radius: var(--jr-radius-lg);
+
+  padding: 20px;
+}
+
+/* =========================================
+   STATUS COLORS
+========================================= */
+
+.status-applied {
+  color: #60a5fa;
+}
+
+.status-waiting {
+  color: #fbbf24;
+}
+
+.status-interview {
+  color: #c084fc;
+}
+
+.status-offer {
+  color: #4ade80;
+}
+
+.status-rejected {
+  color: #f87171;
+}
+
+/* =========================================
+   TABLES
+========================================= */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  color: var(--jr-text-muted);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+td {
+  color: var(--jr-text-soft);
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--jr-bg-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

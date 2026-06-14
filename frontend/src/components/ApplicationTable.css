@@ -1,6 +1,11 @@
 .application-table-wrapper {
   width: 100%;
   overflow-x: auto;
+
+  border: 1px solid var(--jr-border);
+  border-radius: var(--jr-radius-md);
+
+  background: var(--jr-panel-dark);
 }
 
 .application-table {
@@ -10,21 +15,46 @@
 
 .application-table th,
 .application-table td {
-  padding: 14px 18px;
+  padding: 12px 16px;
   text-align: left;
 }
 
 .application-table th {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  text-transform: uppercase;
+  color: var(--jr-text-muted);
+
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.application-table td {
+  color: var(--jr-text-soft);
+  font-size: 14px;
 }
 
 .application-table tr {
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid var(--jr-border);
+}
+
+.application-table tbody tr:last-child {
+  border-bottom: none;
 }
 
 .application-table tbody tr:hover {
-  background: rgba(255,255,255,0.03);
+  background: #161b22;
   cursor: pointer;
+}
+
+.table-action-cell {
+  width: 40px;
+  text-align: center;
+
+  color: var(--jr-text-muted);
+
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.application-table tbody tr:hover .table-action-cell {
+  color: var(--jr-text);
 }

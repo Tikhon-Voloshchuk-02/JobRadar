@@ -1,0 +1,130 @@
+.application-kanban {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(260px, 1fr));
+  gap: 12px;
+
+  overflow-x: auto;
+
+  padding-bottom: 10px;
+}
+
+.kanban-column {
+  min-width: 260px;
+
+  background: var(--jr-panel-dark);
+
+  border: 1px solid var(--jr-border);
+  border-radius: var(--jr-radius-md);
+}
+
+.kanban-column__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 12px;
+
+  border-bottom: 1px solid var(--jr-border);
+}
+
+.kanban-column__header span {
+  color: var(--jr-text-muted);
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.kanban-column__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 10px;
+
+  min-height: 320px;
+}
+
+.kanban-empty {
+  margin: 0;
+
+  color: var(--jr-text-muted);
+
+  font-size: 14px;
+}
+
+.kanban-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  padding: 12px;
+
+  background: var(--jr-bg);
+
+  border: 1px solid var(--jr-border);
+  border-radius: var(--jr-radius-md);
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.kanban-card:hover {
+  background: #161b22;
+  border-color: var(--jr-border-strong);
+}
+
+.kanban-card h3 {
+  margin: 0 0 6px;
+
+  color: var(--jr-text);
+
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.kanban-card p {
+  margin: 0;
+
+  color: var(--jr-text-soft);
+
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.kanban-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kanban-card__meta span {
+  color: var(--jr-text-muted);
+
+  font-size: 12px;
+}
+
+.kanban-card__meta button {
+  padding: 5px 8px;
+
+  background: var(--jr-panel);
+  border: 1px solid var(--jr-border);
+  border-radius: var(--jr-radius-sm);
+
+  color: var(--jr-text-soft);
+
+  cursor: pointer;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.kanban-card__meta button:hover {
+  background: #21262d;
+  border-color: var(--jr-border-strong);
+  color: var(--jr-text);
+}

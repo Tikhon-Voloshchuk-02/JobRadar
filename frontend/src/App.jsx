@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import AiSuggestionsPage from "./pages/AiSuggestionsPage";
 import UserPage from "./pages/UserPage";
+import ApplicationsPage from "./pages/ApplicationsPage";
 
 function App() {
   return (
@@ -35,6 +36,15 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute>
+              <ApplicationsPage />
             </ProtectedRoute>
           }
         />

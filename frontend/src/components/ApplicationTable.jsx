@@ -1,9 +1,9 @@
+import StatusBadge from "./StatusBadge";
+import "./ApplicationTable.css";
+
 export default function ApplicationTable({
   applications,
-  onEdit,
-  onDelete,
-  onViewHistory,
-  onStatusChange,
+  onSelect,
 }) {
   return (
     <div className="application-table-wrapper">
@@ -14,26 +14,28 @@ export default function ApplicationTable({
             <th>Position</th>
             <th>Status</th>
             <th>Applied</th>
-            <th>Actions</th>
+            <th></th>
           </tr>
         </thead>
 
         <tbody>
           {applications.map((app) => (
-            <tr key={app.id}>
+            <tr
+              key={app.id}
+              onClick={() => onSelect(app)}
+            >
               <td>{app.company}</td>
+
               <td>{app.position}</td>
-              <td>{app.status}</td>
-              <td>{app.appliedAt}</td>
 
               <td>
-                <button onClick={() => onEdit(app)}>
-                  Edit
-                </button>
+                <StatusBadge status={app.status} />
+              </td>
 
-                <button onClick={() => onViewHistory(app.id)}>
-                  History
-                </button>
+              <td>{app.appliedAt || "—"}</td>
+
+              <td className="table-action-cell">
+                ›
               </td>
             </tr>
           ))}
