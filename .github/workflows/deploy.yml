@@ -17,6 +17,19 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /home/jobradar/JobRadar
+
             git pull origin main
-            docker compose up --build -d
+
+            cd frontend
+            npm install
+            npm run build
+
+            cd ..
+            rm -rf backend/src/main/resources/static/*
+            cp -r frontend/dist/* backend/src/main/resources/static/
+
+            docker compose down
+            docker compose build --no-cache backend
+            docker compose up -d
+
             docker compose ps
