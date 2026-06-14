@@ -53,14 +53,30 @@ public class ApplicationMatcher {
                 .sum();
     }
 
-    private int calculateScore(Application application, String text, String subject) {
+    private int calculateScore(Application application, String text, String subject,
+                               String detectedCompany, String detectedPosition) {
         int score = 0;
 
         String company = normalize(application.getCompany());
         String position = normalize(application.getPosition());
 
-        if (!position.isBlank() && containsPhrase(subject, position)) {
-            score += 20;
+        String aiCompany = normalize(detectedCompany);
+        String aiPosition = normalize(detectedPosition);
+
+        if (!position.isBlank() && containsPhrase(subject, position)) { score += 20; }
+
+        if (!company.isBlank() && !aiCompany.isBlank()) {
+
+            if (company.equals(aiCompany)) { score += 30; }
+
+            else if (containsPhrase(aiCompany, company)  || containsPhrase(company, aiCompany)) { score += 20; }
+            else if (companyWordScore(company, aiCompany) >= 6) { score += 15; }
+        }
+
+        if (!position.isBlank() && !aiPosition.isBlank()) {
+
+            if (position.equals(aiPosition)) { score += 15; }
+            else if (positionWordScore(position, aiPosition) >= 2) { score += 8; }
         }
 
         boolean companyMatched =
@@ -71,23 +87,10 @@ public class ApplicationMatcher {
 
         boolean platformEmail = isPlatformEmail(text);
 
-        if (companyMatched) {
-            score += 10;
-        }
-
-        if (positionMatched) {
-            score += 8;
-        }
-
-        if (companyMatched && positionMatched) {
-            score += 10;
-        }
-
-        if (platformEmail && positionMatched) {
-            score += 6;
-        }
-
-
+        if (companyMatched) { score += 10; }
+        if (positionMatched) { score += 8; }
+        if (companyMatched && positionMatched) { score += 10; }
+        if (platformEmail && positionMatched) { score += 6; }
 
         return score;
     }
@@ -96,11 +99,7 @@ public class ApplicationMatcher {
         return findMatchingApplication(user, email, null);
     }
 
-    public Optional<Application> findMatchingApplication(
-            User user,
-            GmailMessageDto email,
-            EmailAnalysisResult analysisResult
-    ) {
+    public Optional<Application> findMatchingApplication( User user,  GmailMessageDto email,  EmailAnalysisResult analysisResult) {
         String detectedCompany = analysisResult == null
                 ? ""
                 : safe(analysisResult.detectedCompany());
@@ -133,7 +132,13 @@ public class ApplicationMatcher {
         List<MatchCandidate> candidates = applications.stream()
                 .map(application -> new MatchCandidate(
                         application,
-                        calculateScore(application, text, subject)
+                        calculateScore(
+                                application,
+                                text,
+                                subject,
+                                detectedCompany,
+                                detectedPosition
+                        )
                 ))
                 .filter(candidate -> candidate.score() >= 6)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
