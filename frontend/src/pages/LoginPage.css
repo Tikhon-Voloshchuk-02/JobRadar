@@ -5,27 +5,59 @@
   justify-content: center;
   align-items: center;
   padding: 24px;
+  background:
+    radial-gradient(circle at top, rgba(88, 166, 255, 0.06), transparent 42%),
+    #0d1117;
 }
 
 .login-card {
   width: 100%;
-  max-width: 360px;
+  max-width: 580px;
   padding: 32px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  box-shadow: var(--shadow);
+  border-radius: 12px;
+  border: 1px solid #30363d;
+  background: #161b22;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+
+  animation: fadeUp 0.3s ease;
+}
+
+.login-logo {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 12px;
+  background: #21262d;
+  border: 1px solid #30363d;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+  font-size: 18px;
+  color: #58a6ff;
 }
 
 .login-card h1 {
   margin: 0;
+  color: #f0f6fc;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   text-align: center;
-  color: var(--text-h);
-  font-size: 36px;
+}
+
+.login-subtitle {
+  margin: -8px 0 4px;
+  color: #8b949e;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .login-form {
@@ -34,90 +66,250 @@
   gap: 12px;
 }
 
-.login-form input {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  color: var(--text-h);
+.login-field {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  min-height: 64px;
+  padding: 10px 14px;
+
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  background: #0d1117;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.login-form button {
+.login-field:focus-within {
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.18);
+}
+
+.login-field-icon {
+  color: #8b949e;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.login-field span {
+  color: #8b949e;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.login-field input {
   width: 100%;
-  padding: 12px;
+  padding: 0;
   border: none;
-  border-radius: 10px;
-  background: var(--accent);
-  color: white;
-  cursor: pointer;
+  border-radius: 2px;
+  background: transparent;
+  color: #f0f6fc;
+  font-size: 15px;
+  outline: none;
 }
 
-.login-form button:disabled {
+.login-field {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "icon label toggle"
+    "icon input toggle";
+  column-gap: 14px;
+  row-gap: 5px;
+}
+
+.login-field-icon {
+  grid-area: icon;
+  align-self: center;
+}
+
+.login-field span {
+  grid-area: label;
+}
+
+.login-field input {
+  grid-area: input;
+}
+
+.login-password-toggle {
+  grid-area: toggle;
+  width: auto;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: #8b949e;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.login-password-toggle:hover {
+  color: #f0f6fc;
+  background: transparent;
+}
+
+.login-submit-button {
+  width: 100%;
+  margin-top: 4px;
+  padding: 12px;
+  border: 1px solid rgba(46, 160, 67, 0.4);
+  border-radius: 5px;
+  background: linear-gradient(180deg, #2ea043, #238636);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.login-submit-button:hover {
+  transform: translateY(-1px);
+}
+
+.login-submit-button:active {
+  transform: translateY(1px);
+}
+
+.login-submit-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #8b949e;
+  font-size: 12px;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #30363d;
+}
+
+.google-login-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.google-login-wrapper > div {
+  width: 100%;
+  max-width: 420px;
+}
+
+.google-login-wrapper iframe {
+  width: 100% !important;
+}
+
 .login-error {
   margin: 0;
-  color: var(--danger);
+  padding: 10px 12px;
+  border: 1px solid rgba(248, 81, 73, 0.35);
+  border-radius: 5px;
+  background: rgba(248, 81, 73, 0.08);
+  color: #ff7b72;
   text-align: center;
+  font-size: 14px;
+}
+
+.login-success {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(46, 160, 67, 0.35);
+  border-radius: 5px;
+  background: rgba(46, 160, 67, 0.08);
+  color: #3fb950;
+  text-align: center;
+  font-size: 14px;
+}
+
+.resend-verification-button {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  background: #21262d;
+  color: #f0f6fc;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.resend-verification-button:hover {
+  background: #30363d;
+  transform: translateY(-1px);
+}
+
+.resend-verification-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .login-footer {
+  margin: 0;
   text-align: center;
-  margin-top: 8px;
+  color: #8b949e;
   font-size: 14px;
-  color: var(--text);
 }
 
 .login-footer a {
-  color: var(--accent);
-  font-weight: 500;
+  color: #58a6ff;
+  text-decoration: none;
 }
 
 .login-footer a:hover {
   text-decoration: underline;
 }
 
-.password-input-wrapper {
-  position: relative;
-  width: 100%;
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f0f6fc;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 
-
-.login-form .password-input-wrapper {
-  position: relative;
-  width: 100%;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.login-form .password-input-wrapper input {
-  width: 100%;
-  padding-right: 52px;
-}
+@media (max-width: 700px) {
+  .login-card {
+    padding: 24px;
+  }
 
-.login-form .password-input-wrapper .password-toggle-button {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: auto;
-  height: auto;
-  padding: 0;
-  margin: 0;
-
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  .login-card h1 {
+    font-size: 28px;
+  }
 }
