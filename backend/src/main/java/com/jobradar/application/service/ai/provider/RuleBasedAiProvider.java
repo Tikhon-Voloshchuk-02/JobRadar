@@ -73,7 +73,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     false,
                     null,
                     ConfidenceLevel.LOW,
-                    "Ignored job board recommendation email"
+                    "Ignored job board recommendation email",
+                    null,
+                    null
             );
         }
 
@@ -101,7 +103,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     true,
                     ApplicationStatus.REJECTED,
                     ConfidenceLevel.HIGH,
-                    "Email contains rejection-related keywords"
+                    "Email contains rejection-related keywords",
+                    null,
+                    null
             );
         }
 
@@ -135,7 +139,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     true,
                     ApplicationStatus.OFFER,
                     ConfidenceLevel.HIGH,
-                    "Email contains offer-related keywords"
+                    "Email contains offer-related keywords",
+                    null,
+                    null
             );
         }
 
@@ -170,7 +176,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     true,
                     ApplicationStatus.INTERVIEW,
                     ConfidenceLevel.HIGH,
-                    "Email contains interview-related keywords"
+                    "Email contains interview-related keywords",
+                    null,
+                    null
             );
         }
 
@@ -195,7 +203,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     true,
                     ApplicationStatus.WAITING,
                     ConfidenceLevel.HIGH,
-                    "Email indicates that the application is being reviewed"
+                    "Email indicates that the application is being reviewed",
+                    null,
+                    null
             );
         }
 
@@ -229,7 +239,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     true,
                     ApplicationStatus.APPLIED,
                     ConfidenceLevel.HIGH,
-                    "Email confirms that the application was submitted or received"
+                    "Email confirms that the application was submitted or received",
+                    null,
+                    null
             );
         }
 
@@ -246,7 +258,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     true,
                     ApplicationStatus.WAITING,
                     ConfidenceLevel.MEDIUM,
-                    "Email contains test-assignment-related keywords"
+                    "Email contains test-assignment-related keywords",
+                    null,
+                    null
             );
         }
 
@@ -261,7 +275,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     true,
                     ApplicationStatus.APPLIED,
                     ConfidenceLevel.MEDIUM,
-                    "Email appears to be related to a job application"
+                    "Email appears to be related to a job application",
+                    null,
+                    null
             );
         }
 
@@ -275,7 +291,9 @@ public class RuleBasedAiProvider implements AiProvider {
                     true,
                     ApplicationStatus.APPLIED,
                     ConfidenceLevel.MEDIUM,
-                    "Email appears related to job search"
+                    "Email appears related to job search",
+                    null,
+                    null
             );
         }
 
@@ -283,7 +301,9 @@ public class RuleBasedAiProvider implements AiProvider {
                 false,
                 null,
                 ConfidenceLevel.LOW,
-                "Email does not look job-related"
+                "Email does not look job-related",
+                null,
+                null
         );
     }
 

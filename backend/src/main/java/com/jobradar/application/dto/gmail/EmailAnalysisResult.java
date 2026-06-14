@@ -8,7 +8,7 @@ public record EmailAnalysisResult(
         boolean jobRelated,
         ApplicationStatus suggestedStatus,
         ConfidenceLevel confidence,
-        String reason
-
-) {
-}
+        String reason,
+        String detectedCompany,
+        String detectedPosition
+) {}
