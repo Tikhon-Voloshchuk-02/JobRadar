@@ -37,6 +37,9 @@ export function useDashboard(t) {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("ALL");
+  const [selectedCompany, setSelectedCompany] = useState("ALL");
+  const [sortMode, setSortMode] = useState("NEWEST");
+  const [showFilters, setShowFilters] = useState(true);
 
   const [showForm, setShowForm] = useState(false);
   const [editingApplicationId, setEditingApplicationId] = useState(null);
@@ -152,6 +155,8 @@ export function useDashboard(t) {
       setShowForm(false);
       setShowEditModal(false);
       setSelectedStatus("ALL");
+      setSelectedCompany("ALL");
+      setSortMode("NEWEST");
       setSearchTerm("");
     } catch (err) {
       setError(err.message || "Failed to save application");
@@ -206,10 +211,19 @@ export function useDashboard(t) {
     }
   }
 
+  const companies = useMemo(() => {
+    return Array.from(
+      new Set(applications.map((app) => app.company).filter(Boolean))
+    ).sort();
+  }, [applications]);
+
   const filteredApplications = useMemo(() => {
-    return applications.filter((app) => {
+    let result = applications.filter((app) => {
       const matchesStatus =
         selectedStatus === "ALL" || app.status === selectedStatus;
+
+      const matchesCompany =
+        selectedCompany === "ALL" || app.company === selectedCompany;
 
       const term = searchTerm.trim().toLowerCase();
 
@@ -219,9 +233,33 @@ export function useDashboard(t) {
         app.position?.toLowerCase().includes(term) ||
         app.notes?.toLowerCase().includes(term);
 
-      return matchesStatus && matchesSearch;
+      return matchesStatus && matchesCompany && matchesSearch;
     });
-  }, [applications, searchTerm, selectedStatus]);
+
+    result = [...result].sort((a, b) => {
+      if (sortMode === "COMPANY_ASC") {
+        return (a.company || "").localeCompare(b.company || "");
+      }
+
+      if (sortMode === "COMPANY_DESC") {
+        return (b.company || "").localeCompare(a.company || "");
+      }
+
+      if (sortMode === "OLDEST") {
+        return new Date(a.appliedAt || 0) - new Date(b.appliedAt || 0);
+      }
+
+      return new Date(b.appliedAt || 0) - new Date(a.appliedAt || 0);
+    });
+
+    return result;
+  }, [
+    applications,
+    searchTerm,
+    selectedStatus,
+    selectedCompany,
+    sortMode,
+  ]);
 
   return {
     loading,
@@ -254,5 +292,13 @@ export function useDashboard(t) {
     selectedApplication,
     historyEntries,
     closeHistory: () => setShowHistory(false),
+
+    selectedCompany,
+    setSelectedCompany,
+    sortMode,
+    setSortMode,
+    showFilters,
+    setShowFilters,
+    companies,
   };
 }

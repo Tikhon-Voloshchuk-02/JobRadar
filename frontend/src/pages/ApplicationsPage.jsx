@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import Sidebar from "../components/Sidebar";
-import FilterBar from "../components/FilterBar";
+import ApplicationToolbar from "../components/ApplicationsToolbar";
 import ApplicationTable from "../components/ApplicationTable";
 import ApplicationKanban from "../components/ApplicationKanban";
 import ApplicationViewSwitcher from "../components/ApplicationViewSwitcher";
@@ -50,6 +50,14 @@ export default function ApplicationsPage() {
     selectedApplication,
     historyEntries,
     closeHistory,
+
+    selectedCompany,
+    setSelectedCompany,
+    sortMode,
+    setSortMode,
+    showFilters,
+    setShowFilters,
+    companies,
   } = useDashboard(t);
 
   return (
@@ -62,20 +70,34 @@ export default function ApplicationsPage() {
             <h1>Applications</h1>
             <p>Manage your job applications in table or kanban view.</p>
           </div>
-
-          <button onClick={toggleForm}>
-            {showForm ? t("cancel") : t("add_application")}
-          </button>
         </header>
 
         {showForm && (
-          <ApplicationForm
-            formData={formData}
-            onChange={handleFormChange}
-            onSubmit={handleSubmitApplication}
-            isEditing={false}
-            applicationId={null}
-          />
+          <div className="modal-overlay" onClick={toggleForm}>
+            <div
+              className="create-application-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <div>
+                  <h2>Add application</h2>
+                  <p>Create a new job application entry.</p>
+                </div>
+
+                <button type="button" className="modal-close" onClick={toggleForm}>
+                  ×
+                </button>
+              </div>
+
+              <ApplicationForm
+                formData={formData}
+                onChange={handleFormChange}
+                onSubmit={handleSubmitApplication}
+                isEditing={false}
+                applicationId={null}
+              />
+            </div>
+          </div>
         )}
 
         <EditApplicationModal
@@ -95,15 +117,25 @@ export default function ApplicationsPage() {
             />
           </div>
 
-          <FilterBar
-            searchTerm={searchTerm}
-            selectedStatus={selectedStatus}
+          <ApplicationToolbar
+            search={searchTerm}
+            status={selectedStatus}
+            selectedCompany={selectedCompany}
+            companies={companies}
+            sortMode={sortMode}
+            showFilters={showFilters}
             onSearchChange={setSearchTerm}
             onStatusChange={setSelectedStatus}
-            onReset={() => {
+            onCompanyChange={setSelectedCompany}
+            onSortChange={setSortMode}
+            onToggleFilters={() => setShowFilters((prev) => !prev)}
+            onResetFilters={() => {
               setSearchTerm("");
               setSelectedStatus("ALL");
+              setSelectedCompany("ALL");
+              setSortMode("NEWEST");
             }}
+            onAddApplication={toggleForm}
           />
 
           {loading && <p>{t("loading_applications")}</p>}
