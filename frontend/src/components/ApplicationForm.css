@@ -14,31 +14,36 @@
 .application-form select,
 .application-form textarea {
   width: 100%;
-  min-height: 44px;
+  min-height: 40px;
   box-sizing: border-box;
 
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 12px;
+  border: 1px solid #30363d;
+  border-radius: 2px;
 
-  background: rgba(15, 23, 42, 0.65);
-  color: #e5e7eb;
+  background: #0d1117;
+  color: #e6edf3;
 
-  padding: 0 14px;
+  padding: 0 12px;
   font-size: 14px;
+
   outline: none;
 }
 
 .application-form input:focus,
 .application-form select:focus,
 .application-form textarea:focus {
-  border-color: rgba(59, 130, 246, 0.7);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+  border-color: #58a6ff;
+  box-shadow: none;
 }
 
 .application-form textarea {
   min-height: 110px;
-  padding: 14px;
+
+  padding: 12px;
+
   resize: vertical;
+
+  border-radius: 2px;
 }
 
 .applied-date-wrapper {

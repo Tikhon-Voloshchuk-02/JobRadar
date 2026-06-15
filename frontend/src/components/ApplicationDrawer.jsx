@@ -67,6 +67,23 @@ export default function ApplicationDrawer({
           <StatusBadge status={application.status} />
         </section>
 
+         <section className="drawer-section">
+                  <h3>Vacancy</h3>
+
+                  {application.link ? (
+                    <a
+                      className="drawer-vacancy-link"
+                      href={application.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open vacancy ↗
+                    </a>
+                  ) : (
+                    <p>No vacancy link available</p>
+                  )}
+                </section>
+
         <section className="drawer-section">
           <h3>Applied</h3>
           <p>{application.appliedAt || "—"}</p>

@@ -268,3 +268,26 @@
 .drawer-document-download:hover {
   background: #388bfd;
 }
+
+.drawer-vacancy-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+
+  color: #c9d1d9;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.drawer-vacancy-link:hover {
+  background: #30363d;
+  color: #e6edf3;
+}

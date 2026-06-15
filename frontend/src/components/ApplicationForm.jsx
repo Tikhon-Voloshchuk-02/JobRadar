@@ -8,12 +8,12 @@ export default function ApplicationForm({
   onSubmit,
   isEditing,
   applicationId,
+  hideSubmitButton = false,
 }) {
   const { t } = useTranslation();
 
   return (
     <form className="application-form" onSubmit={onSubmit}>
-      {/* row 1 */}
       <div className="form-row">
         <input
           type="text"
@@ -33,7 +33,6 @@ export default function ApplicationForm({
           required
         />
       </div>
-
 
       <div className="form-row">
         <input
@@ -58,7 +57,6 @@ export default function ApplicationForm({
         </select>
       </div>
 
-
       <textarea
         name="notes"
         placeholder={t("notes")}
@@ -66,9 +64,9 @@ export default function ApplicationForm({
         onChange={onChange}
       />
 
-      {/* ❗ ДАТА ОТДЕЛЬНО */}
       <div className="applied-date-wrapper">
         <label>{t("applied_at")}</label>
+
         <input
           className="applied-date-input"
           type="date"
@@ -77,7 +75,6 @@ export default function ApplicationForm({
           onChange={onChange}
         />
       </div>
-
 
       {isEditing && applicationId && (
         <div className="documents-wrapper">
@@ -88,11 +85,13 @@ export default function ApplicationForm({
         </div>
       )}
 
-      <button type="submit" className="primary-button">
-        {isEditing
-          ? t("update_application")
-          : t("save_application")}
-      </button>
+      {!hideSubmitButton && (
+        <button type="submit" className="primary-button">
+          {isEditing
+            ? t("update_application")
+            : t("save_application")}
+        </button>
+      )}
     </form>
   );
 }

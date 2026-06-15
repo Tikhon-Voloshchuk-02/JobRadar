@@ -6,22 +6,18 @@
   color: var(--jr-text-soft);
 
   box-sizing: border-box;
+
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
-.app-layout .ai-suggestions-page {
-  margin-left: var(--jr-sidebar-collapsed) !important;
-  width: calc(100vw - var(--jr-sidebar-collapsed)) !important;
-  max-width: none !important;
-}
-
-.app-layout.sidebar-open .ai-suggestions-page {
-  margin-left: var(--jr-sidebar-width) !important;
-  width: calc(100vw - var(--jr-sidebar-width)) !important;
-}
-
+.app-layout .ai-suggestions-page,
+.app-layout.sidebar-open .ai-suggestions-page,
 .app-layout.sidebar-closed .ai-suggestions-page {
-  margin-left: var(--jr-sidebar-collapsed) !important;
-  width: calc(100vw - var(--jr-sidebar-collapsed)) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
 }
 
 /* HEADER */
@@ -68,6 +64,8 @@
 
   font-size: 14px;
   font-weight: 600;
+
+  cursor: pointer;
 }
 
 .refresh-button:hover,
@@ -149,17 +147,26 @@
   display: grid;
   gap: 12px;
 
+  width: 100%;
   max-width: 920px;
+
+  box-sizing: border-box;
 }
 
 /* CARD */
 
 .ai-suggestion-card {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
   padding: 16px;
 
   background: var(--jr-bg);
   border: 1px solid var(--jr-border);
   border-radius: var(--jr-radius-md);
+
+  overflow: hidden;
 }
 
 .ai-suggestion-card__header {
@@ -179,6 +186,8 @@
 
   font-size: 18px;
   font-weight: 700;
+
+  overflow-wrap: anywhere;
 }
 
 .ai-suggestion-card__header p {
@@ -187,6 +196,8 @@
   color: var(--jr-text-muted);
 
   font-size: 14px;
+
+  overflow-wrap: anywhere;
 }
 
 /* STATUS CHANGE */
@@ -206,6 +217,8 @@
 /* CONFIDENCE */
 
 .confidence-badge {
+  flex-shrink: 0;
+
   padding: 4px 8px;
 
   border: 1px solid var(--jr-border);
@@ -240,9 +253,13 @@
 
   font-size: 14px;
   line-height: 1.5;
+
+  overflow-wrap: anywhere;
 }
 
 .email-snippet {
+  max-width: 100%;
+
   margin: 0 0 16px;
   padding: 12px 14px;
 
@@ -253,6 +270,10 @@
 
   font-size: 14px;
   line-height: 1.5;
+
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* ACTIONS */
@@ -274,6 +295,8 @@
 
   font-size: 14px;
   font-weight: 600;
+
+  cursor: pointer;
 }
 
 .accept-button:hover,
@@ -311,5 +334,9 @@
 
   .header-actions {
     flex-wrap: wrap;
+  }
+
+  .ai-suggestion-card__header {
+    flex-direction: column;
   }
 }

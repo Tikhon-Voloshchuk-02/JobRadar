@@ -181,7 +181,10 @@ export default function ApplicationsPage() {
         <ApplicationDrawer
           application={drawerApplication}
           onClose={() => setDrawerApplication(null)}
-          onEdit={handleEdit}
+          onEdit={(application) => {
+            setDrawerApplication(null);
+            handleEdit(application);
+          }}
         />
       </main>
     </div>
