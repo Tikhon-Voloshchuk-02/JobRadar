@@ -95,7 +95,7 @@ export default function AiSuggestionsPage() {
   }
 
   return (
-    <div className="app-layout">
+    <div className={`app-layout ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
       <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
 
       <main className="ai-suggestions-page main-content">

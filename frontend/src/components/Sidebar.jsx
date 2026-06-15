@@ -47,13 +47,18 @@ function Sidebar({ open, setOpen }) {
       {open && (
         <>
           <div className="sidebar-logo">
-            <span className="sidebar-logo-icon">◎</span>
+            <span className="sidebar-logo-icon">JR</span>
             <span className="sidebar-logo-text">JobRadar</span>
           </div>
 
           <nav className="sidebar-nav">
+
             <NavLink to="/dashboard" className="sidebar-link">
               {t("nav.dashboard")}
+            </NavLink>
+
+            <NavLink to="/applications" className="sidebar-link">
+              Applications
             </NavLink>
 
             <NavLink to="/ai-suggestions" className="sidebar-link">
@@ -69,6 +74,7 @@ function Sidebar({ open, setOpen }) {
             <NavLink to="/user" className="sidebar-link">
               {t("nav.profile")}
             </NavLink>
+
           </nav>
         </>
       )}
