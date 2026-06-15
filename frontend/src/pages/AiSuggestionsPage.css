@@ -7,17 +7,25 @@
 
   box-sizing: border-box;
 
-  width: 100%;
-  max-width: 100%;
   overflow-x: hidden;
 }
 
-.app-layout .ai-suggestions-page,
-.app-layout.sidebar-open .ai-suggestions-page,
+.app-layout .ai-suggestions-page {
+  margin-left: var(--jr-sidebar-collapsed);
+  width: calc(100% - var(--jr-sidebar-collapsed));
+  max-width: calc(100% - var(--jr-sidebar-collapsed));
+}
+
+.app-layout.sidebar-open .ai-suggestions-page {
+  margin-left: var(--jr-sidebar-width);
+  width: calc(100% - var(--jr-sidebar-width));
+  max-width: calc(100% - var(--jr-sidebar-width));
+}
+
 .app-layout.sidebar-closed .ai-suggestions-page {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin-left: 0 !important;
+  margin-left: var(--jr-sidebar-collapsed);
+  width: calc(100% - var(--jr-sidebar-collapsed));
+  max-width: calc(100% - var(--jr-sidebar-collapsed));
 }
 
 /* HEADER */
