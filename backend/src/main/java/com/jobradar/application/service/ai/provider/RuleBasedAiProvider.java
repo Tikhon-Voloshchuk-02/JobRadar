@@ -97,7 +97,22 @@ public class RuleBasedAiProvider implements AiProvider {
                 "sagen wir ihnen auf diesem weg ab",
                 "daher sagen wir ihnen",
                 "nicht berücksichtigen",
-                "nicht in die engere auswahl")) {
+                "nicht in die engere auswahl",
+                "leider mitteilen",
+                "leider muessen wir",
+                "leider müssen wir",
+                "muessen wir dir leider mitteilen",
+                "müssen wir dir leider mitteilen",
+                "muessen wir ihnen leider mitteilen",
+                "müssen wir ihnen leider mitteilen",
+                "keine moeglichkeit sehen",
+                "keine möglichkeit sehen",
+                "keine positive nachricht",
+                "nicht einsetzen",
+                "nicht entsprechend",
+                "nicht entsprechen",
+                "nicht berücksichtigen",
+                "nicht beruecksichtigen")) {
 
             return new EmailAnalysisResult(
                     true,
