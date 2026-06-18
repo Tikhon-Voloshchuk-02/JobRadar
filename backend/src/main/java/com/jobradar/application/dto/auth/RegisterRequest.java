@@ -1,5 +1,8 @@
 package com.jobradar.application.dto.auth;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class RegisterRequest {
 
     private String firstname;
