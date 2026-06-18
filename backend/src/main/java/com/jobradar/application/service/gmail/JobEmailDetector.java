@@ -59,8 +59,11 @@ public class JobEmailDetector {
                 || text.contains("xing")
 
                 || text.contains("karriere")
-                || text.contains("stelle")
                 || text.contains("stellenanzeige")
+                || text.contains("stellenangebot")
+                || text.contains("jobangebot")
+                || text.contains("offene stelle")
+                || text.contains("freie stelle")
                 || text.contains("praktikum")
                 || text.contains("werkstudent")
                 || text.contains("vorstellungsgespraech")

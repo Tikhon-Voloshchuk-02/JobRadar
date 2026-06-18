@@ -1,6 +1,7 @@
 package com.jobradar.application.model.gmail;
 
 import com.jobradar.application.model.user.User;
+import com.jobradar.application.service.gmail.gmail_email_processing_service.EmailProcessingStatus;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
 
@@ -43,6 +44,10 @@ public class ProcessedEmail {
     @ManyToOne(optional = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EmailProcessingStatus processingStatus = EmailProcessingStatus.DETECTED;
+
 
     public Long getId() { return id; }
 
@@ -72,4 +77,9 @@ public class ProcessedEmail {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public EmailProcessingStatus getProcessingStatus() { return processingStatus; }
+    public void setProcessingStatus(EmailProcessingStatus processingStatus) {
+        this.processingStatus = processingStatus;
+    }
 }
