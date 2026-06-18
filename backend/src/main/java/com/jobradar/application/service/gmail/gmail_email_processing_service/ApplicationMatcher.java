@@ -19,6 +19,7 @@ public class ApplicationMatcher {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationMatcher.class);
     private final ApplicationRepository applicationRepository;
+    private static final int MIN_MATCH_SCORE = 30;
 
     public ApplicationMatcher(ApplicationRepository applicationRepository) {
         this.applicationRepository = applicationRepository;
@@ -116,6 +117,18 @@ public class ApplicationMatcher {
                 detectedPosition
         );
 
+        String normalizedDetectedCompany = normalize(detectedCompany);
+        String normalizedDetectedPosition = normalize(detectedPosition);
+
+        if (normalizedDetectedCompany.isBlank() && normalizedDetectedPosition.isBlank()) {
+            log.warn(
+                    "Application matching skipped: no detected company and no detected position. subject={}, sender={}",
+                    email.subject(),
+                    email.from()
+            );
+            return Optional.empty();
+        }
+
         String text = normalize(String.join(" ",
                 safe(email.subject()),
                 safe(email.from()),
@@ -140,7 +153,7 @@ public class ApplicationMatcher {
                                 detectedPosition
                         )
                 ))
-                .filter(candidate -> candidate.score() >= 6)
+                .filter(candidate -> candidate.score() >= MIN_MATCH_SCORE)
                 .sorted((a, b) -> Integer.compare(b.score(), a.score()))
                 .toList();
 
@@ -163,24 +176,17 @@ public class ApplicationMatcher {
             return Optional.empty();
         }
 
-        if (candidates.size() > 1 && candidates.get(0).score() < 18) {
-            log.warn(
-                    "Weak application match with multiple candidates: bestScore={}, company1={}, company2={}",
-                    candidates.get(0).score(),
-                    candidates.get(0).application().getCompany(),
-                    candidates.get(1).application().getCompany()
-            );
-            return Optional.empty();
-        }
-
         if (candidates.size() > 1
-                && candidates.get(0).score() == candidates.get(1).score()) {
+                && candidates.get(0).score() - candidates.get(1).score() < 10) {
+
             log.warn(
-                    "Ambiguous application match: score={}, company1={}, company2={}",
+                    "Ambiguous application match: bestScore={}, secondScore={}, company1={}, company2={}",
                     candidates.get(0).score(),
+                    candidates.get(1).score(),
                     candidates.get(0).application().getCompany(),
                     candidates.get(1).application().getCompany()
             );
+
             return Optional.empty();
         }
 
