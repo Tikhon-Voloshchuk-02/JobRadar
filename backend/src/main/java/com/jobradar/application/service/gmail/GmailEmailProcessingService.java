@@ -19,6 +19,7 @@ import com.jobradar.application.service.ai.AiSuggestionService;
 import com.jobradar.application.service.ai.EmailAnalysisService;
 import com.jobradar.application.service.ai.StatusTransitionValidator;
 import com.jobradar.application.service.gmail.gmail_email_processing_service.ApplicationMatcher;
+import com.jobradar.application.service.gmail.gmail_email_processing_service.EmailProcessingStatus;
 import com.jobradar.application.service.gmail.gmail_email_processing_service.GmailMessageParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -362,6 +363,7 @@ public class GmailEmailProcessingService {
             );
             processedEmail.setJobRelated(false);
             processedEmail.setProcessed(true);
+            processedEmail.setProcessingStatus(EmailProcessingStatus.IGNORED);
             processedEmail.setProcessedAt(LocalDateTime.now());
 
             processedEmailRepository.save(processedEmail);
@@ -386,7 +388,9 @@ public class GmailEmailProcessingService {
         );
         processedEmail.setJobRelated(jobRelated);
         processedEmail.setProcessed(true);
+        processedEmail.setProcessingStatus(EmailProcessingStatus.DETECTED);
         processedEmail.setProcessedAt(LocalDateTime.now());
+
 
         processedEmailRepository.save(processedEmail);
 
@@ -406,12 +410,22 @@ public class GmailEmailProcessingService {
                 analysis.reason()
         );
 
+        processedEmail.setProcessingStatus(EmailProcessingStatus.ANALYZED);
+        processedEmailRepository.save(processedEmail);
+
         if (analysis.jobRelated() && analysis.suggestedStatus() != null) {
             Optional<Application> matchingApplication = applicationMatcher.findMatchingApplication(user, dto, analysis);
 
             if (matchingApplication.isPresent()) {
                 boolean suggestionCreated =
                         createAiSuggestion(connection, matchingApplication.get(), dto, analysis);
+
+                if (suggestionCreated) {
+                    processedEmail.setProcessingStatus(
+                            EmailProcessingStatus.SUGGESTION_CREATED
+                    );
+                    processedEmailRepository.save(processedEmail);
+                }
 
                 log.info(
                         "AI suggestion creation requested: messageId={}, matchedApplicationId={}, company={}, suggestedStatus={}",
@@ -432,6 +446,9 @@ public class GmailEmailProcessingService {
                         analysis.suggestedStatus()
                 );
 
+                processedEmail.setProcessingStatus(EmailProcessingStatus.NO_MATCH);
+                processedEmailRepository.save(processedEmail);
+
                 return new GmailProcessingResult(true, false);
             }
         } else {
@@ -442,6 +459,9 @@ public class GmailEmailProcessingService {
                     analysis.suggestedStatus(),
                     analysis.reason()
             );
+
+            processedEmail.setProcessingStatus(EmailProcessingStatus.ANALYZED);
+            processedEmailRepository.save(processedEmail);
 
             return new GmailProcessingResult(analysis.jobRelated(), false);
         }
