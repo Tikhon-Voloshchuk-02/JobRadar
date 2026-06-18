@@ -37,30 +37,40 @@ public class JobEmailDetector {
         log.info("JOB DETECTOR TEXT = {}", text);
 
 
-        boolean result =  text.contains("job")
+        boolean result = text.contains("job")
                 || text.contains("career")
                 || text.contains("application")
                 || text.contains("applied")
                 || text.contains("interview")
                 || text.contains("recruit")
-                || text.contains("hr")
                 || text.contains("offer")
                 || text.contains("unfortunately")
                 || text.contains("thank you for applying")
 
                 || text.contains("bewerbung")
                 || text.contains("beworben")
+                || text.contains("bewerber")
+                || text.contains("bewerbungsunterlagen")
+                || text.contains("bewerbungsprozess")
+
                 || text.contains("indeed")
+                || text.contains("stepstone")
+                || text.contains("linkedin")
+                || text.contains("xing")
+
                 || text.contains("karriere")
                 || text.contains("stelle")
                 || text.contains("stellenanzeige")
-                || text.contains("position")
                 || text.contains("praktikum")
                 || text.contains("werkstudent")
                 || text.contains("vorstellungsgespraech")
                 || text.contains("einladung")
                 || text.contains("absage")
-                || text.contains("zusage");
+                || text.contains("zusage")
+
+                || text.contains("assessment")
+                || text.contains("recruiting")
+                || text.contains("talent acquisition");
 
         log.info("JOB DETECTOR RESULT = {}", result);
         return result;
