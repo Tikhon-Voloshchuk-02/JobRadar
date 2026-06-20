@@ -153,7 +153,8 @@ public class AiSuggestionService {
                     oldStatus,
                     newStatus,
                     savedApplication,
-                    StatusChangeSource.AI_GMAIL
+                    StatusChangeSource.AI_GMAIL,
+                    suggestion.getGmailMessageId()
             );
 
             statusHistoryRepository.save(historyEntry);
@@ -203,6 +204,22 @@ public class AiSuggestionService {
         }
 
         return pendingSuggestions.size();
+    }
+
+    public String getEmailLink(Long suggestionId, User user) {
+        AiSuggestion suggestion = aiSuggestionRepository.findById(suggestionId)
+                .orElseThrow(() -> new RuntimeException("Suggestion not found"));
+
+        if (!suggestion.getApplication().getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
+        }
+
+        String messageId = suggestion.getGmailMessageId();
+        if (messageId == null || messageId.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No email linked to this suggestion");
+        }
+
+        return "https://mail.google.com/mail/u/0/#all/" + messageId;
     }
 
     private User getCurrentUser(Authentication auth){

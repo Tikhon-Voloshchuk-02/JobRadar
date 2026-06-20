@@ -11,5 +11,7 @@ public interface StatusHistoryRepository extends JpaRepository<StatusHistory, Lo
 
     List<StatusHistory> findTop5ByApplicationUserOrderByChangedAtDesc(User user);
 
+    List<StatusHistory> findAllByApplicationUserOrderByChangedAtAsc(User user);
+
     void deleteByApplicationId(Long applicationId);
 }
