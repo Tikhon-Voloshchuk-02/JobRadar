@@ -62,6 +62,15 @@ public class AiSuggestionController {
         return aiSuggestionService.rejectSuggestion(id, user);
     }
 
+    @GetMapping("/{id}/email-link")
+    public Map<String, String> getEmailLink(@PathVariable Long id, Authentication auth) {
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String link = aiSuggestionService.getEmailLink(id, user);
+        return Map.of("emailLink", link);
+    }
+
     @PostMapping("/accept-all")
     public ResponseEntity<?> acceptAll(Authentication auth){
         int acceptedCount = aiSuggestionService.acceptAllPending(auth);
