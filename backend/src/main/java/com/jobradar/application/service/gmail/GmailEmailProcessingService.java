@@ -271,6 +271,7 @@ public class GmailEmailProcessingService {
         }
 
         suggestion.setEmailSnippet(preview);
+        suggestion.setGmailMessageId(email.gmailMessageId());
 
         suggestion.setSuggestionStatus(SuggestionStatus.PENDING);
 

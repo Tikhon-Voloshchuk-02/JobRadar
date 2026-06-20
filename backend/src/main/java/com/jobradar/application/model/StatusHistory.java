@@ -33,6 +33,9 @@ public class StatusHistory {
     @JsonIgnore
     private Application application;
 
+    @Column
+    private String gmailMessageId;
+
     public StatusHistory() { }
 
     public StatusHistory(ApplicationStatus oldStatus,
@@ -43,6 +46,15 @@ public class StatusHistory {
         this.newStatus = newStatus;
         this.application = application;
         this.source = source;
+    }
+
+    public StatusHistory(ApplicationStatus oldStatus,
+                         ApplicationStatus newStatus,
+                         Application application,
+                         StatusChangeSource source,
+                         String gmailMessageId) {
+        this(oldStatus, newStatus, application, source);
+        this.gmailMessageId = gmailMessageId;
     }
 
     @PrePersist
@@ -67,4 +79,7 @@ public class StatusHistory {
 
     public StatusChangeSource getSource() { return source; }
     public void setSource(StatusChangeSource source) { this.source = source; }
+
+    public String getGmailMessageId() { return gmailMessageId; }
+    public void setGmailMessageId(String gmailMessageId) { this.gmailMessageId = gmailMessageId; }
 }

@@ -1,0 +1,510 @@
+/* ─────────────────────────────────────────
+   GitHub dark palette (scoped to this page)
+   ───────────────────────────────────────── */
+.statistics-page {
+  --gh-bg:       #0d1117;
+  --gh-surface:  #161b22;
+  --gh-surface2: #21262d;
+  --gh-border:   #30363d;
+  --gh-text:     #e6edf3;
+  --gh-muted:    #8b949e;
+  --cell-0:      #21262d;
+  --cell-1:      #0c2340;
+  --cell-2:      #1e3a5f;
+  --cell-3:      #2563eb;
+
+  min-height: 100vh;
+  padding: 32px 40px;
+  background: var(--gh-bg);
+  color: var(--gh-text);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* Sidebar layout */
+.app-layout .statistics-page           { margin-left: 60px;  width: calc(100vw - 60px);  }
+.app-layout.sidebar-open .statistics-page  { margin-left: 240px; width: calc(100vw - 240px); }
+.app-layout.sidebar-closed .statistics-page { margin-left: 60px;  width: calc(100vw - 60px);  }
+
+/* ── Header ── */
+.stats-header {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gh-border);
+}
+
+.stats-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--gh-text);
+  margin: 0 0 4px;
+}
+
+.stats-header__sub {
+  font-size: 14px;
+  color: var(--gh-muted);
+  margin: 0;
+}
+
+.stats-header__sub strong { color: var(--gh-text); font-weight: 600; }
+.text-green { color: #3fb950; }
+
+/* ── GitHub card ── */
+.gh-card {
+  background: var(--gh-surface);
+  border: 1px solid var(--gh-border);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.gh-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.gh-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gh-text);
+}
+
+.gh-card-meta {
+  font-size: 12px;
+  color: var(--gh-muted);
+}
+
+/* ── Overview bar ── */
+.overview-bar {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  flex-wrap: wrap;
+}
+
+.overview-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 20px;
+  border-radius: 4px;
+  cursor: default;
+  user-select: none;
+  transition: background 150ms ease;
+}
+
+.overview-item:hover { background: rgba(255, 255, 255, 0.05); }
+
+.overview-item + .overview-item { border-left: 1px solid var(--gh-border); }
+.overview-item:first-child       { padding-left: 0; }
+
+.overview-value {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+  min-width: 2ch;
+  text-align: right;
+}
+
+.overview-label {
+  font-size: 12px;
+  color: var(--gh-muted);
+}
+
+/* ── Heatmap ─────────────────────────────────────────────────────────────── */
+.heatmap-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  user-select: none;
+}
+
+/* Month label row — CSS Grid aligned to week columns.
+   Offset 28 px (day labels 24 px + 4 px flex gap) matches heatmap-body layout. */
+.heatmap-months-grid {
+  display: grid;
+  gap: 3px;
+  height: 18px;
+  margin-left: 28px;
+}
+
+.heatmap-month-col {
+  font-size: 11px;
+  color: var(--gh-muted);
+  white-space: nowrap;
+  overflow: visible;
+  line-height: 18px;
+}
+
+/* Row: day-of-week labels + cell grid */
+.heatmap-body {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+
+.heatmap-days {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 3px;
+  width: 24px;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+.heatmap-day {
+  font-size: 9px;
+  color: var(--gh-muted);
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* CSS Grid — gridTemplateColumns set inline via JS (repeat(N, 1fr)).
+   grid-auto-flow: column fills week-by-week (day 0→6 down each column).
+   aspect-ratio: 52/7 makes each cell approximately square. */
+.heatmap-grid {
+  display: grid;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+  grid-template-rows: repeat(7, 1fr);
+  grid-auto-flow: column;
+  aspect-ratio: 52 / 7;
+}
+
+.heatmap-cell {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--cell-0);
+  cursor: default;
+  transition: background 220ms ease, opacity 220ms ease, outline-color 220ms ease;
+}
+
+/* Future cells (after today in current year) — same grey, no pointer */
+.heatmap-cell[data-future="true"] {
+  background: var(--cell-0);
+  opacity: 0.45;
+  cursor: default;
+}
+
+.heatmap-cell[data-level="1"] { background: var(--cell-1); cursor: pointer; }
+.heatmap-cell[data-level="2"] { background: var(--cell-2); cursor: pointer; }
+.heatmap-cell[data-level="3"] { background: var(--cell-3); cursor: pointer; }
+
+.heatmap-cell[data-level="1"]:hover,
+.heatmap-cell[data-level="2"]:hover,
+.heatmap-cell[data-level="3"]:hover {
+  outline: 1px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 1px;
+}
+
+/* ── Company-highlight selection ─────────────────────────────────────────── */
+
+/* Non-matched active cells look the same as empty cells */
+.heatmap-grid.has-selection .heatmap-cell:not([data-highlight]):not([data-level="0"]):not([data-future="true"]) {
+  background: var(--cell-0);
+}
+
+/* Highlight colours — override the level-based colour */
+.heatmap-grid.has-selection .heatmap-cell[data-highlight="offer"]     { background: #3fb950; opacity: 1; cursor: pointer; }
+.heatmap-grid.has-selection .heatmap-cell[data-highlight="interview"] { background: #bc8cff; opacity: 1; cursor: pointer; }
+.heatmap-grid.has-selection .heatmap-cell[data-highlight="rejected"]  { background: #f85149; opacity: 1; cursor: pointer; }
+.heatmap-grid.has-selection .heatmap-cell[data-highlight="applied"]   { background: #2563eb; opacity: 1; cursor: pointer; }
+.heatmap-grid.has-selection .heatmap-cell[data-highlight="waiting"]   { background: #e3b341; opacity: 1; cursor: pointer; }
+
+/* White ring on the clicked/selected cell */
+.heatmap-cell.heatmap-selected {
+  outline: 2px solid rgba(255, 255, 255, 0.75);
+  outline-offset: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Year selector — pushed to the right of the card header */
+.year-select { margin-left: auto; }
+
+/* Legend */
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--gh-muted);
+}
+
+/* Legend cells need a fixed size since they're outside the grid */
+.heatmap-legend .heatmap-cell {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* ── Hover tooltip ── */
+.heatmap-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: #1c2128;
+  border: 1px solid #444c56;
+  border-radius: 6px;
+  padding: 8px 10px;
+  pointer-events: auto;
+  min-width: 160px;
+  max-width: 220px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.heatmap-tooltip__date {
+  font-size: 11px;
+  color: var(--gh-muted);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.heatmap-tooltip__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  border-top: 1px solid #21262d;
+}
+
+.heatmap-tooltip__row:first-of-type { border-top: none; }
+
+.heatmap-tooltip__company {
+  color: #e6edf3;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.heatmap-tooltip__company--link {
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.heatmap-tooltip__company--link:hover {
+  color: #79c0ff;
+  text-decoration: underline;
+}
+
+.heatmap-tooltip__status {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tt-applied   { color: #58a6ff; background: rgba(88, 166, 255, 0.12); }
+.tt-interview { color: #bc8cff; background: rgba(188, 140, 255, 0.12); }
+.tt-offer     { color: #3fb950; background: rgba(63, 185, 80,  0.12); }
+.tt-rejected  { color: #f85149; background: rgba(248, 81,  73,  0.12); }
+.tt-waiting   { color: #e3b341; background: rgba(227, 179, 65,  0.12); }
+
+.heatmap-tooltip__status--link {
+  cursor: pointer;
+  transition: filter 150ms ease, box-shadow 150ms ease;
+}
+
+.heatmap-tooltip__status--link:hover {
+  filter: brightness(1.25);
+  box-shadow: 0 0 0 1px currentColor;
+}
+
+/* ── Tendency / Trend card ── */
+.trend-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+
+/* ── Custom select ── */
+.cs {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #21262d;
+  border: 1px solid #444c56;
+  border-radius: 6px;
+  color: #e6edf3;
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+  user-select: none;
+  min-width: 90px;
+  transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.cs:hover       { border-color: #768390; }
+.cs--open       { background: #2d333b; border-color: #58a6ff; box-shadow: 0 0 0 2px rgba(88,166,255,0.15); }
+
+.cs__label      { flex: 1; }
+.cs__arrow      { font-size: 10px; color: #8b949e; }
+
+.cs__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 100%;
+  background: #1c2128;
+  border: 1px solid #444c56;
+  border-radius: 6px;
+  overflow: hidden;
+  z-index: 1000;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+
+.cs__option {
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 100ms ease;
+}
+
+.cs__option:hover             { background: #2d333b; }
+.cs__option--selected         { color: #58a6ff; }
+
+.trend-kpi {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-left: auto;
+}
+
+.trend-kpi__val {
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.trend-kpi__delta {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.trend-up   { color: #3fb950; }
+.trend-down { color: #f85149; }
+
+.trend-kpi__sub {
+  font-size: 11px;
+  color: var(--gh-muted);
+}
+
+/* ── Bottom row ── */
+.stats-bottom {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 16px;
+}
+
+/* ── Pipeline ── */
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pipeline-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pipeline-row-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.pipeline-label {
+  font-size: 13px;
+  color: var(--gh-muted);
+}
+
+.pipeline-track {
+  height: 6px;
+  background: var(--gh-surface2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-left: 28px;
+}
+
+.pipeline-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.pipeline-count {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+}
+
+.pipeline-pct {
+  font-size: 11px;
+  color: var(--gh-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ── Stage timings ── */
+.timings { display: flex; flex-direction: column; }
+
+.timing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--gh-border);
+}
+
+.timing-row:last-child { border-bottom: none; }
+
+.timing-label { font-size: 13px; color: var(--gh-muted); }
+
+.timing-days {
+  font-size: 20px;
+  font-weight: 600;
+  color: #58a6ff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .stats-bottom { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .statistics-page { padding: 20px; }
+
+  .overview-bar { padding: 12px; flex-wrap: wrap; }
+  .overview-item + .overview-item { border-left: none; }
+
+  .pipeline-row { grid-template-columns: 72px 1fr 24px 36px; gap: 8px; }
+
+  .heatmap-days { gap: 2px; }
+  .heatmap-grid { gap: 2px; }
+}

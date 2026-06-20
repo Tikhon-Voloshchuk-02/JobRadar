@@ -46,6 +46,9 @@ public class AiSuggestion {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column
+    private String gmailMessageId;
+
 
     public AiSuggestion() {
     }
@@ -116,6 +119,14 @@ public class AiSuggestion {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public String getGmailMessageId() {
+        return gmailMessageId;
+    }
+
+    public void setGmailMessageId(String gmailMessageId) {
+        this.gmailMessageId = gmailMessageId;
     }
 
 }
