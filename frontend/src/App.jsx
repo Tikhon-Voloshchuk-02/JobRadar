@@ -7,6 +7,7 @@ import DashboardPage from "./pages/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import AiSuggestionsPage from "./pages/AiSuggestionsPage";
+import StatisticsPage from "./pages/StatisticsPage";
 import UserPage from "./pages/UserPage";
 
 function App() {
@@ -44,6 +45,15 @@ function App() {
           element={
             <ProtectedRoute>
               <AiSuggestionsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/statistics"
+          element={
+            <ProtectedRoute>
+              <StatisticsPage />
             </ProtectedRoute>
           }
         />

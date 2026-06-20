@@ -66,6 +66,10 @@ function Sidebar({ open, setOpen }) {
               )}
             </NavLink>
 
+            <NavLink to="/statistics" className="sidebar-link">
+              {t("nav.statistics")}
+            </NavLink>
+
             <NavLink to="/user" className="sidebar-link">
               {t("nav.profile")}
             </NavLink>
