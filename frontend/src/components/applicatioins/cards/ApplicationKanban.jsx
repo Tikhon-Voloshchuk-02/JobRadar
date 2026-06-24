@@ -14,6 +14,7 @@ export default function ApplicationKanban({
   applications,
   onSelect,
   onEdit,
+  onDelete,
   onStatusChange,
 }) {
   const groupedApplications = STATUS_COLUMNS.map((status) => ({
@@ -49,15 +50,28 @@ export default function ApplicationKanban({
                 <div className="kanban-card__meta">
                   <span>{app.appliedAt || "No date"}</span>
 
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onEdit(app);
-                    }}
-                  >
-                    Edit
-                  </button>
+                  <div className="kanban-card__actions">
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onEdit(app);
+                      }}
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
+                      className="delete-button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onDelete(app.id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </article>
             ))}

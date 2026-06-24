@@ -163,6 +163,7 @@ export default function ApplicationsPage() {
                   applications={filteredApplications}
                   onSelect={setDrawerApplication}
                   onEdit={handleEdit}
+                  onDelete={handleDelete}
                   onStatusChange={handleStatusChange}
                 />
               )}
@@ -184,6 +185,10 @@ export default function ApplicationsPage() {
           onEdit={(application) => {
             setDrawerApplication(null);
             handleEdit(application);
+          }}
+          onDelete={async (id) => {
+            await handleDelete(id);
+            setDrawerApplication(null);
           }}
         />
       </main>
