@@ -1,4 +1,4 @@
-import StatusBadge from "./StatusBadge";
+import StatusBadge from "../StatusBadge";
 import "./ApplicationTable.css";
 
 export default function ApplicationTable({

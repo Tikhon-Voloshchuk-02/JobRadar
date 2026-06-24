@@ -14,7 +14,7 @@ import {
   FiEdit2,
 } from "react-icons/fi";
 
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/applications/Sidebar";
 import "./UserPage.css";
 
 import {

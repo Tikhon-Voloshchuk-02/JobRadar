@@ -2,7 +2,7 @@ import { STATUS_OPTIONS } from "../utils/statusOptions";
 import { useTranslation } from "react-i18next";
 import "./ApplicationCard.css";
 
-import DocumentSection from "./DocumentSection";
+import DocumentSection from "../../documents/DocumentSection";
 
 export default function ApplicationCard({
   application,

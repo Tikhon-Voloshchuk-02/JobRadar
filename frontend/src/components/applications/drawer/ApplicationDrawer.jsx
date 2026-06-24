@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-import StatusBadge from "./StatusBadge";
-import { getDocuments, downloadDocument } from "../api/documents";
+import StatusBadge from "../StatusBadge";
+import { getDocuments, downloadDocument } from "../../../api/documents";
 import "./ApplicationDrawer.css";
 
 export default function ApplicationDrawer({

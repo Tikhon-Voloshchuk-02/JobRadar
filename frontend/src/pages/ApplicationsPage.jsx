@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import Sidebar from "../components/Sidebar";
-import ApplicationToolbar from "../components/ApplicationsToolbar";
-import ApplicationTable from "../components/ApplicationTable";
-import ApplicationKanban from "../components/ApplicationKanban";
-import ApplicationViewSwitcher from "../components/ApplicationViewSwitcher";
-import ApplicationDrawer from "../components/ApplicationDrawer";
-import EditApplicationModal from "../components/EditApplicationModal";
-import ApplicationForm from "../components/ApplicationForm";
-import HistoryPanel from "../components/HistoryPanel";
+import Sidebar from "../components/applications/Sidebar";
+
+import ApplicationToolbar from "../components/applications/toolbar/ApplicationsToolbar";
+import ApplicationViewSwitcher from "../components/applications/toolbar/ApplicationViewSwitcher";
+
+import ApplicationTable from "../components/applications/cards/ApplicationTable";
+import ApplicationKanban from "../components/applications/cards/ApplicationKanban";
+
+import ApplicationDrawer from "../components/applications/drawer/ApplicationDrawer";
+
+import ApplicationForm from "../components/applications/form/ApplicationForm";
+import EditApplicationModal from "../components/applications/form/EditApplicationModal";
+
+import HistoryPanel from "../components/applications/HistoryPanel";
 
 import { useDashboard } from "../hooks/useDashboard";
 
