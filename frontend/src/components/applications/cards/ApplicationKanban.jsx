@@ -1,4 +1,4 @@
-import StatusBadge from "../StatusBadge";
+import StatusBadge from "./StatusBadge";
 import "./ApplicationKanban.css";
 
 const STATUS_COLUMNS = [

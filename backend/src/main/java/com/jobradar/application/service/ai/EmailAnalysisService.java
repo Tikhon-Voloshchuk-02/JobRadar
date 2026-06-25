@@ -87,6 +87,10 @@ public class EmailAnalysisService {
  */
 
 
+    private String safe(String value) {
+        return value == null ? "" : value;
+    }
+
     public EmailAnalysisResult analyze(GmailMessageDto email){
         AiProviderType providerType = aiProperties.getProvider();
 
@@ -127,7 +131,25 @@ public class EmailAnalysisService {
         }
 
         if (decision.getType() == AnalysisDecisionType.RULE_BASED_RESULT) {
-            return decision.getResult();
+            EmailAnalysisResult ruleBasedResult = decision.getResult();
+
+            boolean missingExtraction =
+                    ruleBasedResult.jobRelated()
+                            && ruleBasedResult.suggestedStatus() != null
+                            && safe(ruleBasedResult.detectedCompany()).isBlank()
+                            && safe(ruleBasedResult.detectedPosition()).isBlank();
+
+            if (!missingExtraction) {
+                return ruleBasedResult;
+            }
+
+            log.info(
+                    "Escalating rule-based result to OpenAI because company/position extraction is missing: subject={}, sender={}, suggestedStatus={}, confidence={}",
+                    email.subject(),
+                    email.from(),
+                    ruleBasedResult.suggestedStatus(),
+                    ruleBasedResult.confidence()
+            );
         }
 
         log.info(

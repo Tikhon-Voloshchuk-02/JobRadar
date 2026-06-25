@@ -13,7 +13,9 @@ public class StatusTransitionValidator {
             Map.of(
                     ApplicationStatus.SAVED, Set.of(
                             ApplicationStatus.APPLIED,
-                            ApplicationStatus.WAITING
+                            ApplicationStatus.WAITING,
+                            ApplicationStatus.INTERVIEW,
+                            ApplicationStatus.REJECTED
                     ),
 
                     ApplicationStatus.APPLIED, Set.of(
