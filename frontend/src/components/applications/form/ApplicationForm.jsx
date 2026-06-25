@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import DocumentSection from "./DocumentSection";
+import DocumentSection from "../../documents/DocumentSection";
 import "./ApplicationForm.css";
 
 export default function ApplicationForm({

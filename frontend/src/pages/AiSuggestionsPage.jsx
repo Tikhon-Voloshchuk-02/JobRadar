@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/applications/Sidebar";
 import {
   getPendingAiSuggestions,
   acceptAiSuggestion,

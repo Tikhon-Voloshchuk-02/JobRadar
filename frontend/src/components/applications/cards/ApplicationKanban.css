@@ -129,23 +129,50 @@
   font-size: 12px;
 }
 
-.kanban-card__meta button {
+.kanban-card__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.kanban-card__actions button {
   padding: 5px 8px;
 
-  background: var(--jr-panel);
-  border: 1px solid var(--jr-border);
-  border-radius: var(--jr-radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
 
-  color: var(--jr-text-soft);
+  border-radius: var(--jr-radius-sm);
 
   cursor: pointer;
 
   font-size: 12px;
   font-weight: 600;
+
+  transition: all 0.2s ease;
 }
 
-.kanban-card__meta button:hover {
+/* Edit */
+
+.kanban-card__actions button:first-child {
+  background: var(--jr-panel);
+  border: 1px solid var(--jr-border);
+  color: var(--jr-text-soft);
+}
+
+.kanban-card__actions button:first-child:hover {
   background: #21262d;
   border-color: var(--jr-border-strong);
   color: var(--jr-text);
+}
+
+/* Delete */
+
+.delete-button {
+  background: #da3633;
+  border: 1px solid #f85149;
+  color: #fff;
+}
+
+.delete-button:hover {
+  background: #f85149;
+  border-color: #ff7b72;
 }

@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 import { logout } from "../auth/auth";
 
-import DashboardSummary from "../components/DashboardSummary";
+import DashboardSummary from "../components/dashboard/DashboardSummary";
+import Sidebar from "../components/applications/Sidebar";
 import LanguageSwitcher from "../components/LanguageSwitcher";
-import Sidebar from "../components/Sidebar";
 
 import { useDashboard } from "../hooks/useDashboard";
 

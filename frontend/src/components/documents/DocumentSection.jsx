@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  getDocuments,
-  uploadDocument,
-  deleteDocument,
-  downloadDocument,
-} from "../api/documents";
+    getDocuments,
+    uploadDocument,
+    deleteDocument,
+    downloadDocument 
+        } from "../../api/documents";
 
 import "./DocumentSection.css";
 

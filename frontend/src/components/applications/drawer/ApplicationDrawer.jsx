@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-import StatusBadge from "./StatusBadge";
-import { getDocuments, downloadDocument } from "../api/documents";
+import StatusBadge from "../StatusBadge";
+import { getDocuments, downloadDocument } from "../../../api/documents";
 import "./ApplicationDrawer.css";
 
 export default function ApplicationDrawer({
   application,
   onClose,
   onEdit,
+  onDelete,
 }) {
   const [documents, setDocuments] = useState([]);
   const [documentsLoading, setDocumentsLoading] = useState(false);
@@ -152,6 +153,16 @@ export default function ApplicationDrawer({
               ))}
             </div>
           )}
+        </section>
+
+        <section className="drawer-danger-section">
+          <button
+            type="button"
+            className="drawer-delete-button"
+            onClick={() => onDelete(application.id)}
+          >
+            Delete application
+          </button>
         </section>
       </aside>
     </div>,

@@ -60,6 +60,10 @@
 .drawer-title h2 {
   margin: 0;
 
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
   color: var(--jr-text);
 
   font-size: 20px;
@@ -101,82 +105,6 @@
 
 .drawer-notes {
   white-space: pre-wrap;
-}
-
-.drawer-title h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.drawer-doc-count {
-  color: var(--jr-text-muted);
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.drawer-empty-documents {
-  color: var(--jr-text-muted);
-}
-
-.drawer-documents {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.drawer-document-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  padding: 12px;
-
-  background: var(--jr-panel);
-  border: 1px solid var(--jr-border);
-  border-radius: var(--jr-radius-md);
-}
-
-.drawer-document-icon {
-  width: 38px;
-  height: 38px;
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: rgba(56, 139, 253, 0.12);
-  border-radius: 10px;
-
-  font-size: 18px;
-}
-
-.drawer-document-info {
-  min-width: 0;
-}
-
-.drawer-document-name {
-  color: var(--jr-text);
-  font-size: 14px;
-  font-weight: 600;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.drawer-document-type {
-  margin-top: 4px;
-
-  color: var(--jr-text-muted);
-  font-size: 12px;
-}
-
-.drawer-title h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .drawer-doc-count {
@@ -290,4 +218,37 @@
 .drawer-vacancy-link:hover {
   background: #30363d;
   color: #e6edf3;
+}
+
+.drawer-danger-section {
+  margin-top: 24px;
+  padding-top: 20px;
+
+  border-top: 1px solid var(--jr-border);
+}
+
+.drawer-delete-button {
+  width: 100%;
+
+  padding: 12px 16px;
+
+  background: #da3633;
+  border: 1px solid #f85149;
+  border-radius: var(--jr-radius-md);
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.drawer-delete-button:hover {
+  background: #f85149;
+  border-color: #ff7b72;
+
+  transform: translateY(-1px);
 }
