@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import "./Sidebar.css";
 
 function Sidebar({ open, setOpen }) {
 
