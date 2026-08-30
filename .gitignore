@@ -62,8 +62,6 @@ docker-compose.override.yml
 *.bak
 
 
-# docs
-docs/
 
 # python 
 python-service/
